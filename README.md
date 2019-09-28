@@ -71,6 +71,8 @@ Curate page
 
 * The new user will now see the documents previously annotated under the `Curate` page. This is, because the example project 
 is configured to `ALWAYS_REQUIRE_CURATION`. This can be changed in the `Manage` section, so that no curator is necessary.
+* As a curator, you can either **accept** the annotation result of an annotator, **copy** that annotators result and change it, or just
+annotate the document yourself.
   
 ## Use cases
 - One-off projects (Create project, upload documents, annotate (and optionally curate) annotations and download results via UI)
