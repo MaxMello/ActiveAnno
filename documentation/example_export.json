@@ -1,0 +1,450 @@
+[
+  {
+    "id": "5d8f695719a5dd41b73c9a88",
+    "configurationID": "EXAMPLE_PROJECT_APP_REVIEWS",
+    "originalDocument": {
+      "review": "Great app, I like the fast upload speed and pdf viewer!",
+      "timestamp": 1506594690000,
+      "appName": "Dropbox",
+      "reviewer": "Anonymous",
+      "stars": 5
+    },
+    "annotations": [
+      {
+        "id": "13c5b9be-4e78-4c99-b4b7-ff05abdd49f5",
+        "documentID": "5d8f695719a5dd41b73c9a88",
+        "configurationID": "EXAMPLE_PROJECT_APP_REVIEWS",
+        "timestamp": 1569681261999,
+        "documentAnnotations": {
+          "IS_SPAM": {
+            "value": false
+          },
+          "USEFULNESS": {
+            "value": 3
+          },
+          "REVIEW_CONTAINS": {
+            "value": [
+              "FEATURE_FEEDBACK"
+            ]
+          },
+          "SENTIMENT": {
+            "value": [
+              "VERY_NEGATIVE"
+            ]
+          },
+          "FEATURES": {
+            "value": [
+              "Upload speed",
+              "Pdf viewer"
+            ]
+          }
+        },
+        "spanAnnotations": {},
+        "creator": [
+          {
+            "userIdentifier": "admin",
+            "type": "ANNOTATOR"
+          }
+        ],
+        "interactionLog": {
+          "firstShownTimestamp": 1569681234606,
+          "firstInteractionTimestamp": 1569681241934,
+          "lastInteractionTimestamp": 1569681260253
+        },
+        "documentData": {
+          "DOCUMENT_TEXT": "Great app, I like the fast upload speed and pdf viewer!",
+          "TIMESTAMP": "1506594690000",
+          "APP": "Dropbox",
+          "USER": "Anonymous",
+          "STAR_RATING": "5"
+        },
+        "usedConfig": {
+          "id": "EXAMPLE_PROJECT_APP_REVIEWS",
+          "name": "Example project: App reviews",
+          "description": "This is an automatically generated example project. It shows of the different capabilities of ActiveAnno. The setup is based on the Paper 'How Do Users Like this Feature? A Fine Grained Sentiment Analysis of App Reviews' by Guzman and Maalej. The differences to the paper setup is, that sentiment is assigned here on a document level, not on a per-feature level. Also, we additionally ask to label the review for spam / no spam and to define a usefulness scale for software engineers.",
+          "priority": 0,
+          "annotations": {
+            "annotationMap": {
+              "IS_SPAM": {
+                "type": "BooleanAnnotation",
+                "id": "IS_SPAM",
+                "name": "Is spam",
+                "shortName": "Spam",
+                "targets": [
+                  {
+                    "type": "DocumentTarget"
+                  }
+                ],
+                "optional": false
+              },
+              "SENTIMENT": {
+                "type": "PredefinedTagSetAnnotation",
+                "id": "SENTIMENT",
+                "name": "Sentiment",
+                "shortName": "Sentiment",
+                "targets": [
+                  {
+                    "type": "DocumentTarget"
+                  }
+                ],
+                "minNumberOfTags": 1,
+                "maxNumberOfTags": 1,
+                "options": [
+                  {
+                    "id": "VERY_NEGATIVE",
+                    "name": "Very negative",
+                    "shortName": "-2"
+                  },
+                  {
+                    "id": "NEGATIVE",
+                    "name": "Negative",
+                    "shortName": "-1"
+                  },
+                  {
+                    "id": "NEUTRAL",
+                    "name": "Neutral",
+                    "shortName": "0"
+                  },
+                  {
+                    "id": "POSITIVE",
+                    "name": "Positive",
+                    "shortName": "+1"
+                  },
+                  {
+                    "id": "VERY_POSITIVE",
+                    "name": "Very positive",
+                    "shortName": "+2"
+                  }
+                ]
+              },
+              "REVIEW_CONTAINS": {
+                "type": "PredefinedTagSetAnnotation",
+                "id": "REVIEW_CONTAINS",
+                "name": "This review contains a",
+                "shortName": "Contains",
+                "targets": [
+                  {
+                    "type": "DocumentTarget"
+                  }
+                ],
+                "minNumberOfTags": 0,
+                "maxNumberOfTags": 3,
+                "options": [
+                  {
+                    "id": "FEATURE_FEEDBACK",
+                    "name": "Feedback about a feature",
+                    "shortName": "Feedback"
+                  },
+                  {
+                    "id": "BUG_REPORT",
+                    "name": "Bug report",
+                    "shortName": "Bug"
+                  },
+                  {
+                    "id": "FEATURE_REQUEST",
+                    "name": "Feature request",
+                    "shortName": "Request"
+                  }
+                ]
+              },
+              "REVIEW_CONTAINS_OTHER": {
+                "type": "OpenTextAnnotation",
+                "id": "REVIEW_CONTAINS_OTHER",
+                "name": "Other things this review contains",
+                "shortName": "Other",
+                "targets": [
+                  {
+                    "type": "DocumentTarget"
+                  }
+                ],
+                "minLength": 1,
+                "maxLength": 100,
+                "useDocumentTextAsDefault": false,
+                "applyAutoCorrectOnTarget": false,
+                "optional": true
+              },
+              "FEATURES": {
+                "type": "OpenTagAnnotation",
+                "id": "FEATURES",
+                "name": "Mentioned features",
+                "shortName": "Features",
+                "targets": [
+                  {
+                    "type": "DocumentTarget"
+                  }
+                ],
+                "minNumberOfTags": 0,
+                "maxNumberOfTags": 10,
+                "trimWhitespace": true,
+                "caseBehavior": "CAPITALIZE",
+                "useExistingValuesAsPredefinedTags": false,
+                "predefinedTags": []
+              },
+              "USEFULNESS": {
+                "type": "ClosedNumberAnnotation",
+                "id": "USEFULNESS",
+                "name": "How useful is this review for software engineers?",
+                "shortName": "Usefulness",
+                "targets": [
+                  {
+                    "type": "DocumentTarget"
+                  }
+                ],
+                "min": 1.0,
+                "max": 5.0,
+                "step": 1.0,
+                "optional": false
+              }
+            }
+          },
+          "layout": {
+            "layoutAreas": {
+              "Common": {
+                "id": "Common",
+                "rows": [
+                  {
+                    "cols": [
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4
+                        },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "text": "Review for the App "
+                          },
+                          {
+                            "type": "Bold",
+                            "children": [
+                              {
+                                "type": "TextMetaData",
+                                "id": "APP"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4
+                        },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "text": "Reviewer: "
+                          },
+                          {
+                            "type": "TextMetaData",
+                            "id": "USER"
+                          }
+                        ]
+                      },
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4
+                        },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "text": "Stars: "
+                          },
+                          {
+                            "type": "Bold",
+                            "children": [
+                              {
+                                "type": "TextMetaData",
+                                "id": "STAR_RATING"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 6,
+                          "lg": 4,
+                          "xl": 4
+                        },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "text": "Date: "
+                          },
+                          {
+                            "type": "DateMetaData",
+                            "formatString": "YYYY-MM-DD",
+                            "id": "TIMESTAMP"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "cols": [
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": null,
+                          "md": null,
+                          "lg": null,
+                          "xl": null
+                        },
+                        "children": [
+                          {
+                            "type": "DocumentText",
+                            "label": "Review text"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "DocumentTarget": {
+                "id": "DocumentTarget",
+                "rows": [
+                  {
+                    "cols": [
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 6,
+                          "lg": 6,
+                          "xl": 6
+                        },
+                        "children": [
+                          {
+                            "type": "ButtonGroup",
+                            "referenceAnnotation": "IS_SPAM"
+                          }
+                        ]
+                      },
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 6,
+                          "lg": 6,
+                          "xl": 6
+                        },
+                        "children": [
+                          {
+                            "type": "Slider",
+                            "referenceAnnotation": "USEFULNESS"
+                          }
+                        ]
+                      },
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 6,
+                          "lg": 6,
+                          "xl": 6
+                        },
+                        "children": [
+                          {
+                            "type": "ButtonGroup",
+                            "referenceAnnotation": "REVIEW_CONTAINS"
+                          }
+                        ]
+                      },
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 6,
+                          "lg": 6,
+                          "xl": 6
+                        },
+                        "children": [
+                          {
+                            "type": "TextField",
+                            "referenceAnnotation": "REVIEW_CONTAINS_OTHER",
+                            "showApplyAutoCorrectButton": false
+                          }
+                        ]
+                      },
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 12,
+                          "lg": 6,
+                          "xl": 6
+                        },
+                        "children": [
+                          {
+                            "type": "Dropdown",
+                            "referenceAnnotation": "SENTIMENT"
+                          }
+                        ]
+                      },
+                      {
+                        "width": {
+                          "xs": 12,
+                          "sm": 12,
+                          "md": 12,
+                          "lg": 6,
+                          "xl": 6
+                        },
+                        "children": [
+                          {
+                            "type": "Chips",
+                            "referenceAnnotation": "FEATURES"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "allowManualEscalationToCurator": false
+        }
+      }
+    ],
+    "finalizedAnnotations": {
+      "annotationResultIDs": [
+        "13c5b9be-4e78-4c99-b4b7-ff05abdd49f5"
+      ],
+      "finalizedReason": {
+        "type": "Curator",
+        "curator": "testcurator"
+      },
+      "usedPolicy": {
+        "numberOfAnnotatorsPerDocument": 1,
+        "allowManualEscalationToCurator": false,
+        "finalizeAnnotationPolicy": "ALWAYS_REQUIRE_CURATION"
+      },
+      "timestamp": 1569687686722,
+      "exportStatistics": {
+        "webHookStatistics": [],
+        "restStatistics": [
+          {
+            "route": "/api/v1/export/config/EXAMPLE_PROJECT_APP_REVIEWS",
+            "calls": 1,
+            "createdTimestamp": 1569687694421,
+            "updatedTimestamp": 1569687694423
+          }
+        ]
+      }
+    }
+  }
+]

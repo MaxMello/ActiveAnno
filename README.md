@@ -6,6 +6,7 @@ ActiveAnno is a web-based, responsive, highly configurable open source document 
 - [ActiveAnno](#activeanno)
     - [Quick start](#quick-start)
     - [Use cases](#use-cases)
+    - [API](#api)
     - [Production setup](#production-setup)
     - [Development setup](#development-setup)
     - [Styling](#styling)
@@ -83,6 +84,72 @@ annotate the document yourself.
 - Algorithm only (future use case): Integrate multiple ML/NLP algorithms to annotate documents, build majorities through the application and curate differences with human in the loop (Active Learning)
 - Multi user with algorithms (future use case): Treat ML/NLP algorithms as users, combine with annotators and curators to annotate documents and generate new training data for algorithms (Active Learning)
 
+## API
+Additionally to the endpoints of the backend used by the frontend, there are additional endpoints that are relevant, especially when
+ActiveAnno is used in a microservice context. Here, the endpoints are documented together with screenshots from Postman as an example of how to call the API.
+#### Importing documents into ActiveAnno
+There are two ways to get documents to annotate into the application. Either create a One-off project and upload the documents inside the Manage UI,
+or create a project for continuous annotation of streams of documents. For this, the Import API is available.
+```
+POST /api/v1/import
+```
+The endpoint is protected via `JWT` authentication and authorization. In a production setup, the user needs to have the role `activeanno_producer` (configurable via env variables).
+Typical use cases would be another service pushing data to this endpoint, or pushing data manually via curl, Postman etc. For both cases a JWT with this role is required.
+The endpoint accepts **all** json structures, json objects as well as json arrays of json objects. Therefore, it is even more important that only authorized users can push to that endpoint.
+The application has no assumption about how the json objects are structured. For example, you could push a document of the following structure:
+```json
+{
+  "comment": "some comment",
+  "timestamp": 123456789000,
+  "innerObject": {
+     "innerKey": "some metadata"
+  },
+  "uniqueID": 1
+}
+```
+This document will be assigned a unique ID and be stored in a mongoDB instance. If you want to annotate this document, you need to create a project that applies a filter such that
+this document will be selected. Example filter for the document above
+```json
+{
+  "operator": "eq",
+  "key": "uniqueID",
+  "value": 1
+}
+```
+Now, any document with `unqiueID = 1` would be part of that project and will be shown to the annotators. You don't actually need to write that filter json yourself, it is possible to configure that
+inside the manage UI. Under the hood, it is just a Mongo Query `{"uniqueID": {"$eq": 1}}`. The reason the filter json structure is not directly the mongo query is that we gain type safety by modeling
+all allowed Mongo operations as classes in Kotlin. Also, the `operator` is used for polymorphic deserialization, making the transformation from JSON to the data structure inside the backend easy.
+
+<img src="screenshots/postman_import_1.png" alt="Postman import 1" height="240"/> 
+<img src="screenshots/postman_import_2.png" alt="Postman import 2" height="240"/> 
+
+In Postman, you need to set the Bearer Token to the Base64 encoded JWT. For testing purposes (with JWT verification disabled), go to [jwt.io](https://jwt.io) and create a JWT with the payload
+```json
+{
+  "sub": "testproducer",
+  "roles": [
+      "activeanno_producer"
+  ]
+}
+```
+This will be enough to push to that endpoint (or you can disable role protection via enviroment variables all together).
+#### Exporting documents and annotations
+The other relevant API is for exporting documents with their created annotations. For this, there are tree ways. You can download all documents with the annotations from the Manage UI, you can 
+use the REST API or webhooks.
+First, lets demonstrate the REST api.
+```
+GET /api/v1/export/config/{configID}            // configID, for example EXAMPLE_PROJECT_APP_REVIEWS
+Optional get parameters:
+includeUnfinished=true|false  // Include document that not yet have been fully annotated in the export
+since=12345                   // UTC timestamp in millis, will include every document greater than or equal the timestamp (if includeUnfinished is true, will use the timestamp of the any existing annotation, if false, then from the officially chosen (by curator or algorithm) annotation 
+documentIDs=ABC,DEF,GHI       // Ask for specific documents by their unqiue mongo ID. Comma separated string.
+```
+The authentication for this endpoint is configurable by the project. There is `None`, which means anybody can call this endpoint if they know the ID of the project. Then there is HTTP Basic Auth,
+where a username and password can be specified in the project config. The last one is the JWT role, which will work the same as above for the import, but with role `activeanno_consumer` by default.
+
+<img src="screenshots/postman_export_1.png" alt="Postman export 1" height="300"/> 
+
+The full export result is stored under [example_export.json](./documentation/example_export.json). 
 
 ## Production setup
 For an actual production setup, some more steps are required. The first and biggest one is that an external Authentication Service
