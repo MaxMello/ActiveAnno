@@ -1,0 +1,6 @@
+[activeannoservice](../../index.md) / [common](../index.md) / [io.ktor.routing.Route](index.md) / [deleteAuthenticatedByJwt](./delete-authenticated-by-jwt.md)
+
+# deleteAuthenticatedByJwt
+
+`fun Route.deleteAuthenticatedByJwt(path: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, requiredRoles: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`> = listOf(), onlyOneMustMatch: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = false, body: PipelineInterceptor<`[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)`, ApplicationCall>): Route`
+`fun Route.deleteAuthenticatedByJwt(requiredRoles: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`> = listOf(), onlyOneMustMatch: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = false, body: PipelineInterceptor<`[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)`, ApplicationCall>): Route`

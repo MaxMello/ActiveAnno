@@ -1,0 +1,36 @@
+$dokka.format:gfm
+$dokka.linkExtension:md
+$dokka.location:api$admin(io.ktor.routing.Route, application.ApplicationConfig, document.DocumentDAO)api/io.ktor.routing.-route/admin.md
+$dokka.location:api$annotate(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO)api/io.ktor.routing.-route/annotate.md
+$dokka.location:api$curate(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO)api/io.ktor.routing.-route/curate.md
+$dokka.location:api$export(io.ktor.routing.Route, application.ApplicationConfig, config.ProjectConfigDAO, document.DocumentDAO)api/io.ktor.routing.-route/export.md
+$dokka.location:api$import(io.ktor.routing.Route, application.ApplicationConfig, document.DocumentDAO)api/io.ktor.routing.-route/import.md
+$dokka.location:api$manage(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO)api/io.ktor.routing.-route/manage.md
+$dokka.location:api$pageSetup(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO, user.MessageDAO)api/io.ktor.routing.-route/page-setup.md
+$dokka.location:api$search(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO)api/io.ktor.routing.-route/search.md
+$dokka.location:application$module(io.ktor.application.Application)application/io.ktor.application.-application/module.md
+$dokka.location:application$setupApplication(io.ktor.application.Application)application/io.ktor.application.-application/setup-application.md
+$dokka.location:common$deleteAuthenticatedByJwt(io.ktor.routing.Route, kotlin.String, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/delete-authenticated-by-jwt.md
+$dokka.location:common$deleteAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/delete-authenticated-by-jwt.md
+$dokka.location:common$getAuthenticatedByJwt(io.ktor.routing.Route, kotlin.String, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/get-authenticated-by-jwt.md
+$dokka.location:common$getAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/get-authenticated-by-jwt.md
+$dokka.location:common$getNestedKey(com.fasterxml.jackson.databind.node.ObjectNode, kotlin.String, kotlin.String)common/com.fasterxml.jackson.databind.node.-object-node/get-nested-key.md
+$dokka.location:common$getOrCreateCollection(org.litote.kmongo.coroutine.CoroutineDatabase, kotlin.String)common/org.litote.kmongo.coroutine.-coroutine-database/get-or-create-collection.md
+$dokka.location:common$handleAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/handle-authenticated-by-jwt.md
+$dokka.location:common$jwt#io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall))common/io.ktor.util.pipeline.-pipeline-context/jwt.md
+$dokka.location:common$mapInPlace(kotlin.collections.MutableList((common.mapInPlace.T)), kotlin.Function1((common.mapInPlace.T, )))common/kotlin.collections.-mutable-list/map-in-place.md
+$dokka.location:common$postAuthenticatedByJwt(io.ktor.routing.Route, kotlin.String, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/post-authenticated-by-jwt.md
+$dokka.location:common$postAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/post-authenticated-by-jwt.md
+$dokka.location:common$protectedByRole(io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction0((kotlin.Unit)))common/io.ktor.util.pipeline.-pipeline-context/protected-by-role.md
+$dokka.location:common$putAuthenticatedByJwt(io.ktor.routing.Route, kotlin.String, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/put-authenticated-by-jwt.md
+$dokka.location:common$putAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/put-authenticated-by-jwt.md
+$dokka.location:common$roles#com.auth0.jwt.interfaces.DecodedJWTcommon/com.auth0.jwt.interfaces.-decoded-j-w-t/roles.md
+$dokka.location:common$userIdentifier#com.auth0.jwt.interfaces.DecodedJWTcommon/com.auth0.jwt.interfaces.-decoded-j-w-t/user-identifier.md
+$dokka.location:common$userName#com.auth0.jwt.interfaces.DecodedJWTcommon/com.auth0.jwt.interfaces.-decoded-j-w-t/user-name.md
+$dokka.location:common$validateRole(io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), kotlin.collections.List((kotlin.String)), kotlin.Boolean)common/io.ktor.util.pipeline.-pipeline-context/validate-role.md
+api
+application
+common
+config
+document
+user
