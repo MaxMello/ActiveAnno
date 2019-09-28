@@ -20,7 +20,7 @@ docker-compose -f ./deployments/local.docker-compose.yml up -d
 ```
 By default, this will start 3 container: A MongoDB container, a Ktor backend service and an nginx server hosting a 
 React application. Next, go to `localhost:3000` to open the web UI. You can modify the port by editing the `local.docker-compose.yml`
-and changing the `activeannofrontend.ports` mapping.
+and changing the `activeannofrontend.ports` mapping. (Then, you also need to add the new URL to the `activeannobackend.CORS_HOSTS_LIST` env variable.)
 #### Login
 By default, the `local.docker-compose.yml` is configured for local run only, not for production purposes. Therefore, the authentication
 mechanism is disabled so that any username will automatically generate a super user account. Once opening `localhost:3000`, you
@@ -61,11 +61,16 @@ Annotate page on desktop / tablet (selected)
 
 * When you are the annotator of a document, you won't be able to also be the curator. Therefore, 
 for the example project, you won't be able to see any documents up for curation under the `Curate` page.
-  * To be able to see the curate page content, go to `Manage` > `Edit project` and under the `Basic properties` section,
-  add another username to the list of curators (just chose any name). Save the project.
-  * Go to the User page and logout. Now, login with the previously set username.
-  * The new user will now see the documents previously annotated under the `Curate` page. This is, because the example project
-  is configured to `ALWAYS_REQUIRE_CURATION`. This can be changed in the `Manage` section as well, so that no curator is necessary.
+  * The example project has another user defined as a curator, names `testcurator`. 
+  * Go to the User page and logout. Now, login with the username `testcurator`.
+
+Curate page 
+
+<img src="screenshots/curate_md_1.png" alt="Curate Desktop 1" height="500"/> 
+<img src="screenshots/curate_md_2.png" alt="Curate Desktop 2" height="500"/> 
+
+* The new user will now see the documents previously annotated under the `Curate` page. This is, because the example project 
+is configured to `ALWAYS_REQUIRE_CURATION`. This can be changed in the `Manage` section, so that no curator is necessary.
   
 ## Use cases
 - One-off projects (Create project, upload documents, annotate (and optionally curate) annotations and download results via UI)
@@ -143,9 +148,11 @@ MONGO_CONNECTION_STRING: mongodb://user:password@activeannomongo:27017
 MONGO_DATABASE_NAME: activeanno
 LOGGING_LEVEL: DEBUG
 GENERATE_EXAMPLE_PROJECT: "true"
+CORS_HOSTS_LIST: 'localhost,localhost:3000,0.0.0.0,0.0.0.0:3000'
 ```
 These are the default values. For production purposes, you would probably set `GENERATE_EXAMPLE_PROJECT` to false, increase the logging level, enable `HTTPS_REDIRECT`, and
-potentially connect the service to an existing MongoDB.
+potentially connect the service to an existing MongoDB. The CORS list might not always be necessary, but in the local deploy scenario,
+the URLs of the web page (`localhost:3000`) and the backend (`localhost:8080`) differ and thus CORS is necessary.
 
 ## Styling
 Actually, there are additional environment variables in the frontend for colorizing the web app.
@@ -170,5 +177,5 @@ The contrast text color is just the color for text such that it is readable when
 Lastly, there is the success color which is normally a kind of green.
 
 
-# Licence
+# License
 MIT
