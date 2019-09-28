@@ -17,11 +17,21 @@ If you want to instantly see an example project, chose the username `admin`. For
 configuration as well as some example data is provided.
 
 <img src="screenshots/login_xs.png" alt="Login" height="500"/>
+Login page on mobile
 
 #### Navigation / Usage
-* As a super user, you can see all areas of ActiveAnno. To get a feel about the types of projects that can be created, navigate 
-to the `Manage` page and inspect the existing project or create a new one. 
+<img src="screenshots/overview_md.png" alt="Overview Desktop" height="500"/> 
+Overview page on desktop / tablet
+<img src="screenshots/overview_xs.png" alt="Overview Mobile " height="500"/> 
+Overview page on mobile
+* As a super user, you can see all areas of ActiveAnno. 
+<img src="screenshots/manage_md.png" alt="Manage Desktop" height="500"/> 
+* To get a feel about the types of projects that can be created, navigate to the `Manage` page and inspect the existing project or create a new one.
 * After that, you can go to the `Annotate` page and annotate some documents. 
+<img src="screenshots/annotate_md.png" alt="Annotate Desktop" height="500"/> 
+Annotate page on desktop / tablet (nothing selected)
+<img src="screenshots/annotate_selected_md.png" alt="Annotate Desktop selected" height="500"/> 
+Annotate page on desktop / tablet (selected)
 * When you are the annotator of a document, you won't be able to also be the curator. Therefore, 
 for the example project, you won't be able to see any documents up for curation under the `Curate` page.
   * To be able to see the curate page content, go to `Manage` > `Edit project` and under the `Basic properties` section,
