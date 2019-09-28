@@ -17,17 +17,22 @@ If you want to instantly see an example project, chose the username `admin`. For
 configuration as well as some example data is provided.
 
 Login page on mobile
+
 <img src="screenshots/login_xs.png" alt="Login" height="500"/>
 
 #### Navigation / Usage
 Overview page on desktop / tablet
+
 <img src="screenshots/overview_md.png" alt="Overview Desktop" height="500"/> 
+
 Overview page on mobile
+
 <img src="screenshots/overview_xs.png" alt="Overview Mobile " height="500"/> 
 
 * As a super user, you can see all areas of ActiveAnno. 
 
 Manage page on desktop
+
 <img src="screenshots/manage_md.png" alt="Manage Desktop" height="500"/>
 
 * To get a feel about the types of projects that can be created, navigate to the `Manage` page and inspect the existing project or create a new one.
@@ -35,8 +40,11 @@ Manage page on desktop
 
 
 Annotate page on desktop / tablet (nothing selected)
-<img src="screenshots/annotate_md.png" alt="Annotate Desktop" height="500"/> 
+
+<img src="screenshots/annotate_md.png" alt="Annotate Desktop" height="500"/>
+
 Annotate page on desktop / tablet (selected)
+
 <img src="screenshots/annotate_selected_md.png" alt="Annotate Desktop selected" height="500"/> 
 
 * When you are the annotator of a document, you won't be able to also be the curator. Therefore, 
