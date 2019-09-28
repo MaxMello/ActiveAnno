@@ -2,4 +2,4 @@
 
 # filter
 
-`val filter: `[`FilterCondition`](../-filter-condition/index.md)`?`
+`val filter: `[`FilterCondition`](../../config.filter/-filter-condition/index.md)`?`

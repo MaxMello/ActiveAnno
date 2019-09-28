@@ -2,4 +2,4 @@
 
 # policy
 
-`val policy: `[`Policy`](../-policy/index.md)
+`val policy: `[`Policy`](../../config.policy/-policy/index.md)

@@ -28,7 +28,7 @@
 | [documentDAO](document-d-a-o.md) | `lateinit var documentDAO: `[`DocumentDAO`](../document/-document-d-a-o/index.md) |
 | [httpClient](http-client.md) | `lateinit var httpClient: HttpClient`<br>Instance of HttpClient to make requests to other services / web hooks |
 | [jsonMapper](json-mapper.md) | `lateinit var jsonMapper: ObjectMapper`<br>Global instance of correctly configured json mapper |
-| [messageDAO](message-d-a-o.md) | `lateinit var messageDAO: `[`MessageDAO`](../user/-message-d-a-o/index.md) |
+| [messageDAO](message-d-a-o.md) | `lateinit var messageDAO: `[`MessageDAO`](../user.message/-message-d-a-o/index.md) |
 | [projectConfigDAO](project-config-d-a-o.md) | `lateinit var projectConfigDAO: `[`ProjectConfigDAO`](../config/-project-config-d-a-o/index.md) |
 | [userDAO](user-d-a-o.md) | `lateinit var userDAO: `[`UserDAO`](../user/-user-d-a-o/index.md) |
 

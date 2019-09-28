@@ -2,4 +2,4 @@
 
 # annotations
 
-`val annotations: `[`Annotations`](../-annotations/index.md)
+`val annotations: `[`Annotations`](../../config.annotations/-annotations/index.md)

@@ -2,4 +2,4 @@
 
 # createOrUpdate
 
-`suspend fun createOrUpdate(userIdentifier: `[`UserIdentifier`](../../config/-user-identifier.md)`, userName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`? = null): `[`User`](../-user/index.md)
+`suspend fun createOrUpdate(userIdentifier: `[`UserIdentifier`](../../config.userroles/-user-identifier.md)`, userName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`? = null): `[`User`](../-user/index.md)

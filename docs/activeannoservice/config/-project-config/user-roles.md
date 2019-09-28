@@ -2,4 +2,4 @@
 
 # userRoles
 
-`val userRoles: `[`UserRoles`](../-user-roles/index.md)
+`val userRoles: `[`UserRoles`](../../config.userroles/-user-roles/index.md)

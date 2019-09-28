@@ -2,4 +2,4 @@
 
 # export
 
-`val export: `[`Export`](../-export/index.md)
+`val export: `[`Export`](../../config.export/-export/index.md)

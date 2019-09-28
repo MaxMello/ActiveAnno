@@ -10,6 +10,8 @@ ActiveAnno is a web-based, responsive, highly configurable open source document 
     - [Production setup](#production-setup)
     - [Development setup](#development-setup)
     - [Styling](#styling)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
     - [License](#license)
 
 <!-- /TOC -->
@@ -249,6 +251,12 @@ The secondary color is used to contrast the primary color, for example for butto
 The contrast text color is just the color for text such that it is readable when the background of that text is in the primary / secondary color.
 Lastly, there is the success color which is normally a kind of green.
 
+## Backend
+The backend is written in Kotlin using the Ktor framework.
+The Dokka (JavaDoc equivalent) can be found on [Github pages](https://maxmello.github.io/ActiveAnno/activeannoservice/).
 
-# License
+## Frontend
+The frontend is written in Javascript/ES6, React and Redux.
+
+## License
 MIT

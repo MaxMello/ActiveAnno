@@ -2,4 +2,4 @@
 
 # finalizedAnnotations
 
-`var finalizedAnnotations: `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`FinalizedAnnotation`](../-finalized-annotation/index.md)`>`
+`var finalizedAnnotations: `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`FinalizedAnnotation`](../../document.annotation/-finalized-annotation/index.md)`>`

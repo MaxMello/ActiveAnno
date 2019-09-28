@@ -2,7 +2,7 @@
 
 # getFilterConditions
 
-`fun `[`ProjectConfig`](-project-config/index.md)`.getFilterConditions(): `[`Array`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html)`<`[`FilterCondition`](-filter-condition/index.md)`>`
+`fun `[`ProjectConfig`](-project-config/index.md)`.getFilterConditions(): `[`Array`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html)`<`[`FilterCondition`](../config.filter/-filter-condition/index.md)`>`
 
 Get the filterCondition to use for a [ProjectConfig](-project-config/index.md). If the config is null, it is treated as a restricted config
 and the ID will be used to filter for restrictedConfig from documents. Else, the method will make sure that no

@@ -2,4 +2,4 @@
 
 # userIdentifier
 
-`val userIdentifier: `[`UserIdentifier`](../../config/-user-identifier.md)
+`val userIdentifier: `[`UserIdentifier`](../../config.userroles/-user-identifier.md)

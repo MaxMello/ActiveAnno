@@ -2,7 +2,7 @@
 
 # creator
 
-`val creator: `[`UserIdentifier`](../-user-identifier.md)
+`val creator: `[`UserIdentifier`](../../config.userroles/-user-identifier.md)
 
 Initial creator of the project config
 

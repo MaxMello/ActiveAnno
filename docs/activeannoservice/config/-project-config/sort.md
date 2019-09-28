@@ -2,4 +2,4 @@
 
 # sort
 
-`val sort: `[`Sort`](../-sort/index.md)
+`val sort: `[`Sort`](../../config.sort/-sort/index.md)

@@ -2,4 +2,4 @@
 
 # layout
 
-`val layout: `[`Layout`](../-layout/index.md)
+`val layout: `[`Layout`](../../config.layout/-layout/index.md)

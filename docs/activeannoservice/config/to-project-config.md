@@ -2,4 +2,4 @@
 
 # toProjectConfig
 
-`fun `[`ManageConfig`](-manage-config/index.md)`.toProjectConfig(creator: `[`UserIdentifier`](-user-identifier.md)`, creationTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)` = System.currentTimeMillis(), updateTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)` = System.currentTimeMillis()): `[`ProjectConfig`](-project-config/index.md)
+`fun `[`ManageConfig`](-manage-config/index.md)`.toProjectConfig(creator: `[`UserIdentifier`](../config.userroles/-user-identifier.md)`, creationTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)` = System.currentTimeMillis(), updateTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)` = System.currentTimeMillis()): `[`ProjectConfig`](-project-config/index.md)

@@ -2,4 +2,4 @@
 
 # inputMapping
 
-`val inputMapping: `[`InputMapping`](../-input-mapping/index.md)
+`val inputMapping: `[`InputMapping`](../../config.inputmapping/-input-mapping/index.md)

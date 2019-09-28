@@ -2,4 +2,4 @@
 
 # messageDAO
 
-`lateinit var messageDAO: `[`MessageDAO`](../user/-message-d-a-o/index.md)
+`lateinit var messageDAO: `[`MessageDAO`](../user.message/-message-d-a-o/index.md)
