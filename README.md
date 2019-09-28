@@ -151,6 +151,10 @@ where a username and password can be specified in the project config. The last o
 
 The full export result is stored under [example_export.json](./documentation/example_export.json). 
 
+For **webhook** exports, we need to define the WebHook configuration inside the ManageUI. There, you define a list of URLs where any new finalized document annotation result will be posted to.
+For this, you need to define a URL, a behavior how to handle a failure (retry on next finished or ignore), the export format and the kind of Authentication required for the web hook. At 
+the moment, no authentication and HTTP Basic Auth are supported, though an OAuth2 approach with clientID and clientSecret as well as token URL is planned to be supported in the future.
+
 ## Production setup
 For an actual production setup, some more steps are required. The first and biggest one is that an external Authentication Service
 is necessary, if proper security is required. ActiveAnno uses `JWT` to authenticate and authorize users. Right now, no
