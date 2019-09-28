@@ -147,7 +147,7 @@ documentIDs=ABC,DEF,GHI       // Ask for specific documents by their unqiue mong
 The authentication for this endpoint is configurable by the project. There is `None`, which means anybody can call this endpoint if they know the ID of the project. Then there is HTTP Basic Auth,
 where a username and password can be specified in the project config. The last one is the JWT role, which will work the same as above for the import, but with role `activeanno_consumer` by default.
 
-<img src="screenshots/postman_export_1.png" alt="Postman export 1" height="300"/> 
+<img src="screenshots/postman_export_1.png" alt="Postman export 1" height="500"/> 
 
 The full export result is stored under [example_export.json](./documentation/example_export.json). 
 
