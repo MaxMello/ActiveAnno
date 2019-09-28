@@ -1,5 +1,17 @@
 # ActiveAnno
 ActiveAnno is a web-based, responsive, highly configurable open source document annotation tool.
+
+<!-- TOC -->
+
+- [ActiveAnno](#activeanno)
+    - [Quick start](#quick-start)
+    - [Use cases](#use-cases)
+    - [Production setup](#production-setup)
+    - [Development setup](#development-setup)
+    - [Styling](#styling)
+    - [License](#license)
+
+<!-- /TOC -->
 ## Quick start
 Use `docker-compose` to start the application with frontend, backend and the database. Run the following command from the top
 level directory of the project:
@@ -55,14 +67,14 @@ for the example project, you won't be able to see any documents up for curation 
   * The new user will now see the documents previously annotated under the `Curate` page. This is, because the example project
   is configured to `ALWAYS_REQUIRE_CURATION`. This can be changed in the `Manage` section as well, so that no curator is necessary.
   
-# Use cases
+## Use cases
 - One-off projects (Create project, upload documents, annotate (and optionally curate) annotations and download results via UI)
 - (Micro-)Service integration (Create project, push documents via REST interface, annotate (and optionally curate)), consume annotations via REST or send on finished via WebHooks
 - Single user: One person is creator of project and uses the application to annotate the documents
 - Multi user: Multiple annotators, optionally curators (or majority decision from annotators)
 - Crowd sourcing: A lof of annotators with a few (or no) curators
 - Algorithm only (future use case): Integrate multiple ML/NLP algorithms to annotate documents, build majorities through the application and curate differences with human in the loop (Active Learning)
-- Multi user with algorithms: Treat ML/NLP algorithms as users, combine with annotators and curators to annotate documents and generate new training data for algorithms (Active Learning)
+- Multi user with algorithms (future use case): Treat ML/NLP algorithms as users, combine with annotators and curators to annotate documents and generate new training data for algorithms (Active Learning)
 
 
 ## Production setup
@@ -102,7 +114,7 @@ user will be logged out and asked to provide username and password again.
 When developing inside the project, you probably want to run the MongoDB in a container (use `./deployments/dev.docker-compose.yml`), run the frontend via `npm run start` and the backend via `./gradlew run`. Especially 
 for the backend project, using IntelliJ to run the Ktor application (as well as the docker-compose file) makes things a lot easier. 
 
-To rebuild the backend docker image, first execute `./gradlew build` and then `docker build -t activeannoservice/v1 .`. This will then use the newly generated build files.
+To rebuild the backend docker image, first execute `./gradlew build` and then `docker build -t activeannobackend/v1 .`. This will then use the newly generated build files.
 
 #### Re-building the react application
 As a web application in the browser actually has no environment variables, the environment variables used in the project are set at build time, not at deploy time.
@@ -135,8 +147,8 @@ GENERATE_EXAMPLE_PROJECT: "true"
 These are the default values. For production purposes, you would probably set `GENERATE_EXAMPLE_PROJECT` to false, increase the logging level, enable `HTTPS_REDIRECT`, and
 potentially connect the service to an existing MongoDB.
 
-## Styling the application
-Actually, there are additional environment variables for colorizing the web app.
+## Styling
+Actually, there are additional environment variables in the frontend for colorizing the web app.
 ```
 REACT_APP_COLOR_PRIMARY_MAIN=#9A334F
 REACT_APP_COLOR_PRIMARY_LIGHT=#C1607A
