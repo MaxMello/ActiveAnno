@@ -63,10 +63,11 @@ Annotate page on desktop / tablet (after annotating)
 
 <img src="screenshots/annotate_selected_md.png" alt="Annotate Desktop selected" width="600"/> 
 
-* When you are the annotator of a document, you won't be able to also be the curator. Therefore, 
-for the example project, you won't be able to see any documents up for curation under the `Curate` page.
-  * The example project has another user defined as a curator, names `testcurator`. 
+* When you are the annotator of a specific document, you won't be able to also be the curator for that document. Therefore, 
+for the example project, you won't be able to see any documents you annotated up for curation under the `Curate` page.
+  * The example project has another user defined as a curator, named `testcurator`. 
   * Go to the User page and logout. Now, login with the username `testcurator`.
+  * Go to the Curate page and view the annotation results previously created.
 
 Curate page (Annotation result copied and modified)
 
