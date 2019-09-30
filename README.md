@@ -57,7 +57,7 @@ Manage page on desktop
 
 Annotate page on desktop / tablet (before annotating)
 
-<img src="screenshots/annotate_md.png" alt="Annotate Desktop" width="300"/>
+<img src="screenshots/annotate_md.png" alt="Annotate Desktop" width="600"/>
 
 Annotate page on desktop / tablet (after annotating)
 
