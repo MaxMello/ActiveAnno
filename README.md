@@ -255,6 +255,17 @@ Lastly, there is the success color which is normally a kind of green.
 ## Backend
 The backend is written in Kotlin using the Ktor framework.
 The Dokka (JavaDoc equivalent) can be found on [Github pages](https://maxmello.github.io/ActiveAnno/activeannoservice/).
+To update the Dokka documentation, execute `./gradlew dokka`. This will save the markdown files directly in the /docs path. Then commit the changes
+inside the /docs folder and push to github to update the Github pages site.
+
+### Project structure
+The backend code is structured in the following packages
+- `/api` contains all the routing endpoints
+- `/application` contains the `Application` class, entry point to the application as well as the access to the application config
+- `/common` contains utility code as well as the security code for JWT verification
+- `/config` contains the `ProjectConfig`, different view data classes on it and the DAO for it
+- `/document` contains the `Document` class with its DAO, and the models for storing the `AnnotationResult` for the documents
+- `/user` contains the `User` model and DAO as well as the `Message` model and DAO for communication between users
 
 ## Frontend
 The frontend is written in Javascript/ES6, React and Redux.
