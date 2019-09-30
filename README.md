@@ -34,22 +34,22 @@ configuration as well as some example data is provided.
 
 Login page on mobile
 
-<img src="screenshots/login_xs_cropped.png" alt="Login" width="200"/>
+<img src="screenshots/login_xs_cropped.png" alt="Login" width="300"/>
 
 #### Navigation / Usage
 Overview page on desktop / tablet
 
-<img src="screenshots/overview_md_cropped.png" alt="Overview Desktop" width="400"/> 
+<img src="screenshots/overview_md_cropped.png" alt="Overview Desktop" width="600"/> 
 
 Overview page on mobile
 
-<img src="screenshots/overview_xs_cropped.png" alt="Overview Mobile" width="200"/> 
+<img src="screenshots/overview_xs_cropped.png" alt="Overview Mobile" width="300"/> 
 
 * As a super user, you can see all areas of ActiveAnno. 
 
 Manage page on desktop
 
-<img src="screenshots/manage_md_cropped.png" alt="Manage Desktop" width="400"/>
+<img src="screenshots/manage_md_cropped.png" alt="Manage Desktop" width="600"/>
 
 * To get a feel about the types of projects that can be created, navigate to the `Manage` page and inspect the existing project or create a new one.
 * After that, you can go to the `Annotate` page and annotate some documents. 
@@ -57,11 +57,11 @@ Manage page on desktop
 
 Annotate page on desktop / tablet (before annotating)
 
-<img src="screenshots/annotate_md.png" alt="Annotate Desktop" width="400"/>
+<img src="screenshots/annotate_md.png" alt="Annotate Desktop" width="300"/>
 
 Annotate page on desktop / tablet (after annotating)
 
-<img src="screenshots/annotate_selected_md.png" alt="Annotate Desktop selected" width="400"/> 
+<img src="screenshots/annotate_selected_md.png" alt="Annotate Desktop selected" width="600"/> 
 
 * When you are the annotator of a document, you won't be able to also be the curator. Therefore, 
 for the example project, you won't be able to see any documents up for curation under the `Curate` page.
@@ -70,7 +70,7 @@ for the example project, you won't be able to see any documents up for curation 
 
 Curate page (Annotation result copied and modified)
 
-<img src="screenshots/curate_sm.png" alt="Curate Tablet Portait" width="400"/> 
+<img src="screenshots/curate_sm.png" alt="Curate Tablet Portait" width="600"/> 
 
 * The new user will now see the documents previously annotated under the Curate page (example project is configured 
 to `ALWAYS_REQUIRE_CURATION`, this can be changed in the Manage section, so that no curator is necessary.)
@@ -124,11 +124,11 @@ all allowed Mongo operations as classes in Kotlin. Also, the `operator` is used 
 
 Screenshot Postman with POST to import endpoint - Authorization
 
-<img src="screenshots/postman_import_1.png" alt="Postman import 1" width="400"/> 
+<img src="screenshots/postman_import_1.png" alt="Postman import 1" width="600"/> 
 
 Screenshot Postman with POST to import endpoint - POST body and response (201 Created)
 
-<img src="screenshots/postman_import_2.png" alt="Postman import 2" width="400"/> 
+<img src="screenshots/postman_import_2.png" alt="Postman import 2" width="600"/> 
 
 In Postman, you need to set the Bearer Token to the Base64 encoded JWT. For testing purposes (with JWT verification disabled), go to [jwt.io](https://jwt.io) and create a JWT with the payload
 ```json
@@ -154,7 +154,7 @@ documentIDs=ABC,DEF,GHI       // Ask for specific documents by their unqiue mong
 The authentication for this endpoint is configurable by the project. There is `None`, which means anybody can call this endpoint if they know the ID of the project. Then there is HTTP Basic Auth,
 where a username and password can be specified in the project config. The last one is the JWT role, which will work the same as above for the import, but with role `activeanno_consumer` by default.
 
-<img src="screenshots/postman_export_1.png" alt="Postman export 1" width="400"/> 
+<img src="screenshots/postman_export_1.png" alt="Postman export 1" width="600"/> 
 
 The full export result is stored under [example_export.json](./documentation/example_export.json). 
 
