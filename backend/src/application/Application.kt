@@ -247,10 +247,10 @@ fun generateExampleProject() {
                 val exampleProject = ProjectConfig(
                     "EXAMPLE_PROJECT_APP_REVIEWS",
                     "Example project: App reviews",
-                    "This is an automatically generated example project. It shows of the different capabilities of ActiveAnno. " +
+                    "This is an automatically generated example project. It shows the different capabilities of ActiveAnno. " +
                             "The setup is based on the Paper 'How Do Users Like this Feature? A Fine Grained Sentiment Analysis of App Reviews' " +
-                            "by Guzman and Maalej. The differences to the paper setup is, that sentiment is assigned here on a document level, " +
-                            "not on a per-feature level. Also, we additionally ask to label the review for spam / no spam and to define a " +
+                            "by Guzman and Maalej. The difference to the paper setup is that sentiment is assigned here on a document level, " +
+                            "not on a per-feature level. Also, we additionally ask to label the review as spam / no spam and to define a " +
                             "usefulness scale for software engineers.",
                     "admin",
                     System.currentTimeMillis(), System.currentTimeMillis(), 0, true,

@@ -11,6 +11,8 @@ ActiveAnno is a web-based, responsive, highly configurable open source document 
 - [Backend](#backend)
 - [Frontend](#frontend)
 - [Roadmap](#roadmap)
+- [Browser compatibility](#browser-compatibility)
+- [Author](#autor)
 - [License](#license)
 
 <!-- /TOC -->
@@ -32,47 +34,46 @@ configuration as well as some example data is provided.
 
 Login page on mobile
 
-<img src="screenshots/login_xs.png" alt="Login" height="500"/>
+<img src="screenshots/login_xs_cropped.png" alt="Login" width="200"/>
 
 #### Navigation / Usage
 Overview page on desktop / tablet
 
-<img src="screenshots/overview_md.png" alt="Overview Desktop" height="500"/> 
+<img src="screenshots/overview_md_cropped.png" alt="Overview Desktop" width="400"/> 
 
 Overview page on mobile
 
-<img src="screenshots/overview_xs.png" alt="Overview Mobile " height="500"/> 
+<img src="screenshots/overview_xs_cropped.png" alt="Overview Mobile" width="200"/> 
 
 * As a super user, you can see all areas of ActiveAnno. 
 
 Manage page on desktop
 
-<img src="screenshots/manage_md.png" alt="Manage Desktop" height="500"/>
+<img src="screenshots/manage_md_cropped.png" alt="Manage Desktop" width="400"/>
 
 * To get a feel about the types of projects that can be created, navigate to the `Manage` page and inspect the existing project or create a new one.
 * After that, you can go to the `Annotate` page and annotate some documents. 
 
 
-Annotate page on desktop / tablet (nothing selected)
+Annotate page on desktop / tablet (before annotating)
 
-<img src="screenshots/annotate_md.png" alt="Annotate Desktop" height="500"/>
+<img src="screenshots/annotate_md.png" alt="Annotate Desktop" width="400"/>
 
-Annotate page on desktop / tablet (selected)
+Annotate page on desktop / tablet (after annotating)
 
-<img src="screenshots/annotate_selected_md.png" alt="Annotate Desktop selected" height="500"/> 
+<img src="screenshots/annotate_selected_md.png" alt="Annotate Desktop selected" width="400"/> 
 
 * When you are the annotator of a document, you won't be able to also be the curator. Therefore, 
 for the example project, you won't be able to see any documents up for curation under the `Curate` page.
   * The example project has another user defined as a curator, names `testcurator`. 
   * Go to the User page and logout. Now, login with the username `testcurator`.
 
-Curate page 
+Curate page (Annotation result copied and modified)
 
-<img src="screenshots/curate_md_1.png" alt="Curate Desktop 1" height="500"/> 
-<img src="screenshots/curate_md_2.png" alt="Curate Desktop 2" height="500"/> 
+<img src="screenshots/curate_sm.png" alt="Curate Tablet Portait" width="400"/> 
 
-* The new user will now see the documents previously annotated under the `Curate` page. This is, because the example project 
-is configured to `ALWAYS_REQUIRE_CURATION`. This can be changed in the `Manage` section, so that no curator is necessary.
+* The new user will now see the documents previously annotated under the Curate page (example project is configured 
+to `ALWAYS_REQUIRE_CURATION`, this can be changed in the Manage section, so that no curator is necessary.)
 * As a curator, you can either **accept** the annotation result of an annotator, **copy** that annotators result and change it, or just
 annotate the document yourself.
   
@@ -121,8 +122,13 @@ Now, any document with `unqiueID = 1` would be part of that project and will be 
 inside the manage UI. Under the hood, it is just a Mongo Query `{"uniqueID": {"$eq": 1}}`. The reason the filter json structure is not directly the mongo query is that we gain type safety by modeling
 all allowed Mongo operations as classes in Kotlin. Also, the `operator` is used for polymorphic deserialization, making the transformation from JSON to the data structure inside the backend easy.
 
-<img src="screenshots/postman_import_1.png" alt="Postman import 1" height="240"/> 
-<img src="screenshots/postman_import_2.png" alt="Postman import 2" height="240"/> 
+Screenshot Postman with POST to import endpoint - Authorization
+
+<img src="screenshots/postman_import_1.png" alt="Postman import 1" width="400"/> 
+
+Screenshot Postman with POST to import endpoint - POST body and response (201 Created)
+
+<img src="screenshots/postman_import_2.png" alt="Postman import 2" width="400"/> 
 
 In Postman, you need to set the Bearer Token to the Base64 encoded JWT. For testing purposes (with JWT verification disabled), go to [jwt.io](https://jwt.io) and create a JWT with the payload
 ```json
@@ -135,7 +141,7 @@ In Postman, you need to set the Bearer Token to the Base64 encoded JWT. For test
 ```
 This will be enough to push to that endpoint (or you can disable role protection via enviroment variables all together).
 #### Exporting documents and annotations
-The other relevant API is for exporting documents with their created annotations. For this, there are tree ways. You can download all documents with the annotations from the Manage UI, you can 
+The other relevant API is for exporting documents with their created annotations. For this, there are three ways. You can download all documents with the annotations from the Manage UI, you can 
 use the REST API or webhooks.
 First, lets demonstrate the REST api.
 ```
@@ -148,18 +154,18 @@ documentIDs=ABC,DEF,GHI       // Ask for specific documents by their unqiue mong
 The authentication for this endpoint is configurable by the project. There is `None`, which means anybody can call this endpoint if they know the ID of the project. Then there is HTTP Basic Auth,
 where a username and password can be specified in the project config. The last one is the JWT role, which will work the same as above for the import, but with role `activeanno_consumer` by default.
 
-<img src="screenshots/postman_export_1.png" alt="Postman export 1" height="500"/> 
+<img src="screenshots/postman_export_1.png" alt="Postman export 1" width="400"/> 
 
 The full export result is stored under [example_export.json](./documentation/example_export.json). 
 
-For **webhook** exports, we need to define the WebHook configuration inside the ManageUI. There, you define a list of URLs where any new finalized document annotation result will be posted to.
-For this, you need to define a URL, a behavior how to handle a failure (retry on next finished or ignore), the export format and the kind of Authentication required for the web hook. At 
+For **webhook** exports, we need to define the WebHook configuration inside the Manage UI. There, you define a list of URLs where any new finalized document annotation result will be posted to.
+For this, you need to define a URL, a behavior how to handle a failure (retry on next finished or ignore), the export format and the kind of authentication required for the web hook. At 
 the moment, no authentication and HTTP Basic Auth are supported, though an OAuth2 approach with clientID and clientSecret as well as token URL is planned to be supported in the future.
 
 ## Production setup
-For an actual production setup, some more steps are required. The first and biggest one is that an external Authentication Service
+For an actual production setup, some more steps are required. The first and biggest one is that an external Authentication service
 is necessary, if proper security is required. ActiveAnno uses `JWT` to authenticate and authorize users. Right now, no
-built-in user authentication is provided, as ActiveAnno is supposed to be uses in a (Micro-)Service context, where authentication
+built-in user authentication is provided, as ActiveAnno is supposed to be used in a (Micro-)Service context, where authentication
 needs to work over multiple distributed services. 
 #### Authentication service integration
 * The authentication service needs an HTTP POST endpoint (which can be configured in the backend via an environment variable `JWT_VALIDATION_URL`). 
@@ -168,7 +174,7 @@ if the token is still valid (anything else otherwise, returning 401 would be app
 * The service also needs an HTTP POST endpoint to generate the JWT. The URL can be set via an environment variable in the 
 frontend application `REACT_APP_AUTHENTICATION_SERVICE_URL`. The body of the request will be a JSON with the keys `username` 
 and `password`. Result should be a JSON with the key `token` and the value the already Base64 encoded JWT.
-  * Sadly, the required format for the responses is not configurable. If your existing Authentication Service does not match that 
+  * Sadly, the required format for the responses is not configurable. If your existing Authentication service does not match that 
   structure, the best thing would be to clone the project and adjust the relevant parts where the token is received from the
   authentication service.
 * The frontend application will request a username/password if no JWT is stored in the frontend. The values will be sent to 
@@ -245,7 +251,7 @@ REACT_APP_COLOR_SECONDARY_CONTRAST_TEXT=#ffffff
 
 REACT_APP_COLOR_SUCCESS_MAIN=#85BC5E
 ```
-With this, you can customize the UI to fit your corporate design. The primary color is used for the header, some buttons etc.
+With this, you can customize the UI to fit your UI requirements. The primary color is used for the header, some buttons etc.
 The secondary color is used to contrast the primary color, for example for buttons and icons where the background is in the primary color.
 The contrast text color is just the color for text such that it is readable when the background of that text is in the primary / secondary color.
 Lastly, there is the success color which is normally a kind of green.
@@ -280,7 +286,7 @@ ActiveAnno is under active development.
 
 ### Big features
 * Span-level annotations: Additionally to document-level annotations, enable annotations for specifics parts of a document text. Also allow for hybrid annotations which can be defined either on document- or span-level.
-* Hierarchical Tag input: Right now, predefined tag inputs (like Sentiment scale, categories etc.) only allow one layer of depth. Hierarchical tag input would allow to specify a tag in a hierarchy like (Country > State > City)
+* Hierarchical tag input: Right now, predefined tag inputs (like Sentiment scale, categories etc.) only allow one layer of depth. Hierarchical tag input would allow to specify a tag in a hierarchy like (Country > State > City)
 * Machine Learning integration
   * Include predictions for labels as annotation results on the same level as if they were users (allowing for majority decision between algorithms and humans or multiple algorithms, curation of algorithms)
   * Show predictions for labels inside the UI
@@ -297,6 +303,19 @@ ActiveAnno is under active development.
 * Language based on browser + switch language button
 * Better curation view with disagreement highlighting
 * Performance optimization for queries, especially if the DB grows large (add indices)
+
+
+## Browser compatibility 
+WebAnno was mainly developed with Firefox (v69), but it was also tested in an up-to-date version of Chrome and Safari.
+
+
+## Contributing
+
+Please submit any issues as Github issues in this repository. You are invited to submit merge requests to contribute to this project.
+
+## Author
+
+* **Max Wiechmann** [Twitter](https://twitter.com/maxmello)
 
 ## License
 MIT
