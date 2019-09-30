@@ -12,6 +12,7 @@ ActiveAnno is a web-based, responsive, highly configurable open source document 
     - [Styling](#styling)
     - [Backend](#backend)
     - [Frontend](#frontend)
+    - [Roadmap](#roadmap)
     - [License](#license)
 
 <!-- /TOC -->
@@ -257,6 +258,36 @@ The Dokka (JavaDoc equivalent) can be found on [Github pages](https://maxmello.g
 
 ## Frontend
 The frontend is written in Javascript/ES6, React and Redux.
+
+## Roadmap
+ActiveAnno is under active development.
+
+### New pages / views
+* Search page: Find documents (annotated and not annotated) for some project + additional parameters (full text search, time range, etc.)
+* Admin page: Global access to all configurations, users, documents. Might also move some application config that could be changed at runtime from the application.conf to an editable config in the UI.
+* Messages: In-app communication between annotators and curators
+  * Annotators can escalate a document straight to the curator and add a message (Ask what to do here, explain why they could not annotate themselves)
+  * Curators can give feedback to annotators, e.g. if something was annotated incorrect, attached to a specific document as context
+
+### Big features
+* Span-level annotations: Additionally to document-level annotations, enable annotations for specifics parts of a document text. Also allow for hybrid annotations which can be defined either on document- or span-level.
+* Hierarchical Tag input: Right now, predefined tag inputs (like Sentiment scale, categories etc.) only allow one layer of depth. Hierarchical tag input would allow to specify a tag in a hierarchy like (Country > State > City)
+* Machine Learning integration
+  * Include predictions for labels as annotation results on the same level as if they were users (allowing for majority decision between algorithms and humans or multiple algorithms, curation of algorithms)
+  * Show predictions for labels inside the UI
+  * Pre-select buttons based on predictions inside the UI
+
+### Smaller features
+* User error protection: Configurable minimum required time to spent per annotation etc.
+* Usability
+  * Configurable UI preferences (font size for document texts)
+  * Keyboard shortcuts (possibly configurable)
+  * Swipe touch interactions (for limited cases, like spam / no spam)
+  * Alert before logout / leaving the site if not all results are saved on server
+* Easy setup of project pipelines. For example: Same kinds of documents, first get annotated for spam / no spam, and only in the no spam case, another project configuration will trigger and ask for additional labels like sentiment etc.
+* Language based on browser + switch language button
+* Better curation view with disagreement highlighting
+* Performance optimization for queries, especially if the DB grows large (add indices)
 
 ## License
 MIT
