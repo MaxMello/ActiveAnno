@@ -12,7 +12,7 @@ ActiveAnno is a web-based, responsive, highly configurable open source document 
 - [Frontend](#frontend)
 - [Roadmap](#roadmap)
 - [Browser compatibility](#browser-compatibility)
-- [Author](#autor)
+- [Author](#author)
 - [License](#license)
 
 <!-- /TOC -->
