@@ -2,18 +2,16 @@
 ActiveAnno is a web-based, responsive, highly configurable open source document annotation tool.
 
 <!-- TOC -->
-
-- [ActiveAnno](#activeanno)
-    - [Quick start](#quick-start)
-    - [Use cases](#use-cases)
-    - [API](#api)
-    - [Production setup](#production-setup)
-    - [Development setup](#development-setup)
-    - [Styling](#styling)
-    - [Backend](#backend)
-    - [Frontend](#frontend)
-    - [Roadmap](#roadmap)
-    - [License](#license)
+- [Quick start](#quick-start)
+- [Use cases](#use-cases)
+- [API](#api)
+- [Production setup](#production-setup)
+- [Development setup](#development-setup)
+- [Styling](#styling)
+- [Backend](#backend)
+- [Frontend](#frontend)
+- [Roadmap](#roadmap)
+- [License](#license)
 
 <!-- /TOC -->
 ## Quick start

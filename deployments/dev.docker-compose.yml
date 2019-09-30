@@ -1,0 +1,14 @@
+version: '3.4'
+
+# compose file for only running the mongo DB inside a container. Then, you can run the backend and frontend directly.
+
+services:
+  mongo:
+    container_name: mongo
+    image: mongo:4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: activeanno
+    ports:
+      - 27017:27017
