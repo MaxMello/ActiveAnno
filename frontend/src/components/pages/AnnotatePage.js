@@ -31,12 +31,12 @@ import type {
     WithLocalizationComponentProps,
     WithStylesComponentProps
 } from "../../types/Types";
+import FetchStatus from "../../api/FetchStatus";
 
 type AnnotationProps = WithLocalizationComponentProps & WithStylesComponentProps & {
     annotationConfig: AnnotationConfigState,
     annotationData: AnnotationDataState
 };
-
 
 const style: Function = (theme: Object): Object => ({
     root: {
@@ -168,6 +168,17 @@ class AnnotatePage extends Component<AnnotationProps> {
                 this.props.setConfigActive(c.id);
             }
         });
+        if (nextProps.annotationConfig.configs && nextProps.annotationConfig.activeConfigID
+            && nextProps.annotationConfig.configs[nextProps.annotationConfig.activeConfigID].annotations) {
+            // Have active config
+            const activeConfig = nextProps.annotationConfig.configs[nextProps.annotationConfig.activeConfigID];
+            const documentsForActiveConfig = nextProps.annotationData.documents[activeConfig.id] ? nextProps.annotationData.documents[activeConfig.id] : {};
+            const nonFinishedDocuments = Object.values(documentsForActiveConfig).filter(d => !d.finished);
+            if(nonFinishedDocuments.length === 0 && nextProps.annotationData.fetchStatus !== FetchStatus.ACTIVE
+                 && nextProps.annotationData.fetchStatus !== FetchStatus.ERROR) {
+                this.props.triggerRefresh();
+            }
+        }
     }
 
     componentDidMount() {
@@ -372,6 +383,9 @@ const mapDispatchToProps = (dispatch: Function): Object => {
         },
         forceRefresh: () => {
             dispatch(AnnotationAction.forceRefresh());
+        },
+        triggerRefresh: () => {
+            dispatch(AnnotationAction.triggerRefresh());
         }
     });
 };

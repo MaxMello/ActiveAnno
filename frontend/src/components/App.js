@@ -109,7 +109,6 @@ class App extends Component<AppProps> {
 }
 
 const mapStateToProps = (state: AppState): Object => {
-    console.log("APP STATE", state);
     return {
         language: state.application.language.selected,
         authentication: state.authentication,

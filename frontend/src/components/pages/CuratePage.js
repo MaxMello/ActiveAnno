@@ -30,6 +30,7 @@ import {CurationDataActions} from "../../redux/curationData";
 import {CurationAction} from "../../redux/curation";
 import {CurationConfigActions} from "../../redux/curationConfig";
 import type {UserInfo} from "../../types/PageSetupTypes";
+import FetchStatus from "../../api/FetchStatus";
 
 type CurationProps = {
     curationConfig: CurationConfigState,
@@ -170,6 +171,17 @@ class CuratePage extends Component<CurationProps> {
                 this.props.setConfigActive(c.id);
             }
         });
+        if (nextProps.curationConfig.configs && nextProps.curationConfig.activeConfigID
+            && nextProps.curationConfig.configs[nextProps.curationConfig.activeConfigID].annotations) {
+            // Have active config
+            const activeConfig = nextProps.curationConfig.configs[nextProps.curationConfig.activeConfigID];
+            const documentsForActiveConfig = nextProps.curationData.documents[activeConfig.id] ? nextProps.curationData.documents[activeConfig.id] : {};
+            const nonFinishedDocuments = Object.values(documentsForActiveConfig).filter(d => !d.finished);
+            if(nonFinishedDocuments.length === 0 && nextProps.curationData.fetchStatus !== FetchStatus.ACTIVE
+                && nextProps.curationData.fetchStatus !== FetchStatus.ERROR) {
+                this.props.triggerRefresh();
+            }
+        }
     }
 
     componentDidMount() {
@@ -382,6 +394,9 @@ const mapDispatchToProps = (dispatch: Function): Object => ({
     },
     forceRefresh: () => {
         dispatch(CurationAction.forceRefresh());
+    },
+    triggerRefresh: () => {
+        dispatch(CurationAction.triggerRefresh());
     },
     acceptExistingAnnotation: (annotatedDocument: AnnotationResult) => {
         dispatch(CurationDataActions.acceptExistingAnnotation(annotatedDocument.configurationID, annotatedDocument.documentID, annotatedDocument.id));

@@ -12,12 +12,14 @@ import type {AnnotationConfigFull} from "../types/AnnotationTypes";
 
 const CurationActionKeys = {
     FORCE_REFRESH: "CURATION/FORCE_REFRESH",
+    TRIGGER_REFRESH: "CURATION/TRIGGER_REFRESH",
     START_REFRESHING: "CURATION/START_REFRESHING",
     STOP_REFRESHING: "CURATION/STOP_REFRESHING",
 };
 
 export const CurationAction = {
     forceRefresh: createAction(CurationActionKeys.FORCE_REFRESH),
+    triggerRefresh: createAction(CurationActionKeys.TRIGGER_REFRESH),
     startRefreshing: createAction(CurationActionKeys.START_REFRESHING),
     stopRefreshing: createAction(CurationActionKeys.STOP_REFRESHING)
 };
@@ -47,12 +49,13 @@ const refreshCurationPage: Function = function * (force: boolean = false) {
 export const refreshCurationPageSaga: Function = function* () {
     yield takeLatest(CurationActionKeys.START_REFRESHING, function*() {
         while (true) {
-            const {forceRefresh, periodicRefresh, cancel} = yield race({
+            const {forceRefresh, triggerRefresh, periodicRefresh, cancel} = yield race({
                 forceRefresh: take(CurationActionKeys.FORCE_REFRESH),
+                triggerRefresh: take(CurationActionKeys.TRIGGER_REFRESH),
                 periodicRefresh: delay(10000),
                 cancel: take(CurationActionKeys.STOP_REFRESHING)
             });
-            if (forceRefresh || periodicRefresh) {
+            if (forceRefresh || triggerRefresh || periodicRefresh) {
                 yield refreshCurationPage(!!forceRefresh);
             } else if (cancel) {
                 break;

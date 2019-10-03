@@ -105,7 +105,6 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
 
     mapLayoutElementsToComponent = (element: Object, documentData: Object, key: string): Array<Component> => {
         const nonInteractiveComponent = createIllustrationComponent(element, documentData, key);
-        console.log("AnnotationDocumentCard", element, documentData, this.props);
         if(nonInteractiveComponent === null) {
             switch (element.type) {
                 case LayoutElement.BUTTON_GROUP: {
