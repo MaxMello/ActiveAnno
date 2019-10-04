@@ -243,6 +243,13 @@ export default ({
         'project.sort.order.caption': 'Order of document retrieval by the natural ordering of the value of the specified key. Examples: Ascending order of numbers: 1 before 2; Descending order of letters: Z before A.',
 
 
+        'project.inputMapping.documentText.name': 'Key of the document text',
+        'project.inputMapping.documentText.caption': 'Under which key inside the input document is the document text to be found? Nested keys can be expressed like this: "comment.value".',
+
+        'project.inputMapping.metaData.name': 'Keys of additional meta data',
+        'project.inputMapping.metaData.caption': 'Additionally to the document text, which meta data, which is relevant for the annotation process, is present in the input documents? Please specify a list of keys with the same syntax as for the document text (nested keys separated with a dot).',
+
+
         'project.export.onOverwrittenFinalizedAnnotationBehavior.name': 'Handle overwritten exported results behavior',
         'project.export.onOverwrittenFinalizedAnnotationBehavior.caption': 'If an annotation result was exported already, what to do if the annotation result changes after the export occurred? Either ignore the update, or trigger the export again. Only affects web hooks, the REST interface always returns the newest result.',
         'project.export.onOverwrittenFinalizedAnnotationBehavior.doNothing': 'Do nothing',
@@ -266,7 +273,7 @@ export default ({
         'project.export.authentication.username.caption': 'HTTP Basic Auth username - Keep it secured!',
         'project.export.authentication.password.name': 'Password',
         'project.export.authentication.password.caption': 'HTTP Basic Auth password - Keep it secured!',
-        
+
         'project.export.webhooks.panelTitle': 'Web hooks',
         'project.export.webhooks.enabled.name': 'Web hook enabled?',
         'project.export.webhooks.enabled.caption': 'Should the web hook mechanism be enabled or disabled?',

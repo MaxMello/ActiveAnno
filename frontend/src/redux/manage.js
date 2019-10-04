@@ -105,7 +105,10 @@ const initialState: ManageState = {
         },
         filter: null,
         inputMapping: {
-
+            documentText: {
+                key: ""
+            },
+            metaData: []
         },
         sort: {
             sorts: [{
