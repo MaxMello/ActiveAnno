@@ -25,6 +25,7 @@ import OverflowMenuItem from "../elements/OverflowMenuItem";
 import BasicProperties from "../elements/project/BasicProperties";
 import type {UserInfo} from "../../types/PageSetupTypes";
 import AnnotationsStep from "../elements/project/AnnotationsStep";
+import FilterAndSortStep from "../elements/project/FilterAndSortStep";
 
 
 type EditProjectPageProps = WithStylesComponentProps & WithRouterComponentProps & WithLocalizationComponentProps & {
@@ -45,6 +46,9 @@ const style: Function = (theme: Object): Object => ({
     },
     stepper: {
         flexGrow: 1
+    },
+    stepperContainer: {
+        marginBottom: theme.spacing(2)
     },
     formControl: {
         marginTop: theme.spacing(2),
@@ -109,6 +113,8 @@ class EditProjectPage extends Component<EditProjectPageProps> {
                                             policy={config.policy ? config.policy : {}}
                                             updateConfigValue={this.props.updateConfigValue}
                                             isNewConfig={this.props.isNewConfig} userInfo={this.props.userInfo} userIdentifier={this.props.userIdentifier}/>;
+            case 1: return <FilterAndSortStep id={config.id} updateConfigValue={this.props.updateConfigValue} filter={config.filter} sort={config.sort}
+                                              isNewConfig={this.props.isNewConfig}/>;
             case 3: return <AnnotationsStep id={config.id} updateConfigValue={this.props.updateConfigValue}
                                             isNewConfig={this.props.isNewConfig} annotations={config.annotations}/>
         }
@@ -124,7 +130,7 @@ class EditProjectPage extends Component<EditProjectPageProps> {
                     </Typography>
                 </Grid>
             </Grid>
-            <Grid container>
+            <Grid container className={this.props.classes.stepperContainer}>
                 <Grid item xs={12}>
                     <Hidden only={'xs'}>
                     <Stepper alternativeLabel nonLinear activeStep={this.props.currentStep} className={this.props.classes.stepper}>

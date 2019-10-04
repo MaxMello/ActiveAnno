@@ -63,11 +63,15 @@ const initialState: ManageState = {
             curators: [],
             managers: []
         },
+        filter: null,
         inputMapping: {
 
         },
         sort: {
-
+            sorts: [{
+                key: 'storeTimestamp',
+                order: 'DESC'
+            }]
         },
         annotations: {
             annotationMap: {
@@ -148,7 +152,7 @@ export const manageReducer = handleActions({
         };
     },
     [EditProjectActionKey.UPDATE_CONFIG_VALUE]: (state: ManageState, action: Action): Function => {
-        return {
+        const a =  {
             ...state,
             ...(action.payload.configID ? {
                 configs: {
@@ -161,7 +165,9 @@ export const manageReducer = handleActions({
             } : {
                 newConfig: buildDeepObject(action.payload.keys, state.newConfig, action.payload.value, 0)
             })
-        }
+        };
+        console.log("New config state", a);
+        return a;
     },
     [GlobalActionKey.LOGOUT]: (): Function => {
         return {

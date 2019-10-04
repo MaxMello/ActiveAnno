@@ -69,12 +69,12 @@ export default function BooleanButtonGroup(props: AnnotationInteractionProps) {
                            }
                            }
                            key={`${props.keyValue}ToggleButtonGroup`}>
-            <ToggleButton value={true} className={classes.toggleButton}
+            <ToggleButton value={true} className={classes.toggleButton} fullWidth
                           classes={{selected: classes.toggleButtonSelected}}>
                 <Check/>
                 {props.localize('yes')}
             </ToggleButton>
-            <ToggleButton value={false} className={classes.toggleButton}
+            <ToggleButton value={false} className={classes.toggleButton} fullWidth
                           classes={{selected: classes.toggleButtonSelected}}>
                 <Close/>
                 {props.localize('no')}

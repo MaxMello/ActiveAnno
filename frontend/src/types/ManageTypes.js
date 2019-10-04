@@ -82,10 +82,8 @@ export type FilterConditionOperator = 'eq' | 'neq' | 'exists' | 'regex' | 'gt' |
 export type FilterCondition = {
     key: string,
     operator: FilterConditionOperator,
-    value?: any, // Equals, NotEquals, GT, GTE, LT, LTE, Size
-    exists?: boolean, // KeyExists
-    regex?: string, // Regex
-    values?: Array<any>, // In, NotIn, ContainsAll
+    dataType?: string, // Ignored by the backend, only relevant for frontend
+    value?: any, // Equals, NotEquals, GT, GTE, LT, LTE, Size, KeyExists, Regex, In, NotIn, ContainsAll
     filterCondition?: FilterCondition, // Not
     filterConditions?: Array<FilterCondition> // Any, Or, Nor
 }
