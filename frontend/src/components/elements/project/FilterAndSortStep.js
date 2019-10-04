@@ -166,7 +166,8 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     constructor(props) {
         super(props);
         this.state = {
-            expanded: true
+            filterExpanded: true,
+            sortExpanded: true
         };
     }
 
@@ -229,7 +230,6 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     renderDataTypeInput() {
         if(this.props.filter && this.props.filter.operator) {
             const currentVal = this.props.filter.dataType ? this.props.filter.dataType : FilterConditionToDataTypeOptions[this.props.filter.operator][0];
-            console.log(currentVal, "<---");
             return <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
                 <InteractionComponentWrapper name={this.props.localize('project.filterCondition.dataType.name')}
                                              caption={
@@ -404,7 +404,8 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
         if(this.props.filter) {
             return <ExpansionPanel defaultExpanded={true}  className={this.props.classes.panel} onChange={(_, expanded) => {
                 this.setState({
-                    expanded: expanded
+                    sortExpanded: this.state.sortExpanded,
+                    filterExpanded: expanded
                 })
             }}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>} className={this.props.classes.panelSummary} >
@@ -427,7 +428,8 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     renderSort() {
         return <ExpansionPanel defaultExpanded={true}  className={this.props.classes.panel} onChange={(_, expanded) => {
             this.setState({
-                expanded: expanded
+                filterExpanded: this.state.filterExpanded,
+                sortExpanded: expanded
             })
         }}>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>} className={this.props.classes.panelSummary} >
@@ -491,7 +493,6 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
                                        exclusive
                                        className={this.props.classes.buttonGroup}
                                        onChange={(_, newValue) => {
-                                           console.log("PROJECT TYPE", newValue);
                                            if(newValue === ProjectType.CONTINUOUS) {
                                                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter"], {})
                                            } else {

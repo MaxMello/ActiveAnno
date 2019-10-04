@@ -50,6 +50,46 @@ export const EditProjectActions = {
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                                   V A L U E S
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+export const OnOverwrittenFinalizedAnnotationBehavior = {
+    DO_NOTHING: "DO_NOTHING",
+    TRIGGER_EXPORT_AGAIN: "TRIGGER_EXPORT_AGAIN"
+};
+
+export const RestAuthentication = {
+    NONE: {
+        type: "None"
+    },
+    HTTP_BASIC_AUTH: {
+        type: "HttpBasicAuth",
+        username: "",
+        password: ""
+    },
+    JWT_ROLE: {
+        type: "JwtRole"
+    }
+};
+
+export const WebHookAuthentication = {
+    NONE: {
+        type: "None"
+    },
+    HTTP_BASIC_AUTH: {
+        type: "HttpBasicAuth",
+        username: "",
+        password: ""
+    }
+};
+
+export const OnWebHookFailureBehavior = {
+    IGNORE: "IGNORE",
+    RESEND_ON_NEXT_TRIGGER: "RESEND_ON_NEXT_TRIGGER"
+};
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                                    S T A T E
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -85,7 +125,11 @@ const initialState: ManageState = {
 
         },
         export: {
+            webHooks: [
 
+            ],
+            rest: null,
+            onOverwrittenFinalizedAnnotationBehavior: OnOverwrittenFinalizedAnnotationBehavior.DO_NOTHING
         }
     }
 };

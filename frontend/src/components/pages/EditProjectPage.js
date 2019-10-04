@@ -26,6 +26,7 @@ import BasicProperties from "../elements/project/BasicProperties";
 import type {UserInfo} from "../../types/PageSetupTypes";
 import AnnotationsStep from "../elements/project/AnnotationsStep";
 import FilterAndSortStep from "../elements/project/FilterAndSortStep";
+import ExportStep from "../elements/project/ExportStep";
 
 
 type EditProjectPageProps = WithStylesComponentProps & WithRouterComponentProps & WithLocalizationComponentProps & {
@@ -116,7 +117,9 @@ class EditProjectPage extends Component<EditProjectPageProps> {
             case 1: return <FilterAndSortStep id={config.id} updateConfigValue={this.props.updateConfigValue} filter={config.filter} sort={config.sort}
                                               isNewConfig={this.props.isNewConfig}/>;
             case 3: return <AnnotationsStep id={config.id} updateConfigValue={this.props.updateConfigValue}
-                                            isNewConfig={this.props.isNewConfig} annotations={config.annotations}/>
+                                            isNewConfig={this.props.isNewConfig} annotations={config.annotations}/>;
+            case 5: return <ExportStep id={config.id} updateConfigValue={this.props.updateConfigValue}
+                                       isNewConfig={this.props.isNewConfig} export={config.export}/>;
         }
     }
 
