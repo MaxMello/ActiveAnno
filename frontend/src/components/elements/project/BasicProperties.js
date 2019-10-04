@@ -29,6 +29,7 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import ChipInput from "material-ui-chip-input";
 import type {UserInfo} from "../../../types/PageSetupTypes";
+import theme from "../../theme/Theme";
 
 
 type BasicPropertiesProps = WithStylesComponentProps & WithLocalizationComponentProps & {
@@ -54,6 +55,8 @@ const style: Function = (theme: Object): Object => ({
         [theme.breakpoints.down('xs')]: {
             flexWrap: 'wrap',
         },
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1)
     },
     toggleButton: {
         color: `${theme.palette.secondary.main} !important`,
@@ -87,7 +90,9 @@ const style: Function = (theme: Object): Object => ({
     defaultFormControl: theme.defaultFormControl,
     dropDown: {
         width: '100%',
-        flexGrow: 1
+        flexGrow: 1,
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1)
     },
     label: {
         transform: "translate(13px, 13px) scale(1)"
@@ -105,6 +110,12 @@ const style: Function = (theme: Object): Object => ({
     },
     expansionPanel: {
         marginTop: theme.spacing(1)
+    },
+    chipInput: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        marginTop: theme.spacing(3),
+        marginBottom: theme.spacing(1)
     }
 });
 
