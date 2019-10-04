@@ -124,9 +124,9 @@ class NotEquals(key: String, val value: Any?) : FilterCondition(key) {
     }
 }
 
-class KeyExists(key: String, val exists: Boolean) : FilterCondition(key) {
+class KeyExists(key: String, val value: Boolean) : FilterCondition(key) {
     override fun toQuery(): ObjectNode {
-        return jsonMapper.createObjectNode().putAny("\$exists", exists)
+        return jsonMapper.createObjectNode().putAny("\$exists", value)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -134,21 +134,21 @@ class KeyExists(key: String, val exists: Boolean) : FilterCondition(key) {
         if (other !is KeyExists) return false
         if (!super.equals(other)) return false
 
-        if (exists != other.exists) return false
+        if (value != other.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + exists.hashCode()
+        result = 31 * result + value.hashCode()
         return result
     }
 }
 
-class Regex(key: String, val regex: String) : FilterCondition(key) {
+class Regex(key: String, val value: String) : FilterCondition(key) {
     override fun toQuery(): ObjectNode {
-        return jsonMapper.createObjectNode().putAny("\$regex", regex)
+        return jsonMapper.createObjectNode().putAny("\$regex", value)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -156,14 +156,14 @@ class Regex(key: String, val regex: String) : FilterCondition(key) {
         if (other !is Regex) return false
         if (!super.equals(other)) return false
 
-        if (regex != other.regex) return false
+        if (value != other.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + regex.hashCode()
+        result = 31 * result + value.hashCode()
         return result
     }
 }
@@ -256,10 +256,10 @@ class LessThanEquals(key: String, val value: Any) : FilterCondition(key) {
     }
 }
 
-class In(key: String, val values: List<Any?>) : FilterCondition(key) {
+class In(key: String, val value: List<Any?>) : FilterCondition(key) {
     override fun toQuery(): ObjectNode {
         return jsonMapper.createObjectNode()
-            .set("\$in", jsonMapper.createArrayNode().apply { values.forEach { addAny(it) } }) as ObjectNode
+            .set("\$in", jsonMapper.createArrayNode().apply { value.forEach { addAny(it) } }) as ObjectNode
     }
 
     override fun equals(other: Any?): Boolean {
@@ -267,22 +267,22 @@ class In(key: String, val values: List<Any?>) : FilterCondition(key) {
         if (other !is In) return false
         if (!super.equals(other)) return false
 
-        if (values != other.values) return false
+        if (value != other.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + values.hashCode()
+        result = 31 * result + value.hashCode()
         return result
     }
 }
 
-class NotIn(key: String, val values: List<Any?>) : FilterCondition(key) {
+class NotIn(key: String, val value: List<Any?>) : FilterCondition(key) {
     override fun toQuery(): ObjectNode {
         return jsonMapper.createObjectNode()
-            .set("\$nin", jsonMapper.createArrayNode().apply { values.forEach { addAny(it) } }) as ObjectNode
+            .set("\$nin", jsonMapper.createArrayNode().apply { value.forEach { addAny(it) } }) as ObjectNode
     }
 
     override fun equals(other: Any?): Boolean {
@@ -290,14 +290,14 @@ class NotIn(key: String, val values: List<Any?>) : FilterCondition(key) {
         if (other !is NotIn) return false
         if (!super.equals(other)) return false
 
-        if (values != other.values) return false
+        if (value != other.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + values.hashCode()
+        result = 31 * result + value.hashCode()
         return result
     }
 }
@@ -312,9 +312,9 @@ class NotIn(key: String, val values: List<Any?>) : FilterCondition(key) {
  * Example:
  * { tags: { $all: [ "ssl" , "security" ] } } => { $and: [ { tags: "ssl" }, { tags: "security" } ] }
  */
-class ContainsAll(key: String, val values: List<Any?>) : FilterCondition(key) {
+class ContainsAll(key: String, val value: List<Any?>) : FilterCondition(key) {
     override fun toQuery(): ObjectNode {
-        return jsonMapper.createObjectNode().set("\$all", jsonMapper.createArrayNode().apply { values.forEach { addAny(it) } }) as ObjectNode
+        return jsonMapper.createObjectNode().set("\$all", jsonMapper.createArrayNode().apply { value.forEach { addAny(it) } }) as ObjectNode
     }
 
     override fun equals(other: Any?): Boolean {
@@ -322,14 +322,14 @@ class ContainsAll(key: String, val values: List<Any?>) : FilterCondition(key) {
         if (other !is ContainsAll) return false
         if (!super.equals(other)) return false
 
-        if (values != other.values) return false
+        if (value != other.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + values.hashCode()
+        result = 31 * result + value.hashCode()
         return result
     }
 }

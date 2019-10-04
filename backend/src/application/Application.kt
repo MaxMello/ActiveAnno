@@ -261,12 +261,12 @@ fun generateExampleProject() {
                     ),
                     InputMapping(
                         DocumentText("review", false), listOf(
-                            MetaData("TIMESTAMP", "timestamp"),
-                            MetaData("APP", "appName"),
-                            MetaData("USER", "reviewer"),
-                            MetaData("STAR_RATING", "stars")
+                            MetaData("timestamp", "timestamp"),
+                            MetaData("appName", "appName"),
+                            MetaData("reviewer", "reviewer"),
+                            MetaData("stars", "stars")
                         )
-                    ), null, Sort(listOf(SortElement("timestamp", Order.DESC))),
+                    ), null, Sort(listOf(SortElement("originalDocument.timestamp", Order.DESC))),
                     Annotations(
                         mapOf(
                             "IS_SPAM" to BooleanAnnotation(
@@ -348,14 +348,14 @@ fun generateExampleProject() {
                                                     12, 12, 6, 4, 4
                                                 ), listOf(
                                                     Text("Review for the App "),
-                                                    Bold(TextMetaData("APP"))
+                                                    Bold(TextMetaData("appName"))
                                                 )
                                             ),
                                             Column(
                                                 ColumnSizes(
                                                     12, 12, 6, 4, 4
                                                 ), listOf(
-                                                    Text("Reviewer: "), TextMetaData("USER")
+                                                    Text("Reviewer: "), TextMetaData("reviewer")
                                                 )
                                             ),
                                             Column(
@@ -363,7 +363,7 @@ fun generateExampleProject() {
                                                     12, 12, 6, 4, 4
                                                 ), listOf(
                                                     Text("Stars: "),
-                                                    Bold(TextMetaData("STAR_RATING"))
+                                                    Bold(TextMetaData("stars"))
                                                 )
                                             ),
                                             Column(
@@ -371,7 +371,7 @@ fun generateExampleProject() {
                                                     12, 12, 6, 4, 4
                                                 ), listOf(
                                                     Text("Date: "),
-                                                    DateMetaData("YYYY-MM-DD", "TIMESTAMP")
+                                                    DateMetaData("YYYY-MM-DD", "timestamp")
                                                 )
                                             )
                                         )
