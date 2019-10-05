@@ -51,10 +51,10 @@ export type OpenTextAnnotation = {
     name: string,
     targets: Array<DocumentTarget | SpanTarget>,
     minLength: number,
-    maxLength: number,
+    maxLength?: number,
     optional: boolean,
     useDocumentTextAsDefault: boolean,
-    applyAutoCorrectOnTarget: boolean
+    applyAutoCorrectOnTarget?: boolean
 }
 
 export type TypeBooleanAnnotation = "BooleanAnnotation";

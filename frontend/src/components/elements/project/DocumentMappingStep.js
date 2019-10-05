@@ -65,7 +65,7 @@ class DocumentMappingStep extends Component<DocumentMappingStepProps> {
                             currentMetaData = currentMetaData.filter(c => c.key !== chip);
                             this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["inputMapping", "metaData"], currentMetaData);
                         }}
-                        allowDuplicates={true}
+                        allowDuplicates={false}
                         fullWidth={true}
                         newChipKeyCodes={[13, 9]}
                     /></MuiThemeProvider>

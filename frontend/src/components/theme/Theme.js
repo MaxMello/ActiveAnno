@@ -156,7 +156,15 @@ theme = createMuiTheme({
             paddingBottom: theme.spacing(1),
             paddingLeft: theme.spacing(2),
             paddingRight: theme.spacing(2)
-        }
+        },
+        errorButton: {
+            color: theme.palette.error.contrastText,
+            backgroundColor: theme.palette.error.dark
+        },
+        errorButtonSelected: {
+            color: theme.palette.error.contrastText,
+            backgroundColor: `${color(theme.palette.error.dark).darken(0.2).hex()} !important`
+        },
     }
 });
 
