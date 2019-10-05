@@ -42,11 +42,7 @@ type CurationProps = {
 };
 
 const style: Function = (theme: Object): Object => ({
-    root: {
-        marginTop: 64,
-        padding: 0,
-        width: '100%'
-    },
+    root: theme.pageRoot,
     firstRow: {
         display: 'flex',
         width: '100%',
@@ -107,12 +103,7 @@ const style: Function = (theme: Object): Object => ({
     description: {
         flexGrow: 1
     },
-    popoverContent: {
-        paddingTop: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2)
-    },
+    popoverContent: theme.defaultPopoverContent,
     bottomWhitespace: {
         height: theme.spacing(7),
         [theme.breakpoints.up('md')]: {

@@ -2,7 +2,6 @@ import {makeStyles} from "@material-ui/core";
 import React from "react";
 import type {
     AnnotationInteractionProps,
-    Annotations,
     Dictionary
 } from "../../../types/Types";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
@@ -11,6 +10,7 @@ import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import {isArray} from "../../helper/HelperFunctions";
 import InteractionComponentWrapper from "./InteractionComponentWrapper";
+import type {Annotations} from "../../../types/AnnotationConfigTypes";
 
 
 const useStyles = makeStyles(theme => ({

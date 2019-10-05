@@ -27,10 +27,7 @@ type ContentProps = {
 };
 
 const style: Function = (theme: Object): Object => ({
-    root: {
-        padding: '2vh',
-        marginTop: 64,
-    },
+    root: theme.pageRoot,
     link: theme.link
 });
 

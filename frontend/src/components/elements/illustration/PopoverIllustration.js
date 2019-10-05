@@ -11,12 +11,7 @@ type PopoverIllustrationProps = {
 }
 
 const useStyles = makeStyles(theme => ({
-    popoverContent: {
-        paddingTop: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2)
-    }
+    popoverContent: theme.defaultPopoverContent
 }));
 
 export default function PopoverIllustration(props: PopoverIllustrationProps) {

@@ -2,48 +2,15 @@ import {makeStyles} from "@material-ui/core";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import React from "react";
-import {grey} from '@material-ui/core/colors';
-import color from 'color';
 import type {AnnotationInteractionProps} from "../../../types/Types";
 import Check from "@material-ui/icons/Check";
 import Close from "@material-ui/icons/Close";
 import InteractionComponentWrapper from "./InteractionComponentWrapper";
 
 const useStyles = makeStyles(theme => ({
-    buttonGroup: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        userSelect: 'none',
-        backgroundColor: 'transparent'
-    },
-    toggleButton: {
-        color: `${theme.palette.secondary.main} !important`,
-        backgroundColor: grey[100],
-        border: '0 !important',
-        paddingTop: theme.spacing(0.75),
-        paddingBottom: theme.spacing(0.75),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-        height: 'inherit !important',
-        margin: theme.spacing(0.5),
-        '&:hover': {
-            backgroundColor: grey[200],
-            marginLeft: '4px !important',
-            marginRight: '4px !important'
-        },
-        '&:not(:first-child)': {
-            marginLeft: '4px !important',
-            marginRight: '4px !important'
-        },
-        [theme.breakpoints.down('xs')]: {
-            width: '100% !important',
-        }
-    },
-    toggleButtonSelected: {
-        color: `${theme.palette.secondary.main} !important`,
-        backgroundColor: `${color(theme.palette.secondary.light).lighten(0.95).hex()} !important`
-    },
-    interactionCaption: theme.interactionCaption,
+    buttonGroup: theme.defaultFullWidthButtonGroup,
+    toggleButton: theme.defaultFullWidthToggleButton,
+    toggleButtonSelected: theme.defaultToggleButtonSelected,
     buttonLabel: {
         padding: theme.spacing(1),
         userSelect: 'none'
@@ -69,12 +36,12 @@ export default function BooleanButtonGroup(props: AnnotationInteractionProps) {
                            }
                            }
                            key={`${props.keyValue}ToggleButtonGroup`}>
-            <ToggleButton value={true} className={classes.toggleButton} fullWidth
+            <ToggleButton value={true} className={classes.toggleButton}
                           classes={{selected: classes.toggleButtonSelected}}>
                 <Check/>
                 {props.localize('yes')}
             </ToggleButton>
-            <ToggleButton value={false} className={classes.toggleButton} fullWidth
+            <ToggleButton value={false} className={classes.toggleButton}
                           classes={{selected: classes.toggleButtonSelected}}>
                 <Close/>
                 {props.localize('no')}

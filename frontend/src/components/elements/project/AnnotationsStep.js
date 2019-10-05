@@ -6,7 +6,7 @@ import type {
     WithLocalizationComponentProps,
     WithStylesComponentProps
 } from "../../../types/Types";
-import {Grid, OutlinedInput, Typography} from "@material-ui/core";
+import {Grid, OutlinedInput} from "@material-ui/core";
 import InteractionComponentWrapper from "../interaction/InteractionComponentWrapper";
 import Select from "@material-ui/core/Select";
 import OverflowMenuItem from "../OverflowMenuItem";
@@ -27,6 +27,7 @@ const style: Function = (theme: Object): Object => ({
         width: '100%',
         flexGrow: 1
     },
+    defaultFormControl: theme.defaultFormControl,
 });
 
 function annotationView(type: string) {

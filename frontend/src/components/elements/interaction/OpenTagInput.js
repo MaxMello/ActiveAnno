@@ -7,12 +7,7 @@ import {CaseBehavior} from "../../../constants/CaseBehavior";
 import InteractionComponentWrapper from "./InteractionComponentWrapper";
 
 const useStyles = makeStyles(theme => ({
-    interactionCaption: theme.interactionCaption,
-    chipInput: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1)
-    },
-    interactionHeader: theme.interactionHeader
+    chipInput: theme.defaultChipInput
 }));
 
 function createCaption(annotationConfig: Annotations, referenceAnnotation: string, localize: Function): string {

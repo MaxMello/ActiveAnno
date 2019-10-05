@@ -13,9 +13,7 @@ import {Grid, OutlinedInput, Typography} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
-import {grey} from "@material-ui/core/colors";
 import {Check, Close} from "@material-ui/icons";
-import color from 'color';
 import {FinalizeAnnotationPolicy} from '../../../constants/ProjectConfig';
 import InteractionComponentWrapper from "../interaction/InteractionComponentWrapper";
 import TextField from "@material-ui/core/TextField";
@@ -29,7 +27,6 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import ChipInput from "material-ui-chip-input";
 import type {UserInfo} from "../../../types/PageSetupTypes";
-import theme from "../../theme/Theme";
 
 
 type BasicPropertiesProps = WithStylesComponentProps & WithLocalizationComponentProps & {
@@ -47,52 +44,15 @@ type BasicPropertiesProps = WithStylesComponentProps & WithLocalizationComponent
 };
 
 const style: Function = (theme: Object): Object => ({
-    buttonGroup: {
-        display: 'flex',
-        flexWrap: 'nowrap',
-        userSelect: 'none',
-        backgroundColor: 'transparent',
-        [theme.breakpoints.down('xs')]: {
-            flexWrap: 'wrap',
-        },
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1)
-    },
-    toggleButton: {
-        color: `${theme.palette.secondary.main} !important`,
-        backgroundColor: grey[100],
-        border: '0 !important',
-        paddingTop: theme.spacing(0.75),
-        paddingBottom: theme.spacing(0.75),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-        flowGrow: 1,
-        margin: theme.spacing(0.5),
-        '&:hover': {
-            backgroundColor: grey[200],
-            marginLeft: '4px !important',
-            marginRight: '4px !important'
-        },
-        '&:not(:first-child)': {
-            marginLeft: '4px !important',
-            marginRight: '4px !important'
-        },
-        width: '100% !important'
-    },
-    toggleButtonSelected: {
-        color: `${theme.palette.secondary.main} !important`,
-        backgroundColor: `${color(theme.palette.secondary.light).lighten(0.95).hex()} !important`
-    },
+    buttonGroup: theme.defaultFullWidthButtonGroup,
+    toggleButton: theme.defaultFullWidthToggleButton,
+    toggleButtonSelected: theme.defaultToggleButtonSelected, 
+    defaultFormControl: theme.defaultFormControl,
+    dropDown: theme.defaultDropDown,
+    chipInput: theme.defaultChipInput,
     buttonLabel: {
         padding: theme.spacing(1),
         userSelect: 'none'
-    },
-    defaultFormControl: theme.defaultFormControl,
-    dropDown: {
-        width: '100%',
-        flexGrow: 1,
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1)
     },
     label: {
         transform: "translate(13px, 13px) scale(1)"
@@ -111,12 +71,6 @@ const style: Function = (theme: Object): Object => ({
     expansionPanel: {
         marginTop: theme.spacing(1)
     },
-    chipInput: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        marginTop: theme.spacing(3),
-        marginBottom: theme.spacing(1)
-    }
 });
 
 class BasicProperties extends Component<BasicPropertiesProps> {

@@ -1,6 +1,8 @@
 // @flow
 import {createMuiTheme} from '@material-ui/core/styles';
 import {PRIMARY_COLOR, SECONDARY_COLOR, SUCCESS_COLOR} from "../../constants/Constants";
+import {grey} from "@material-ui/core/colors";
+import color from 'color';
 
 /************************************************************************************************
  * Create the ActiveAnno material ui theme. Defines the main colors and typography of the app.
@@ -41,6 +43,11 @@ theme = createMuiTheme({
                 fontSize: '1.2rem'
             }
         },
+        pageRoot: {
+            padding: '2vh',
+            marginTop: 64,
+            width: '100%'
+        },
         link: {
             color: 'inherit',
             textDecoration: 'inherit',
@@ -57,6 +64,98 @@ theme = createMuiTheme({
         defaultFormControl: {
             marginTop: theme.spacing(1),
             marginBottom: theme.spacing(1)
+        },
+        defaultFullWidthFormControl: {
+            marginTop: theme.spacing(2),
+            marginBottom: theme.spacing(2),
+            width: '100%',
+            flexGrow: 1
+        },
+        defaultDropDown: {
+            width: '100%',
+            flexGrow: 1,
+            marginTop: theme.spacing(1),
+            marginBottom: theme.spacing(1) 
+        },
+        defaultFullWidthButtonGroup: {
+            display: 'flex',
+            flexWrap: 'nowrap',
+            userSelect: 'none',
+            backgroundColor: 'transparent',
+            [theme.breakpoints.down('xs')]: {
+                flexWrap: 'wrap',
+            },
+            marginTop: theme.spacing(1),
+            marginBottom: theme.spacing(1)
+        },
+        defaultFullWidthToggleButton: {
+            color: `${SECONDARY_COLOR.main} !important`,
+            backgroundColor: grey[100],
+            border: '0 !important',
+            paddingTop: theme.spacing(0.75),
+            paddingBottom: theme.spacing(0.75),
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2),
+            flowGrow: 1,
+            margin: theme.spacing(0.5),
+            '&:hover': {
+                backgroundColor: grey[200],
+                marginLeft: '4px !important',
+                marginRight: '4px !important'
+            },
+            '&:not(:first-child)': {
+                marginLeft: '4px !important',
+                marginRight: '4px !important'
+            },
+            width: '100% !important'
+        },
+        defaultButtonGroup: {
+            display: 'flex',
+            flexWrap: 'wrap',
+            userSelect: 'none',
+            backgroundColor: 'transparent'
+        },
+        defaultToggleButton: {
+            color: `${SECONDARY_COLOR.main} !important`,
+            backgroundColor: grey[100],
+            border: '0 !important',
+            paddingTop: theme.spacing(0.75),
+            paddingBottom: theme.spacing(0.75),
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2),
+            flowGrow: 1,
+            margin: theme.spacing(0.5),
+            '&:hover': {
+                backgroundColor: grey[200],
+                marginLeft: '4px !important',
+                marginRight: '4px !important'
+            },
+            '&:not(:first-child)': {
+                marginLeft: '4px !important',
+                marginRight: '4px !important'
+            },
+            [theme.breakpoints.down('xs')]: {
+                width: '100% !important',
+            }
+        },
+        defaultToggleButtonSelected: {
+            color: `${SECONDARY_COLOR.main} !important`,
+            backgroundColor: `${color(SECONDARY_COLOR.light).lighten(0.95).hex()} !important`
+        },
+        defaultToggleButtonDisabled: {
+            color: 'rgba(0, 0, 0, 0.33) !important'
+        },
+        defaultChipInput: {
+            marginLeft: theme.spacing(1),
+            marginRight: theme.spacing(1),
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(1)
+        },
+        defaultPopoverContent: {
+            paddingTop: theme.spacing(1),
+            paddingBottom: theme.spacing(1),
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2)
         }
     }
 });

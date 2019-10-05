@@ -28,10 +28,7 @@ const ViewState = {
 };
 
 const style: Function = (theme: Object): Object => ({
-    root: {
-        padding: '2vh',
-        marginTop: 64
-    },
+    root: theme.pageRoot,
     '@global': {
         body: {
             backgroundColor: theme.palette.common.white,

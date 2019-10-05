@@ -2,53 +2,19 @@ import {makeStyles} from "@material-ui/core";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import React from "react";
-import { grey } from '@material-ui/core/colors';
-import color from 'color';
 import type {
     AnnotationInteractionProps,
-    Annotations,
     Dictionary
 } from "../../../types/Types";
 import {isArray} from "../../helper/HelperFunctions";
 import InteractionComponentWrapper from "./InteractionComponentWrapper";
+import type {Annotations} from "../../../types/AnnotationConfigTypes";
 
 const useStyles = makeStyles(theme => ({
-    buttonGroup: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        userSelect: 'none',
-        backgroundColor: 'transparent'
-    },
-    toggleButton: {
-        color: `${theme.palette.secondary.main} !important`,
-        backgroundColor: grey[100],
-        border: '0 !important',
-        paddingTop: theme.spacing(0.75),
-        paddingBottom: theme.spacing(0.75),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-        height: 'inherit !important',
-        margin: theme.spacing(0.5),
-        '&:hover':{
-            backgroundColor: grey[200],
-            marginLeft: '4px !important',
-            marginRight: '4px !important'
-        },
-        '&:not(:first-child)': {
-            marginLeft: '4px !important',
-            marginRight: '4px !important'
-        },
-        [theme.breakpoints.down('xs')]: {
-            width: '100% !important',
-        }
-    },
-    toggleButtonSelected: {
-        color: `${theme.palette.secondary.main} !important`,
-        backgroundColor: `${color(theme.palette.secondary.light).lighten(0.95).hex()} !important`
-    },
-    toggleButtonDisabled: {
-        color: 'rgba(0, 0, 0, 0.12) !important'
-    }
+    buttonGroup: theme.defaultButtonGroup,
+    toggleButton: theme.defaultToggleButton,
+    toggleButtonSelected: theme.defaultToggleButtonSelected,
+    toggleButtonDisabled: theme.defaultToggleButtonDisabled
 }));
 
 function checkDisableButton(annotations: Dictionary<string, any>, annotationConfig: Annotations, referenceAnnotation: string, optionID) {

@@ -41,22 +41,11 @@ type EditProjectPageProps = WithStylesComponentProps & WithRouterComponentProps 
 };
 
 const style: Function = (theme: Object): Object => ({
-    root: {
-        padding: '2vh',
-        width: '100%',
-        marginTop: 64,
-    },
+    root: theme.pageRoot,
     stepper: {
         flexGrow: 1
     },
-    stepperContainer: {
-        marginBottom: theme.spacing(2)
-    },
-    formControl: {
-        marginTop: theme.spacing(2),
-        width: '100%',
-        flexGrow: 1
-    },
+    formControl: theme.defaultFullWidthFormControl,
     label: {
         transform: "translate(13px, 13px) scale(1)"
     },
@@ -123,6 +112,7 @@ class EditProjectPage extends Component<EditProjectPageProps> {
                                             isNewConfig={this.props.isNewConfig} annotations={config.annotations}/>;
             case 5: return <ExportStep id={config.id} updateConfigValue={this.props.updateConfigValue}
                                        isNewConfig={this.props.isNewConfig} export={config.export}/>;
+            default: return null;
         }
     }
 
@@ -136,7 +126,7 @@ class EditProjectPage extends Component<EditProjectPageProps> {
                     </Typography>
                 </Grid>
             </Grid>
-            <Grid container className={this.props.classes.stepperContainer}>
+            <Grid container>
                 <Grid item xs={12}>
                     <Hidden only={'xs'}>
                     <Stepper alternativeLabel nonLinear activeStep={this.props.currentStep} className={this.props.classes.stepper}>

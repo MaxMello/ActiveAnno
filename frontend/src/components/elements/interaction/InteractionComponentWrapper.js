@@ -38,7 +38,6 @@ export default function InteractionComponentWrapper(props: InteractionComponentP
         key={`${props.keyValue}InteractionCaption`}>
          {props.caption}
     </Typography>,
-
         props.validationErrors ? props.validationErrors.map((e, index) => {
             return <Typography variant="caption"
                         display="block"

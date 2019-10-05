@@ -82,12 +82,7 @@ const style: Function = (theme: Object): Object => {
             color: 'inherit',
             fontStyle: 'inherit'
         },
-        popoverContent: {
-            paddingTop: theme.spacing(1),
-            paddingBottom: theme.spacing(1),
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2)
-        }
+        popoverContent: theme.defaultPopoverContent
     });
 };
 

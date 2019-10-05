@@ -23,12 +23,7 @@ type DocumentMappingStepProps = WithStylesComponentProps & WithLocalizationCompo
 
 const style: Function = (theme: Object): Object => ({
     defaultFormControl: theme.defaultFormControl,
-    chipInput: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        marginTop: theme.spacing(3),
-        marginBottom: theme.spacing(1)
-    },
+    chipInput: theme.defaultChipInput
 });
 
 
@@ -62,7 +57,7 @@ class DocumentMappingStep extends Component<DocumentMappingStepProps> {
                             chip = chip.trim();
                             currentMetaData.push({
                                 key: chip,
-                                id: chip
+                                id: chip.replace(".", "_")
                             });
                             this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["inputMapping", "metaData"], currentMetaData);
                         }}

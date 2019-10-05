@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {withStyles} from "@material-ui/core";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
-import Divider from "@material-ui/core/Divider";
 import {withLocalization} from "react-localize";
 import classNames from 'classnames';
 import SwipeableViews from 'react-swipeable-views';
@@ -60,18 +59,6 @@ const style: Function = (theme: Object): Object => {
         },
         tabBar: {
             backgroundColor: 'white'
-        },
-        row: {
-            paddingBottom: theme.spacing(1),
-            paddingTop: theme.spacing(1)
-        },
-        column: {
-            alignContent: 'center',
-            paddingRight: theme.spacing(1),
-            paddingLeft: theme.spacing(1),
-        },
-        divider: {
-            backgroundColor: grey[200]
         },
         [LayoutAreaTypes.SHARED_TARGET]: {
 
@@ -234,7 +221,7 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
         } else {
             cssClass = this.props.classes[layoutAreaType];
         }
-        return [<Grid container className={classNames(this.props.classes.row, cssClass)}
+        return <Grid container spacing={4} className={classNames(this.props.classes.row, cssClass)}
                      key={`${key}Row${rowIndex}`}>
             {row.cols.map((c, columnIndex) => {
                 return [<Grid item
@@ -250,7 +237,7 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
                     })}
                 </Grid>]
             })}
-        </Grid>, <Divider variant={'fullWidth'} className={this.props.classes.divider} key={`${key}Divider${rowIndex}`}/>]
+        </Grid>;
     }
 
     render() {

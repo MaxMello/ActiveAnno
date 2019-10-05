@@ -8,12 +8,10 @@ import type {
 } from "../../../types/Types";
 import {Grid, OutlinedInput, Typography} from "@material-ui/core";
 import InteractionComponentWrapper from "../interaction/InteractionComponentWrapper";
-import color from 'color';
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import {Check, Close} from "@material-ui/icons";
 import type {FilterCondition, Sort} from "../../../types/ManageTypes";
-import {grey} from "@material-ui/core/colors";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import OverflowMenuItem from "../OverflowMenuItem";
@@ -36,51 +34,12 @@ type FilterAndSortStepProps = WithStylesComponentProps & WithLocalizationCompone
 };
 
 const style: Function = (theme: Object): Object => ({
-    buttonGroup: {
-        display: 'flex',
-        flexWrap: 'nowrap',
-        userSelect: 'none',
-        backgroundColor: 'transparent',
-        [theme.breakpoints.down('xs')]: {
-            flexWrap: 'wrap',
-        },
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1)
-    },
-    toggleButton: {
-        color: `${theme.palette.secondary.main} !important`,
-        backgroundColor: grey[100],
-        border: '0 !important',
-        paddingTop: theme.spacing(0.75),
-        paddingBottom: theme.spacing(0.75),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-        flowGrow: 1,
-        margin: theme.spacing(0.5),
-        '&:hover': {
-            backgroundColor: grey[200],
-            marginLeft: '4px !important',
-            marginRight: '4px !important'
-        },
-        '&:not(:first-child)': {
-            marginLeft: '4px !important',
-            marginRight: '4px !important'
-        },
-        width: '100% !important'
-    },
-    toggleButtonSelected: {
-        color: `${theme.palette.secondary.main} !important`,
-        backgroundColor: `${color(theme.palette.secondary.light).lighten(0.95).hex()} !important`
-    },
+    buttonGroup: theme.defaultFullWidthButtonGroup,
+    toggleButton: theme.defaultFullWidthToggleButton,
+    toggleButtonSelected: theme.defaultToggleButtonSelected,
+    toggleButtonDisabled: theme.defaultToggleButtonDisabled,
     defaultFormControl: theme.defaultFormControl,
-    interactionCaption: theme.interactionCaption,
-    chipInput: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        marginTop: theme.spacing(3),
-        marginBottom: theme.spacing(1)
-    },
-    interactionHeader: theme.interactionHeader
+    chipInput: theme.defaultChipInput,
 });
 
 const ProjectType = {
@@ -502,12 +461,12 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
                                        }>
                         <ToggleButton value={ProjectType.ONE_OFF} className={this.props.classes.toggleButton}
                                       disabled={!this.props.isNewConfig}
-                                      classes={{selected: this.props.classes.toggleButtonSelected}}>
+                                      classes={{selected: this.props.classes.toggleButtonSelected, disabled: this.props.classes.toggleButtonDisabled}}>
                             {this.props.localize('project.projectType.oneOff')}
                         </ToggleButton>
                         <ToggleButton value={ProjectType.CONTINUOUS} className={this.props.classes.toggleButton}
                                       disabled={!this.props.isNewConfig}
-                                      classes={{selected: this.props.classes.toggleButtonSelected}}>
+                                      classes={{selected: this.props.classes.toggleButtonSelected, disabled: this.props.classes.toggleButtonDisabled}}>
                             {this.props.localize('project.projectType.continuous')}
                         </ToggleButton>
                     </ToggleButtonGroup>
