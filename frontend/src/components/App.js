@@ -21,6 +21,7 @@ import type {AuthenticationState} from "../types/AuthenticationTypes";
 import type {PageSetupState} from "../types/PageSetupTypes";
 import type {AppState, WithRouterComponentProps, WithStylesComponentProps} from "../types/Types";
 import EditProjectPage from "./pages/EditProjectPage";
+import {ROUTING_BASE_NAME} from "../constants/Constants";
 
 type AppProps = WithRouterComponentProps & WithStylesComponentProps & {
     language: string,
@@ -132,7 +133,7 @@ const AppComponent = withRouter(withStyles(style)(connect(mapStateToProps, mapDi
 class AppWrapper extends Component<Object> {
     render() {
         return (
-            <BrowserRouter>
+            <BrowserRouter basename={ROUTING_BASE_NAME}>
                 <AppComponent authentication={this.props.authentication}
                                         language={this.props.language}
                                         pageSetup={this.props.pageSetup}

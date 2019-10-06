@@ -113,7 +113,7 @@ class DocumentMappingStep extends Component<DocumentMappingStepProps> {
                             chip = chip.trim();
                             currentMetaData.push({
                                 key: chip,
-                                id: chip.replaceAll(".", "_")
+                                id: chip.replace(/\./g, "_")
                             });
                             this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["inputMapping", "metaData"], currentMetaData);
                             this.updateLayoutCommonArea();

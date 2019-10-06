@@ -19,10 +19,18 @@ import io.ktor.util.KtorExperimentalAPI
 import org.slf4j.LoggerFactory
 import user.UserDAO
 import java.io.FileOutputStream
+import java.lang.Exception
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 private val logger = LoggerFactory.getLogger("ManageRouting")
+
+
+data class ConfigStoreFailure(
+    val configID: String?,
+    val errors: Map<String, ConfigValidationError>,
+    val message: String
+)
 
 /**
  * The manage endpoint is for manager users in the frontend, giving the ability to read, edit and create configs,
@@ -56,11 +64,19 @@ fun Route.manage(applicationConfig: ApplicationConfig, userDAO: UserDAO, project
                 val configJSON = call.receive<ObjectNode>()
                 val errors = validateManageConfig(configJSON)
                 if(errors.errors.isNotEmpty()) {
-                    call.respond(HttpStatusCode.BadRequest, errors)
+                    call.respond(HttpStatusCode.BadRequest, ConfigStoreFailure(configJSON.get("id").asText(null), errors.errors, "Project has invalid structure or missing fields"))
                 } else {
-                    val config = jsonMapper.treeToValue(configJSON, ManageConfig::class.java)
-                    val id = projectConfigDAO.insertOne(config.toProjectConfig(user.userIdentifier))
-                    call.respond(HttpStatusCode.Created, projectConfigDAO.getConfigById(id).toManageConfig())
+                    try {
+                        val config = jsonMapper.treeToValue(configJSON, ManageConfig::class.java)
+                        try {
+                            val id = projectConfigDAO.insertOne(config.toProjectConfig(user.userIdentifier))
+                            call.respond(HttpStatusCode.Created, projectConfigDAO.getConfigById(id).toManageConfig())
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.InternalServerError, ConfigStoreFailure(configJSON.get("id").asText(null), mapOf(), "Could not save project in database"))
+                        }
+                    } catch (e: Exception) {
+                        call.respond(HttpStatusCode.BadRequest, ConfigStoreFailure(configJSON.get("id").asText(null), mapOf(), "Project has invalid structure or missing fields"))
+                    }
                 }
             }
             putAuthenticatedByJwt("/{id}", listOf(applicationConfig.jwt.roleManager)) {
@@ -74,16 +90,17 @@ fun Route.manage(applicationConfig: ApplicationConfig, userDAO: UserDAO, project
                     val configJSON = call.receive<ObjectNode>()
                     val errors = validateManageConfig(configJSON)
                     if(errors.errors.isNotEmpty()) {
-                        call.respond(HttpStatusCode.BadRequest, errors)
+                        call.respond(HttpStatusCode.BadRequest, ConfigStoreFailure(configJSON.get("id").asText(null), mapOf(), "Project has invalid structure or missing fields"))
                     } else {
                         val newConfig = jsonMapper.treeToValue(configJSON, ManageConfig::class.java)
-                        projectConfigDAO.replaceById(
-                            id,
-                            newConfig.toProjectConfig(oldConfig.creator, oldConfig.creationTimestamp)
-                        )
-                        call.respond(HttpStatusCode.OK)
+                        try {
+                            projectConfigDAO.replaceById(id, newConfig.toProjectConfig(oldConfig.creator, oldConfig.creationTimestamp))
+                            call.respond(HttpStatusCode.OK, projectConfigDAO.getConfigById(id).toManageConfig())
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.InternalServerError, ConfigStoreFailure(configJSON.get("id").asText(null), mapOf(), "Could not save project in database"))
+                        }
                     }
-                } ?: call.respond(HttpStatusCode.BadRequest, "Id missing")
+                } ?: call.respond(HttpStatusCode.BadRequest, ConfigStoreFailure(null, mapOf(), "ID missing"))
             }
             route("/{id}/document") {
                 getAuthenticatedByJwt(listOf(applicationConfig.jwt.roleManager)) {

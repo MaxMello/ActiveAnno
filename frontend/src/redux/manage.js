@@ -55,17 +55,22 @@ export const ManageConfigActions = {
 };
 
 export const CreateConfigActions = {
-    start: createAction(CreateConfigActionKey.START),
+    start: createAction(CreateConfigActionKey.START, (config: ManageConfigFull) => config),
     received: createAction(CreateConfigActionKey.RECEIVED, (config: ManageConfigFull) => config),
-    error: createAction(CreateConfigActionKey.ERROR)
+    error: createAction(CreateConfigActionKey.ERROR, (response: any) => {
+        return {
+            configID: response.configID
+        }
+    })
 };
 
 export const SaveConfigActions = {
-    start: createAction(SaveConfigActionKey.START, (configID: string) => {
-            return {configID}
-    }),
+    start: createAction(SaveConfigActionKey.START, (config: ManageConfigFull) => config),
     received: createAction(SaveConfigActionKey.RECEIVED, (config: ManageConfigFull) => config),
-    error: createAction(SaveConfigActionKey.ERROR)
+    error: createAction(SaveConfigActionKey.ERROR, (response: any) => {
+    return {
+        configID: response.configID
+    }})
 };
 
 export const EditProjectActions = {
@@ -289,8 +294,8 @@ export const manageReducer = handleActions({
             ...{
                 configs: {
                     ...state.configs,
-                    [action.payload.config.id]: {
-                        ...state.configs[action.payload.config]
+                    [action.payload.id]: {
+                        ...action.payload
                     }
                 },
                 newConfig: newConfig
@@ -298,7 +303,7 @@ export const manageReducer = handleActions({
         };
     },
     [CreateConfigActionKey.ERROR]: (state: ManageState, action: Action): Function => {
-        return action.payload.configID ? {
+        return {
             ...state,
             ...{
                 newConfig: {
@@ -308,7 +313,7 @@ export const manageReducer = handleActions({
                     }
                 }
             }
-        } : state;
+        };
     },
     [SaveConfigActionKey.START]: (state: ManageState, action: Action): Function => {
         return {
@@ -316,8 +321,8 @@ export const manageReducer = handleActions({
             ...{
                 configs: {
                     ...state.configs,
-                    [action.payload.configID]: {
-                        ...state.configs[action.payload.configID],
+                    [action.payload.id]: {
+                        ...state.configs[action.payload.id],
                         ...{
                             fetchStatus: FetchStatus.ACTIVE
                         }
@@ -332,15 +337,15 @@ export const manageReducer = handleActions({
             ...{
                 configs: {
                     ...state.configs,
-                    [action.payload.config.id]: {
-                        ...state.configs[action.payload.config]
+                    [action.payload.id]: {
+                        ...action.payload
                     }
                 },
             }
         };
     },
     [SaveConfigActionKey.ERROR]: (state: ManageState, action: Action): Function => {
-        return action.payload.configID ? {
+        return action.payload && action.payload.configID ? {
             ...state,
             ...{
                 configs: {
@@ -375,9 +380,9 @@ export const onLoadManageConfig: Function = function*() {
 };
 
 export const onCreateConfig: Function = function*() {
-    yield jwtNetworkRequestSaga(CreateConfigActionKey.START, postManageConfig, CreateConfigActionKey.received, CreateConfigActionKey.error);
+    yield jwtNetworkRequestSaga(CreateConfigActionKey.START, postManageConfig, CreateConfigActions.received, CreateConfigActions.error);
 };
 
 export const onSaveConfig: Function = function*() {
-    yield jwtNetworkRequestSaga(SaveConfigActionKey.START, putManageConfig, SaveConfigActionKey.received, SaveConfigActionKey.error);
+    yield jwtNetworkRequestSaga(SaveConfigActionKey.START, putManageConfig, SaveConfigActions.received, SaveConfigActions.error);
 };

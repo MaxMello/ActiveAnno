@@ -8,6 +8,7 @@ export const ACTIVE_ANNO_SERVICE_URL: string = `${process.env.REACT_APP_ACTIVE_A
 
 export const GENERATE_SUPERUSER_ON_LOGIN: boolean = process.env.REACT_APP_GENERATE_SUPERUSER_ON_LOGIN ? process.env.REACT_APP_GENERATE_SUPERUSER_ON_LOGIN : true;
 
+export const ROUTING_BASE_NAME: string =  process.env.REACT_APP_ROUTING_BASE_NAME ? process.env.REACT_APP_ROUTING_BASE_NAME : '';
 
 export const PRIMARY_COLOR = {
     main: process.env.REACT_APP_COLOR_PRIMARY_MAIN ? process.env.REACT_APP_COLOR_PRIMARY_MAIN : "#9A334F",

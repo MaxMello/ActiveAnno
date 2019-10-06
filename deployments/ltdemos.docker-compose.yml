@@ -1,0 +1,49 @@
+version: '3.4'
+
+# compose file for local demos / testing. Not production ready (see README).
+
+volumes:
+  activeanno-data:
+
+services:
+  activeannomongo:
+    container_name: activeannomongo
+    image: mongo:4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: activeanno
+    volumes:
+      - activeanno-data:/data/db
+    ports:
+      - 27017:27017
+  activeannofrontend:
+    image: maxmello/activeannofrontend:1.0-ltdemos
+    ports:
+      - 3000:80
+    container_name: activeannofrontend
+  activeannoservice:
+    image: maxmello/activeannoservice:1.0
+    ports:
+      - 8080:8080
+    container_name: activeannoservice
+    environment:
+      PORT: 8080
+      HTTPS_REDIRECT: "false"
+      MONGO_CONNECTION_STRING: mongodb://user:password@activeannomongo:27017
+      MONGO_DATABASE_NAME: activeanno
+      JWT_USE_ROLE_PROTECTION: "true"
+      JWT_ROLES_KEY: roles
+      JWT_ROLE_ADMIN: activeanno_admin
+      JWT_ROLE_MANAGER: activeanno_manager
+      JWT_ROLE_USER: activeanno_user
+      JWT_ROLE_PRODUCER: activeanno_producer
+      JWT_ROLE_CONSUMER: activeanno_consumer
+      JWT_ROLE_GLOBAL_SEARCH: activeanno_global_search
+      JWT_USER_IDENTIFIER_KEY: sub
+      JWT_USER_NAME: name
+      JWT_VALIDATION_ACCEPT_ALL_TOKENS: "true"
+      JWT_VALIDATION_URL:
+      CORS_HOSTS_LIST: 'localhost,localhost:3000,0.0.0.0,0.0.0.0:3000,ltdemos.informatik.uni-hamburg.de'
+      LOGGING_LEVEL: DEBUG
+      GENERATE_EXAMPLE_PROJECT: "true"

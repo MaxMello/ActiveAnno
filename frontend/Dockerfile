@@ -9,7 +9,9 @@ RUN npm install
 
 COPY ./ /app/
 
-RUN npm run build
+ARG BUILD_COMMAND=build
+
+RUN npm run $BUILD_COMMAND
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginx:1.15

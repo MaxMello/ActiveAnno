@@ -36,7 +36,11 @@ export const networkRequest: Function = function* (action: Action, apiCall: Func
  * @returns {IterableIterator<ForkEffect>}
  */
 export const jwtNetworkRequestSaga: Function = function* (startKey: string, apiCall: Function, receivedAction: Function, errorAction: Function) {
-    yield takeLatest(startKey, function*(action: Action) {
-        yield networkRequest(action, apiCall, receivedAction, errorAction);
-    });
+    try {
+        yield takeLatest(startKey, function* (action: Action) {
+            yield networkRequest(action, apiCall, receivedAction, errorAction);
+        });
+    } catch(e) {
+        console.log(e);
+    }
 };

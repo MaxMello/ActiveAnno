@@ -57,9 +57,11 @@ class ManagePage extends Component<ContentProps> {
 
     saveConfig(configID: string, isNewConfig: boolean) {
         if(isNewConfig) {
-            this.props.createConfig();
+            console.log("CREATE CONFIG", this.props.newConfig);
+            this.props.createConfig(this.props.newConfig);
         } else {
-            this.props.updateConfig()
+            console.log("SAVE CONFIG", this.props.configs[configID]);
+            this.props.updateConfig(this.props.configs[configID])
         }
     }
 
@@ -102,15 +104,19 @@ class ManagePage extends Component<ContentProps> {
                         : null}
             </Grid>
             <Grid item xs={1}>
-                {(isNewConfig || (config && config.needsSyncing)) ?
+                {((isNewConfig || (config && config.needsSyncing)) && this.validateConfig(config)) ?
                                 <IconButton edge="end" onClick={() => {
-                                    this.saveConfig(config ? config.id : "", true)
+                                    this.saveConfig(config ? config.id : "", isNewConfig)
                                 }}>
                                 <Save className={this.props.classes.saveIcon}/>
                              </IconButton>
                 : null}
             </Grid>
         </Grid>
+    }
+
+    validateConfig(config: ManageConfigFull) {
+        return config && config.id && config.id.length > 0 && config.name && config.name.length > 0
     }
 
     render() {
@@ -145,11 +151,11 @@ const mapDispatchToProps = (dispatch: Function) : Object => {
         loadConfigList: () => {
             dispatch(ManageConfigListActions.start());
         },
-        updateConfig: () => {
-            dispatch(SaveConfigActions.start());
+        updateConfig: (config: ManageConfigFull) => {
+            dispatch(SaveConfigActions.start(config));
         },
-        createConfig: () => {
-            dispatch(CreateConfigActions.start());
+        createConfig: (config: ManageConfigFull) => {
+            dispatch(CreateConfigActions.start(config));
         }
     });
 };
