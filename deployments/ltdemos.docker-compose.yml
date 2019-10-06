@@ -25,10 +25,10 @@ services:
   activeannoservice:
     image: maxmello/activeannoservice:1.0
     ports:
-      - 8080:8080
+      - 80:8080
     container_name: activeannoservice
     environment:
-      PORT: 8080
+      PORT: 80
       HTTPS_REDIRECT: "false"
       MONGO_CONNECTION_STRING: mongodb://user:password@activeannomongo:27017
       MONGO_DATABASE_NAME: activeanno
