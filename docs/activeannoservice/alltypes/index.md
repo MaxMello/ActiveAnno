@@ -30,6 +30,7 @@
 | [config.layout.Column](../config.layout/-column/index.md) | A column is part of a row and has a width dependent of screen size. Every row should have at least one column. |
 | [config.layout.ColumnSizes](../config.layout/-column-sizes/index.md) | The UI defines 5 different screen size breakpoints, from smallest (xs) to largest (xl). The actual pixel breakpoints are defined by the UI. Column sizes should be in [1,12](#) range, 12 being the full width of the row, 1 being 1/12 width of the row. At least xs needs to be defined. |
 | [document.ConfigAnnotationData](../document/-config-annotation-data/index.md) | Data class representing all annotation data for a specific configuration. |
+| [api.manage.ConfigStoreFailure](../api.manage/-config-store-failure/index.md) |  |
 | [config.ConfigValidationError](../config/-config-validation-error/index.md) | A single validation error for a specific key of the [ManageConfig](../config/-manage-config/index.md) |
 | [config.ConfigValidationResult](../config/-config-validation-result/index.md) | Data class wrapping the map of [ConfigValidationError](../config/-config-validation-error/index.md)s |
 | [config.filter.ContainsAll](../config.filter/-contains-all/index.md) | Equivalent to And connection between Contains conditions, exists as shorthand Example: { tags: { $all: [ssl,security](#) } } =&gt; { $and: [{tagsssl},{tagssecurity}](#) } |

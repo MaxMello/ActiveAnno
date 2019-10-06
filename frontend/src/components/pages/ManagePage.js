@@ -116,7 +116,7 @@ class ManagePage extends Component<ContentProps> {
     }
 
     validateConfig(config: ManageConfigFull) {
-        return config && config.id && config.id.length > 0 && config.name && config.name.length > 0
+        return config && config.id && config.id.length > 0 && config.name && config.name.length > 0 && config.annotations && config.layout && config.userRoles
     }
 
     render() {

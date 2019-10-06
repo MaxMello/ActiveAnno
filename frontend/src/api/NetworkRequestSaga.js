@@ -21,7 +21,7 @@ export const networkRequest: Function = function* (action: Action, apiCall: Func
         });
     } catch (e) {
         console.log(action, "Error getting response form server", e);
-        if(e.statusCode === 403) {
+        if(e && e.statusCode === 403) {
             yield put(GlobalActions.logout());
         } else {
             yield put(errorAction());

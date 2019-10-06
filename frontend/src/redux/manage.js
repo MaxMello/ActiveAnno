@@ -57,20 +57,13 @@ export const ManageConfigActions = {
 export const CreateConfigActions = {
     start: createAction(CreateConfigActionKey.START, (config: ManageConfigFull) => config),
     received: createAction(CreateConfigActionKey.RECEIVED, (config: ManageConfigFull) => config),
-    error: createAction(CreateConfigActionKey.ERROR, (response: any) => {
-        return {
-            configID: response.configID
-        }
-    })
+    error: createAction(CreateConfigActionKey.ERROR)
 };
 
 export const SaveConfigActions = {
     start: createAction(SaveConfigActionKey.START, (config: ManageConfigFull) => config),
     received: createAction(SaveConfigActionKey.RECEIVED, (config: ManageConfigFull) => config),
-    error: createAction(SaveConfigActionKey.ERROR, (response: any) => {
-    return {
-        configID: response.configID
-    }})
+    error: createAction(SaveConfigActionKey.ERROR)
 };
 
 export const EditProjectActions = {
