@@ -138,11 +138,9 @@ const getPageSetup = (state) => state.pageSetup;
 export const periodicRefreshPageSetup: Function = function* () {
     while (true) {
         yield delay(30000);
-        console.log("periodic page setup");
         const authentication = yield select(getAuthentication);
         const pageSetup = yield select(getPageSetup);
         if(authentication.jwt !== null && (!pageSetup.pageSetup || pageSetup.fetchStatus !== FetchStatus.ACTIVE)) {
-            console.log("periodic page setup start");
             yield put(RequestPageSetupActions.start());
         }
     }

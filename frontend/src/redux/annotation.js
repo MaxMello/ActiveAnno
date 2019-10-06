@@ -3,7 +3,7 @@
  */
 import { take, takeLatest, race, delay, select } from 'redux-saga/effects';
 import {createAction} from "redux-actions";
-import {AnnotationConfigListActions, annotationConfigReducer} from "./annotationConfig";
+import {AnnotationConfigListActions} from "./annotationConfig";
 import {RequestAnnotationDataActions} from "./annotationData";
 import FetchStatus from "../api/FetchStatus";
 import {getAnnotateConfigs, getDataForAnnotateConfig} from "../api/Endpoints";
@@ -43,7 +43,6 @@ const refreshAnnotationPage: Function = function * (force: boolean = false) {
     const annotationConfig = yield select(getAnnotationConfig);
     const annotationData = yield select(getAnnotationData);
     if(force) {
-        console.log("Upload config list");
         // If force, start by refreshing the list of configs
         yield networkRequest(AnnotationConfigListActions.start(), getAnnotateConfigs, AnnotationConfigListActions.received, AnnotationConfigListActions.error);
     }
@@ -52,14 +51,9 @@ const refreshAnnotationPage: Function = function * (force: boolean = false) {
         const documentsForActiveConfig = annotationData.documents[activeConfig.id] ? annotationData.documents[activeConfig.id] : {};
         const nonFinishedDocuments = Object.values(documentsForActiveConfig).filter(d => !d.finished);
         if(nonFinishedDocuments.length <= 3 && annotationData.fetchStatus !== FetchStatus.ACTIVE) {
-            console.log("Load data", annotationData, "with ignore", Object.keys(documentsForActiveConfig));
             yield networkRequest(RequestAnnotationDataActions.start(annotationConfig.activeConfigID, Object.keys(documentsForActiveConfig)),
                 getDataForAnnotateConfig, RequestAnnotationDataActions.received, RequestAnnotationDataActions.error);
-        } else {
-            console.log("Don't need to load new data, have enough or still fetching with status=", annotationConfigReducer.fetchStatus);
         }
-    } else {
-        console.log("Refresh, but full config not loaded");
     }
 };
 

@@ -362,6 +362,12 @@ export default ({
         'project.annotations.OpenTagAnnotation.caption': 'Let the annotator provide a list of tags with predefined options but also the possibility for the annotator to extend the list of tags.',
         'project.annotations.ClosedNumberAnnotation.caption': 'Let the annotator chose a single number between an upper and lower bound, typically displayed as a slider.',
         'project.annotations.OpenNumberAnnotation.caption': 'Let the annotator provide any number, typically displayed as a number input field.',
-        'project.annotations.NumberRangeAnnotation.caption': 'Let the annotator chose two numbers and therefore define a range, typically displayed as a slider with two controls.'
+        'project.annotations.NumberRangeAnnotation.caption': 'Let the annotator chose two numbers and therefore define a range, typically displayed as a slider with two controls.',
+    
+        'project.layout.description': 'The layout of the project is currently generated based on the document mapping and annotations defined in the project. You can edit the following JSON to change the values displayed in the preview below.',
+        'project.layout.example.description': 'Below, you can see how the document data and annotation inputs will be displayed based on the example document provided above.',
+        'project.layout.example.documentText': 'This is an example text',
+        'project.layout.example.metaData.example': "Example",
+        "project.layout.json.description": "For reference, you can see the layout JSON structure below. This will be removed in future versions in exchange for a proper GUI editor.",
     }
 });

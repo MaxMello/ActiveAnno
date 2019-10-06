@@ -8,17 +8,22 @@ import type {
 } from "../../../types/Types";
 import {Grid} from "@material-ui/core";
 import InteractionComponentWrapper from "../interaction/InteractionComponentWrapper";
-import type {InputMapping} from "../../../types/ManageTypes";
+import type {InputMapping, ManageConfigFull} from "../../../types/ManageTypes";
 import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import ChipInput from "material-ui-chip-input";
+import type {Layout, LayoutArea} from "../../../types/LayoutConfigTypes";
+import {LayoutAreaTypes} from "../../../constants/LayoutAreaTypes";
+import {generateExampleDocument} from "./LayoutStep";
 
 
 type DocumentMappingStepProps = WithStylesComponentProps & WithLocalizationComponentProps & {
     id: string,
     updateConfigValue: Function,
     isNewConfig: boolean,
-    inputMapping: InputMapping
+    inputMapping: InputMapping,
+    layout: Layout,
+    config: ManageConfigFull
 };
 
 const style: Function = (theme: Object): Object => ({
@@ -26,8 +31,59 @@ const style: Function = (theme: Object): Object => ({
     chipInput: theme.defaultChipInput
 });
 
+function buildLayoutCommonArea(inputMapping: InputMapping): LayoutArea {
+    return {
+        id: LayoutAreaTypes.COMMON,
+        rows: [
+            {
+                cols: (inputMapping.metaData.map(m => {
+                    return {
+                        width: {
+                            xs: 12,
+                            sm: 6,
+                            md: 6,
+                            lg: 4,
+                            xl: 3
+                        },
+                        children: [
+                            {
+                                type: "Text",
+                                text: `${m.id}: `
+                            },
+                            {
+                                type: "TextMetaData",
+                                id: m.id
+                            }
+                        ]
+                    }
+                }).concat(
+                    {
+                        width: {
+                            xs: 12
+                        },
+                        children: [
+                            {
+                                type: "DocumentText",
+                                label: "Document text"
+                            }
+                        ]
+                    }
+                ))
+            }
+        ]
+    };
+}
+
 
 class DocumentMappingStep extends Component<DocumentMappingStepProps> {
+
+
+    updateLayoutCommonArea() {
+        const area = buildLayoutCommonArea(this.props.inputMapping);
+        this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "layoutAreas", LayoutAreaTypes.COMMON], area);
+        this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "exampleDocument"], generateExampleDocument(this.props.config, this.props.localize));
+    }
+    
 
     render() {
         let currentMetaData = this.props.inputMapping.metaData;
@@ -57,13 +113,15 @@ class DocumentMappingStep extends Component<DocumentMappingStepProps> {
                             chip = chip.trim();
                             currentMetaData.push({
                                 key: chip,
-                                id: chip.replace(".", "_")
+                                id: chip.replaceAll(".", "_")
                             });
                             this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["inputMapping", "metaData"], currentMetaData);
+                            this.updateLayoutCommonArea();
                         }}
                         onDelete={(chip) => {
                             currentMetaData = currentMetaData.filter(c => c.key !== chip);
                             this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["inputMapping", "metaData"], currentMetaData);
+                            this.updateLayoutCommonArea();
                         }}
                         allowDuplicates={false}
                         fullWidth={true}

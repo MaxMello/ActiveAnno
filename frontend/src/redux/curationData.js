@@ -183,7 +183,6 @@ export const curationDataReducer = handleActions({
         };
     },
     [RequestCurationDataKey.RECEIVED]: (state: CurationDataState, action: Action): Function => {
-        console.log(action);
         return {
             ...state,
             ...mapDataToState(state, action.payload),

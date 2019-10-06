@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {withLocalization} from "react-localize";
 import type {
+    Dictionary,
     WithLocalizationComponentProps,
     WithStylesComponentProps
 } from "../../../types/Types";
@@ -23,15 +24,19 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import {Check, Close} from "@material-ui/icons";
 import {CaseBehavior} from "../../../constants/CaseBehavior";
-import {isArray} from "../../helper/HelperFunctions";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import ChipInput from "material-ui-chip-input";
+import type {ManageConfigFull} from "../../../types/ManageTypes";
+import type {LayoutArea} from "../../../types/LayoutConfigTypes";
+import {LayoutAreaTypes} from "../../../constants/LayoutAreaTypes";
+import {generateExampleDocument} from "./LayoutStep";
 
 type AnnotationsStepProps = WithStylesComponentProps & WithLocalizationComponentProps & {
     id: string,
     updateConfigValue: Function,
     isNewConfig: boolean,
-    annotations: Annotations
+    annotations: Annotations,
+    config: ManageConfigFull
 };
 
 const style: Function = (theme: Object): Object => ({
@@ -82,6 +87,73 @@ const style: Function = (theme: Object): Object => ({
     }
 });
 
+function buildActionElementForAnnotation(annotation: any) {
+    if(annotation.type === AnnotationType.PredefinedTagSetAnnotation) {
+        if(annotation.options.length > 5) {
+            return {
+                "type": "Dropdown",
+                "referenceAnnotation": annotation.id
+            }
+        } else {
+            return {
+                "type": "ButtonGroup",
+                "referenceAnnotation": annotation.id
+            }
+        }
+    } else if(annotation.type === AnnotationType.BooleanAnnotation) {
+        return {
+            "type": "ButtonGroup",
+            "referenceAnnotation": annotation.id
+        }
+    } else if(annotation.type === AnnotationType.OpenTextAnnotation) {
+        return {
+            "type": "TextField",
+            "referenceAnnotation": annotation.id
+        }
+    } else if(annotation.type === AnnotationType.OpenTagAnnotation) {
+        return {
+            "type": "Chips",
+            "referenceAnnotation": annotation.id
+        }
+    } else if(annotation.type === AnnotationType.ClosedNumberAnnotation) {
+        return {
+            "type": "Slider",
+            "referenceAnnotation": annotation.id
+        }
+    } else if(annotation.type === AnnotationType.OpenNumberAnnotation) {
+        return {
+            "type": "NumberField",
+            "referenceAnnotation": annotation.id
+        }
+    } else if(annotation.type === AnnotationType.NumberRangeAnnotation) {
+        return {
+            "type": "Slider",
+            "referenceAnnotation": annotation.id
+        }
+    }
+}
+
+function buildLayoutDocumentArea(annotationMap: Dictionary<string, any>): LayoutArea {
+    return {
+        id: LayoutAreaTypes.DOCUMENT_TARGET,
+        rows: [
+            {
+                cols: Object.values(annotationMap).map(a => {
+                    return {
+                        width: {
+                            xs: 12,
+                            sm: 6
+                        },
+                        children: [
+                            buildActionElementForAnnotation(a)
+                        ]
+                    }
+                })
+            }
+        ]
+    };
+}
+
 class AnnotationsStep extends Component<AnnotationsStepProps> {
 
     constructor(props) {
@@ -102,14 +174,21 @@ class AnnotationsStep extends Component<AnnotationsStepProps> {
     addAnnotation() {
         if(this.state.newAnnotation.type !== undefined && this.state.newAnnotation.id.length > 0) {
             if(!(this.state.newAnnotation.id in this.props.annotations.annotationMap)) {
-                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["annotations", "annotationMap", this.state.newAnnotation.id], {
-                    ...DefaultAnnotations[this.state.newAnnotation.type],
-                    ...{
-                        id: this.state.newAnnotation.id,
-                        name: this.state.newAnnotation.id,
-                        shortName: this.state.newAnnotation.id
+                const newMap = {
+                    ...this.props.annotations.annotationMap,
+                    [this.state.newAnnotation.id]: {
+                        ...DefaultAnnotations[this.state.newAnnotation.type],
+                        ...{
+                            id: this.state.newAnnotation.id,
+                            name: this.state.newAnnotation.id,
+                            shortName: this.state.newAnnotation.id
+                        }
                     }
-                });
+                };
+                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["annotations", "annotationMap"], newMap);
+                const layoutDocumentTargetArea = buildLayoutDocumentArea(newMap);
+                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "layoutAreas", LayoutAreaTypes.DOCUMENT_TARGET], layoutDocumentTargetArea);
+                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "exampleDocument"], generateExampleDocument(this.props.config, this.props.localize));
                 this.setState({
                     ...this.state,
                     ...{
@@ -137,10 +216,13 @@ class AnnotationsStep extends Component<AnnotationsStepProps> {
         const currentMap = this.props.annotations.annotationMap;
         delete currentMap[id];
         this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["annotations", "annotationMap"], currentMap);
+        const layoutDocumentTargetArea = buildLayoutDocumentArea(currentMap);
+        this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "layoutAreas", LayoutAreaTypes.DOCUMENT_TARGET], layoutDocumentTargetArea);
+        this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "exampleDocument"], generateExampleDocument(this.props.config, this.props.localize));
+
     }
 
     canAddNewTagSetOption(annotationID): boolean {
-        console.log("Add new tag set option", annotationID, this.state.newTagSetOptions);
         return this.state.newTagSetOptions[annotationID] &&
             this.state.newTagSetOptions[annotationID].id && this.state.newTagSetOptions[annotationID].id.length > 0 &&
             this.state.newTagSetOptions[annotationID].name && this.state.newTagSetOptions[annotationID].name.length > 0 &&
@@ -149,7 +231,6 @@ class AnnotationsStep extends Component<AnnotationsStepProps> {
 
     addTagSetOption(annotationID: string) {
         if(this.canAddNewTagSetOption(annotationID)) {
-            console.log("ABC", this.state.newTagSetOptions[annotationID].id, this.props.annotations.annotationMap[annotationID].options.map(o => o.id));
             if(!(this.props.annotations.annotationMap[annotationID].options.map(o => o.id)).includes(this.state.newTagSetOptions[annotationID].id)) {
                 const currentOptions = this.props.annotations.annotationMap[annotationID].options;
                 currentOptions.push({
@@ -538,7 +619,6 @@ class AnnotationsStep extends Component<AnnotationsStepProps> {
     }
 
     render() {
-        console.log(this.props.annotations);
         const existingAnnotationsView = Object.values(this.props.annotations.annotationMap).map(a => {
             return <Grid item xs={12}>
                 <ExpansionPanel defaultExpanded={true}  className={this.props.classes.panel}>

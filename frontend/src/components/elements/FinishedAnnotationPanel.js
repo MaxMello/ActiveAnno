@@ -135,7 +135,7 @@ class FinishedAnnotationPanel extends Component<FinishedAnnotationPanelProps> {
             case "number":
                 return value.toString();
             case "string":
-                return this.displayValueByType(value, annotation);
+                return value.toString();
             case "boolean":
                 return value ? <Check fontSize={"small"} className={this.props.classes.booleanIcon}/> : <Close  fontSize={"small"} className={this.props.classes.booleanIcon}/>;
             default:

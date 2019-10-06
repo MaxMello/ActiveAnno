@@ -82,7 +82,6 @@ class BasicProperties extends Component<BasicPropertiesProps> {
     }
 
     render() {
-        console.log("UI", this.props.userInfo, Object.keys(this.props.userInfo));
         return <Grid container spacing={4}>
                 <Grid item xs={12} sm={12} md={6}>
                     <InteractionComponentWrapper name={this.props.localize('project.id.name')}

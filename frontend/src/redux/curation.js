@@ -39,7 +39,6 @@ const refreshCurationPage: Function = function * (force: boolean = false) {
         const documentsForActiveConfig = curationData.documents[activeConfig.id] ? curationData.documents[activeConfig.id] : {};
         const nonFinishedDocuments = Object.values(documentsForActiveConfig).filter(d => !d.finished);
         if(nonFinishedDocuments.length <= 3 && curationData.fetchStatus !== FetchStatus.ACTIVE) {
-            console.log("Curation Load data", curationData, "with ignore", Object.keys(documentsForActiveConfig));
             yield networkRequest(RequestCurationDataActions.start(curationConfig.activeConfigID, Object.keys(documentsForActiveConfig)),
                 getDataForCurateConfig, RequestCurationDataActions.received, RequestCurationDataActions.error);
         }

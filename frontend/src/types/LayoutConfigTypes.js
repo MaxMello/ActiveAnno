@@ -24,5 +24,6 @@ export type LayoutArea = {
 }
 
 export type Layout = {
-    layoutAreas: Map<LayoutAreaType, LayoutArea>
+    layoutAreas: Map<LayoutAreaType, LayoutArea>,
+    exampleDocument: Object // Frontend only
 }

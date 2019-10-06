@@ -1,12 +1,13 @@
-import type {ManageState} from "../types/ManageTypes";
+import type {ManageConfigFull, ManageState} from "../types/ManageTypes";
 import {createAction, handleActions} from "redux-actions";
 import FetchStatus from "../api/FetchStatus";
 import type {Action} from "../types/Types";
 import {normalize, normalizeObject} from "../helper/Helper";
 import {GlobalActionKey} from "./GlobalActions";
 import {jwtNetworkRequestSaga} from "../api/NetworkRequestSaga";
-import {getManageConfig, getManageConfigList} from "../api/Endpoints";
+import {getManageConfig, getManageConfigList, postManageConfig, putManageConfig} from "../api/Endpoints";
 import {buildDeepObject} from "../components/helper/HelperFunctions";
+import {LayoutAreaTypes} from "../constants/LayoutAreaTypes";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                                    A C T I O N S
@@ -25,6 +26,18 @@ export const ManageConfigActionKey = {
     ERROR: "MANAGE_CONFIG/ERROR"
 };
 
+export const CreateConfigActionKey = {
+    START: "CREATE_CONFIG/START",
+    RECEIVED: "CREATE_CONFIG/RECEIVED",
+    ERROR: "CREATE_CONFIG/ERROR"
+};
+
+export const SaveConfigActionKey = {
+    START: "SAVE_CONFIG/START",
+    RECEIVED: "SAVE_CONFIG/RECEIVED",
+    ERROR: "SAVE_CONFIG/ERROR"
+};
+
 export const EditProjectActionKey = {
     UPDATE_CONFIG_VALUE: "EDIT_PROJECT/UPDATE_CONFIG_VALUE"
 };
@@ -39,6 +52,20 @@ export const ManageConfigActions = {
     start: createAction(ManageConfigActionKey.START, (configID: string) => configID),
     received: createAction(ManageConfigActionKey.RECEIVED, (configs: Array) => configs),
     error: createAction(ManageConfigActionKey.ERROR)
+};
+
+export const CreateConfigActions = {
+    start: createAction(CreateConfigActionKey.START),
+    received: createAction(CreateConfigActionKey.RECEIVED, (config: ManageConfigFull) => config),
+    error: createAction(CreateConfigActionKey.ERROR)
+};
+
+export const SaveConfigActions = {
+    start: createAction(SaveConfigActionKey.START, (configID: string) => {
+            return {configID}
+    }),
+    received: createAction(SaveConfigActionKey.RECEIVED, (config: ManageConfigFull) => config),
+    error: createAction(SaveConfigActionKey.ERROR)
 };
 
 export const EditProjectActions = {
@@ -93,48 +120,77 @@ export const OnWebHookFailureBehavior = {
                                    S T A T E
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+const newConfig = {
+    userRoles: {
+        annotators: [],
+        curators: [],
+        managers: []
+    },
+    name: "",
+    description: "",
+    active: false,
+    priority: 0,
+    filter: null,
+    inputMapping: {
+        documentText: {
+            key: ""
+        },
+        metaData: []
+    },
+    sort: {
+        sorts: [{
+            key: 'storeTimestamp',
+            order: 'DESC'
+        }]
+    },
+    annotations: {
+        annotationMap: {
+
+        }
+    },
+    layout: {
+        exampleDocument: {
+            documentID: "EXAMPLE_DOCUMENT",
+            spanAnnotations: {},
+            documentAnnotations: {},
+            documentData: {
+                "DOCUMENT_TEXT": ""
+            }
+        },
+        layoutAreas: {
+            [LayoutAreaTypes.COMMON]: {
+                id: LayoutAreaTypes.COMMON,
+                rows: [
+
+                ]
+            },
+            [LayoutAreaTypes.DOCUMENT_TARGET]: {
+                id: LayoutAreaTypes.DOCUMENT_TARGET,
+                rows: [
+
+                ]
+            }
+        }
+    },
+    policy: {
+        numberOfAnnotatorsPerDocument: 1,
+        allowManualEscalationToCurator: false,
+        finalizeAnnotationPolicy: "MAJORITY_VOTE_PER_ANNOTATION_OR_CURATOR"
+    },
+    export: {
+        webHooks: [
+
+        ],
+        rest: null,
+        onOverwrittenFinalizedAnnotationBehavior: OnOverwrittenFinalizedAnnotationBehavior.DO_NOTHING
+    }
+};
+
 const initialState: ManageState = {
     configs: {},
     listFetchStatus: null,
     configFetchStatus: null,
-    newConfig: {
-        userRoles: {
-            annotators: [],
-            curators: [],
-            managers: []
-        },
-        filter: null,
-        inputMapping: {
-            documentText: {
-                key: ""
-            },
-            metaData: []
-        },
-        sort: {
-            sorts: [{
-                key: 'storeTimestamp',
-                order: 'DESC'
-            }]
-        },
-        annotations: {
-            annotationMap: {
-
-            }
-        },
-        layout: {
-
-        },
-        policy: {
-
-        },
-        export: {
-            webHooks: [
-
-            ],
-            rest: null,
-            onOverwrittenFinalizedAnnotationBehavior: OnOverwrittenFinalizedAnnotationBehavior.DO_NOTHING
-        }
-    }
+    newConfig: newConfig
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -199,7 +255,7 @@ export const manageReducer = handleActions({
         };
     },
     [EditProjectActionKey.UPDATE_CONFIG_VALUE]: (state: ManageState, action: Action): Function => {
-        const a =  {
+        return {
             ...state,
             ...(action.payload.configID ? {
                 configs: {
@@ -213,8 +269,91 @@ export const manageReducer = handleActions({
                 newConfig: buildDeepObject(action.payload.keys, state.newConfig, action.payload.value, 0)
             })
         };
-        console.log("New config state", a);
-        return a;
+    },
+    [CreateConfigActionKey.START]: (state: ManageState): Function => {
+        return {
+            ...state,
+            ...{
+                newConfig: {
+                    ...state.newConfig,
+                    ...{
+                        fetchStatus: FetchStatus.ACTIVE
+                    }
+                }
+            }
+        };
+    },
+    [CreateConfigActionKey.RECEIVED]: (state: ManageState, action: Action): Function => {
+        return {
+            ...state,
+            ...{
+                configs: {
+                    ...state.configs,
+                    [action.payload.config.id]: {
+                        ...state.configs[action.payload.config]
+                    }
+                },
+                newConfig: newConfig
+            }
+        };
+    },
+    [CreateConfigActionKey.ERROR]: (state: ManageState, action: Action): Function => {
+        return action.payload.configID ? {
+            ...state,
+            ...{
+                newConfig: {
+                    ...state.newConfig,
+                    ...{
+                        fetchStatus: FetchStatus.ERROR
+                    }
+                }
+            }
+        } : state;
+    },
+    [SaveConfigActionKey.START]: (state: ManageState, action: Action): Function => {
+        return {
+            ...state,
+            ...{
+                configs: {
+                    ...state.configs,
+                    [action.payload.configID]: {
+                        ...state.configs[action.payload.configID],
+                        ...{
+                            fetchStatus: FetchStatus.ACTIVE
+                        }
+                    }
+                }
+            }
+        };
+    },
+    [SaveConfigActionKey.RECEIVED]: (state: ManageState, action: Action): Function => {
+        return {
+            ...state,
+            ...{
+                configs: {
+                    ...state.configs,
+                    [action.payload.config.id]: {
+                        ...state.configs[action.payload.config]
+                    }
+                },
+            }
+        };
+    },
+    [SaveConfigActionKey.ERROR]: (state: ManageState, action: Action): Function => {
+        return action.payload.configID ? {
+            ...state,
+            ...{
+                configs: {
+                    ...state.configs,
+                    [action.payload.configID]: {
+                        ...state.configs[action.payload.configID],
+                        ...{
+                            fetchStatus: FetchStatus.ERROR
+                        }
+                    }
+                }
+            }
+        } : state;
     },
     [GlobalActionKey.LOGOUT]: (): Function => {
         return {
@@ -233,4 +372,12 @@ export const onLoadManageConfigList: Function = function*() {
 
 export const onLoadManageConfig: Function = function*() {
     yield jwtNetworkRequestSaga(ManageConfigActionKey.START, getManageConfig, ManageConfigActions.received, ManageConfigActions.error);
+};
+
+export const onCreateConfig: Function = function*() {
+    yield jwtNetworkRequestSaga(CreateConfigActionKey.START, postManageConfig, CreateConfigActionKey.received, CreateConfigActionKey.error);
+};
+
+export const onSaveConfig: Function = function*() {
+    yield jwtNetworkRequestSaga(SaveConfigActionKey.START, putManageConfig, SaveConfigActionKey.received, SaveConfigActionKey.error);
 };

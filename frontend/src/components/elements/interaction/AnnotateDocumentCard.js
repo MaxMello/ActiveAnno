@@ -83,7 +83,7 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
     }
 
     getValidationErrorsForComponent(element: Object): Array<ValidationError> {
-       if(this.props.document.validationErrors[element.referenceAnnotation]){
+       if(this.props.document.validationErrors && this.props.document.validationErrors[element.referenceAnnotation]){
            return this.props.document.validationErrors[element.referenceAnnotation].filter(e => e.target === this.props.currentTarget);
        } else {
            return [];

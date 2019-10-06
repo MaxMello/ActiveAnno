@@ -21,7 +21,7 @@ import {refreshAnnotationPageSaga} from "./redux/annotation";
 import {curationConfigReducer, onLoadCurationConfig, onLoadCurationConfigList} from "./redux/curationConfig";
 import {curationDataReducer, onLoadCurationData, sendFinishedCurations} from "./redux/curationData";
 import {refreshCurationPageSaga} from "./redux/curation";
-import {manageReducer, onLoadManageConfig, onLoadManageConfigList} from "./redux/manage";
+import {manageReducer, onCreateConfig, onLoadManageConfig, onLoadManageConfigList, onSaveConfig} from "./redux/manage";
 import {WEB_DATABASE} from "./constants/Constants";
 
 /************************************************************************************************
@@ -138,7 +138,7 @@ const rootSaga = function*(): Generator<AllEffect, GenericAllEffect<any>, any> {
     yield all([onGetJWT(), onStartLoad(), periodicRefreshPageSetup(),
         onLoadAnnotationConfigList(), onLoadAnnotationConfig(), onLoadAnnotationData(), refreshAnnotationPageSaga(), sendFinishedAnnotations(),
         onLoadCurationConfigList(), onLoadCurationConfig(), onLoadCurationData(), refreshCurationPageSaga(), sendFinishedCurations(),
-        onLoadManageConfigList(), onLoadManageConfig()])
+        onLoadManageConfigList(), onLoadManageConfig(), onCreateConfig(), onSaveConfig()])
 };
 sagaMiddleware.run(rootSaga);
 

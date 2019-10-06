@@ -5,7 +5,7 @@ import {withLocalization} from "react-localize";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
-import {Button, OutlinedInput, Typography} from "@material-ui/core";
+import {OutlinedInput, Typography} from "@material-ui/core";
 import {connect} from "react-redux";
 import {AnnotationConfigActions} from "../../redux/annotationConfig";
 import Refresh from "@material-ui/icons/Refresh";
@@ -252,7 +252,6 @@ class AnnotatePage extends Component<AnnotationProps> {
                 />;
             } else if (nonFinishedDocuments.length > 0) {
                 const toBeActiveDocument = nonFinishedDocuments[0];
-                console.log("No active document, set following document active", toBeActiveDocument);
                 this.props.setDocumentActive(this.props.annotationConfig.activeConfigID,
                     toBeActiveDocument.documentID,
                     AnnotatePage.getInitialTarget(activeConfig.annotations.annotationMap));
@@ -261,18 +260,18 @@ class AnnotatePage extends Component<AnnotationProps> {
                     <Grid item xs={12} className={this.props.classes.noDocumentsTextRow}>
                         <Typography>No more documents for this project are available.</Typography>
                     </Grid>
-                    <Grid item xs={12} className={this.props.classes.noDocumentsButtonRow}>
+                    {
+                        /*<Grid item xs={12} className={this.props.classes.noDocumentsButtonRow}>
                         <Button className={this.props.classes.noDocumentsButton}>
                             Retry
                         </Button>
                         <Button color={"primary"} variant={"outlined"} className={this.props.classes.noDocumentsButton}>
                             Next project
                         </Button>
-                    </Grid>
+                    </Grid>*/
+                    }
                 </Grid>;
             }
-        } else {
-            console.log("Don't have active config");
         }
         return <div className={this.props.classes.root}>
             <div className={this.props.classes.firstRow}>
