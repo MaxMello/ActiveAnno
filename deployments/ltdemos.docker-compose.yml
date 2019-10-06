@@ -25,10 +25,10 @@ services:
   activeannoservice:
     image: maxmello/activeannoservice:1.0
     ports:
-      - 80:8080
+      - 3001:8080
     container_name: activeannoservice
     environment:
-      PORT: 80
+      PORT: 8080
       HTTPS_REDIRECT: "false"
       MONGO_CONNECTION_STRING: mongodb://user:password@activeannomongo:27017
       MONGO_DATABASE_NAME: activeanno
@@ -44,6 +44,6 @@ services:
       JWT_USER_NAME: name
       JWT_VALIDATION_ACCEPT_ALL_TOKENS: "true"
       JWT_VALIDATION_URL:
-      CORS_HOSTS_LIST: 'localhost,localhost:3000,0.0.0.0,0.0.0.0:3000,ltdemos.informatik.uni-hamburg.de'
+      CORS_HOSTS_LIST: 'ltdemos.informatik.uni-hamburg.de'
       LOGGING_LEVEL: DEBUG
       GENERATE_EXAMPLE_PROJECT: "true"
