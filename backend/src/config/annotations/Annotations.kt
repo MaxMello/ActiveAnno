@@ -155,7 +155,7 @@ class PredefinedTagSetAnnotation(
     shortName: String?,
     targets: Set<Target>,
     val minNumberOfTags: Int = 1,
-    val maxNumberOfTags: Int = 1,
+    val maxNumberOfTags: Int? = null,
     val options: List<TagSetOption>
 ) : BaseAnnotation(id, name, shortName, targets) {
 
@@ -174,7 +174,7 @@ class PredefinedTagSetAnnotation(
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + minNumberOfTags
-        result = 31 * result + maxNumberOfTags
+        result = 31 * result + (maxNumberOfTags ?: 0)
         result = 31 * result + options.hashCode()
         return result
     }
@@ -237,7 +237,7 @@ class OpenTagAnnotation(
     shortName: String?,
     targets: Set<Target>,
     val minNumberOfTags: Int = 1,
-    val maxNumberOfTags: Int = 1,
+    val maxNumberOfTags: Int? = null,
     val trimWhitespace: Boolean = true,
     val caseBehavior: CaseBehavior = CaseBehavior.KEEP_ORIGINAL,
     val useExistingValuesAsPredefinedTags: Boolean = false,
@@ -283,7 +283,7 @@ class OpenTagAnnotation(
     override fun hashCode(): Int {
         var result = super.hashCode()
         result = 31 * result + minNumberOfTags
-        result = 31 * result + maxNumberOfTags
+        result = 31 * result + (maxNumberOfTags ?: 0)
         result = 31 * result + trimWhitespace.hashCode()
         result = 31 * result + caseBehavior.hashCode()
         result = 31 * result + useExistingValuesAsPredefinedTags.hashCode()
