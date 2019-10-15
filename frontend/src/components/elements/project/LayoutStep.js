@@ -60,7 +60,7 @@ class LayoutStep extends Component<LayoutStepProps> {
         const docEditor = <Editor
             value={this.props.config.layout.exampleDocument ? this.props.config.layout.exampleDocument.documentData : exampleDocument.documentData}
             onChange={(v) => {
-                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "exampleDocument", "documentData"], v);
+                // this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "exampleDocument", "documentData"], v);
             }}
         />;
 
