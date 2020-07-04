@@ -3,3 +3,6 @@
 # &lt;init&gt;
 
 `UserDAO(database: CoroutineDatabase)`
+
+DAO for accessing the user collection
+

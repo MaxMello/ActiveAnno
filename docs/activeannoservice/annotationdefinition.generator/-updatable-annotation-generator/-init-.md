@@ -1,0 +1,8 @@
+[activeannoservice](../../index.md) / [annotationdefinition.generator](../index.md) / [UpdatableAnnotationGenerator](index.md) / [&lt;init&gt;](./-init-.md)
+
+# &lt;init&gt;
+
+`UpdatableAnnotationGenerator(id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, annotationDefinitionID: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, targetType: `[`TargetType`](../../annotationdefinition.target/-target-type/index.md)`, name: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, description: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, input: `[`AnnotationStepKey`](../../project.annotationschema/-annotation-step-key/index.md)`, finalizeCondition: `[`FinalizeCondition`](../-finalize-condition/index.md)`, startThreshold: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)`, updateThreshold: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)`, dataFilter: `[`FilterCondition`](../../project.filter/-filter-condition/index.md)`, versions: `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`UpdatableAnnotationGeneratorVersion`](../-updatable-annotation-generator-version/index.md)`> = mutableListOf(), createdTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)` = System.currentTimeMillis())`
+
+Base class for [AnnotationGenerator](../-annotation-generator/index.md)s which are updatable, for example ML models, as compared to static models like a statistics based generator
+

@@ -1,16 +1,10 @@
-import type {userIdentifier} from "./Types";
-
-export type UserCredentials = {
+// @flow
+export type UserCredentials = {|
     username: string,
     password: string
-}
+|}
 
-export type JWT = {
+export type JWT = {|
     token: string
-}
+|}
 
-export type AuthenticationState = {
-    jwt: JWT,
-    fetchStatus: number,
-    username: userIdentifier
-}

@@ -1,5 +1,6 @@
 package application
 
+import common.tryReadAsFileOrReturnValue
 import io.ktor.application.ApplicationEnvironment
 import io.ktor.util.KtorExperimentalAPI
 
@@ -12,8 +13,7 @@ class ApplicationConfig() {
     lateinit var cors: Cors
     lateinit var mongo: MongoConfig
     lateinit var ktorHttpsConfig: KtorHttpsConfig
-    lateinit var loggingConfig: LoggingConfig
-    var generateExampleProject: Boolean = false
+    lateinit var featuresConfig: FeaturesConfig
 
     @KtorExperimentalAPI
     constructor(environment: ApplicationEnvironment) : this() {
@@ -34,21 +34,28 @@ class ApplicationConfig() {
             )
         )
         cors = Cors(environment.config.property("cors.hosts").getString().split(","))
-        mongo = MongoConfig(environment.config.property("mongo.connectionString").getString(),
-            environment.config.property("mongo.databaseName").getString())
+        @Suppress("LongLine")
+        mongo = MongoConfig(
+            "mongodb://${environment.config.property("mongo.user").getString().tryReadAsFileOrReturnValue()}:${environment.config.property("mongo.password").getString().tryReadAsFileOrReturnValue()}@${environment.config.property(
+                "mongo.connection"
+            ).getString()}/?retryWrites=false", // Fix for standalone server wrong error message
+            environment.config.property("mongo.databaseName").getString()
+        )
         ktorHttpsConfig = KtorHttpsConfig(environment.config.property("ktor.https.redirect").getString().toBoolean())
-        loggingConfig = LoggingConfig(environment.config.property("logging.level").getString())
-        generateExampleProject = environment.config.property("ktor.generateExampleProject").getString().toBoolean()
+        featuresConfig = FeaturesConfig(
+            generateExampleProject = environment.config.property("features.generateExampleProject").getString().toBoolean()
+        )
     }
 
-    constructor(jwtConfiguration: JwtConfiguration, cors: Cors, mongoConfig: MongoConfig,
-                ktorHttpsConfig: KtorHttpsConfig, loggingConfig: LoggingConfig, generateExampleProject: Boolean): this() {
+    constructor(
+        jwtConfiguration: JwtConfiguration, cors: Cors, mongoConfig: MongoConfig,
+        ktorHttpsConfig: KtorHttpsConfig, featuresConfig: FeaturesConfig
+    ) : this() {
         this.jwt = jwtConfiguration
         this.cors = cors
         this.mongo = mongoConfig
         this.ktorHttpsConfig = ktorHttpsConfig
-        this.loggingConfig = loggingConfig
-        this.generateExampleProject = generateExampleProject
+        this.featuresConfig = featuresConfig
     }
 }
 
@@ -64,7 +71,7 @@ data class JwtConfiguration(
     val roleProducer: String = "activeanno_producer",
     val roleConsumer: String = "activeanno_consumer",
     val roleGlobalSearch: String = "activeanno_global_search",
-    val userIdentifierKey: String = "email",
+    val userIdentifierKey: String = "sub",
     val userNameKey: String = "name",
     val validation: JwtValidation
 )
@@ -99,9 +106,6 @@ data class KtorHttpsConfig(
     val redirect: Boolean = false
 )
 
-/**
- * Data class representing the logging config
- */
-data class LoggingConfig(
-    val level: String = "DEBUG"
+data class FeaturesConfig(
+    val generateExampleProject: Boolean = false
 )

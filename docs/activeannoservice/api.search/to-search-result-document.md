@@ -2,7 +2,7 @@
 
 # toSearchResultDocument
 
-`fun `[`Document`](../document/-document/index.md)`.toSearchResultDocument(config: `[`ProjectConfig`](../config/-project-config/index.md)`): `[`SearchResultDocument`](-search-result-document/index.md)
+`fun `[`Document`](../document/-document/index.md)`.toSearchResultDocument(project: `[`Project`](../project/-project/index.md)`): `[`SearchResultDocument`](-search-result-document/index.md)
 
 Convert a [Document](../document/-document/index.md) to a [SearchResultDocument](-search-result-document/index.md)
 

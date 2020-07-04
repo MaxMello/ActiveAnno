@@ -2,19 +2,23 @@ package api.pagesetup
 
 import application.ApplicationConfig
 import common.*
-import config.ProjectConfigDAO
-import config.userroles.UserIdentifier
 import document.DocumentDAO
 import io.ktor.application.call
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
-import user.message.MessageDAO
+import org.slf4j.LoggerFactory
+import project.ProjectDAO
+import project.userroles.UserIdentifier
 import user.UserDAO
 import user.UserInfo
+import user.message.MessageDAO
 import user.toUserInfoModel
 
+/*
+ * Constants for the individual frontend pages
+ */
 const val PAGE_ADMIN = "admin"
 const val PAGE_MANAGE = "manage"
 const val PAGE_CURATE = "curate"
@@ -22,6 +26,7 @@ const val PAGE_ANNOTATE = "annotate"
 const val PAGE_SEARCH = "search"
 const val PAGE_MESSAGES = "messages"
 
+private val logger = LoggerFactory.getLogger("PageSetupRouting")
 /**
  * A [Page] represents a UI page of the frontend, optionally with a [badgeCount] to indicate how many interactions
  * are waiting for the user
@@ -45,11 +50,13 @@ data class PageSetup(
  * - for messages, the number of unread messages
  */
 @KtorExperimentalAPI
-fun Route.pageSetup(applicationConfig: ApplicationConfig, userDAO: UserDAO, projectConfigDAO: ProjectConfigDAO,
-                    documentDAO: DocumentDAO, messageDAO: MessageDAO
+fun Route.pageSetup(
+    applicationConfig: ApplicationConfig, userDAO: UserDAO, projectDAO: ProjectDAO,
+    documentDAO: DocumentDAO, messageDAO: MessageDAO
 ) {
     route("/pageSetup") {
-        getAuthenticatedByJwt(listOf(
+        getAuthenticatedByJwt(
+            listOf(
                 applicationConfig.jwt.roleAdmin,
                 applicationConfig.jwt.roleManager,
                 applicationConfig.jwt.roleUser
@@ -57,10 +64,10 @@ fun Route.pageSetup(applicationConfig: ApplicationConfig, userDAO: UserDAO, proj
         ) {
             val roles = jwt.roles
             val user = userDAO.createOrUpdate(jwt.userIdentifier, jwt.userName)
-            val configs = projectConfigDAO.getConfigsForUser(user.userIdentifier)
+            val projects = projectDAO.getProjectsForUser(user.userIdentifier)
             call.respond(PageSetup(pages = (if (roles.contains(applicationConfig.jwt.roleUser)) {
                 when {
-                    configs.any { it.userRoles.curators.contains(user.userIdentifier) } && configs.any {
+                    projects.any { it.userRoles.curators.contains(user.userIdentifier) } && projects.any {
                         it.userRoles.annotators.contains(
                             user.userIdentifier
                         )
@@ -68,8 +75,8 @@ fun Route.pageSetup(applicationConfig: ApplicationConfig, userDAO: UserDAO, proj
                         PAGE_ANNOTATE,
                         PAGE_CURATE
                     )
-                    configs.any { it.userRoles.curators.contains(user.userIdentifier) } -> listOf(PAGE_CURATE)
-                    configs.any { it.userRoles.annotators.contains(user.userIdentifier) } -> listOf(PAGE_ANNOTATE)
+                    projects.any { it.userRoles.curators.contains(user.userIdentifier) } -> listOf(PAGE_CURATE)
+                    projects.any { it.userRoles.annotators.contains(user.userIdentifier) } -> listOf(PAGE_ANNOTATE)
                     else -> listOf()
                 }
             } else {
@@ -77,7 +84,6 @@ fun Route.pageSetup(applicationConfig: ApplicationConfig, userDAO: UserDAO, proj
             } + roles.map { role ->
                 when (role) {
                     applicationConfig.jwt.roleManager -> PAGE_MANAGE
-                    // applicationConfig.jwt.roleAdmin -> PAGE_ADMIN    // TODO Enable if implemented
                     else -> ""
                 }
             }).filter { it.isNotEmpty() }
@@ -86,21 +92,22 @@ fun Route.pageSetup(applicationConfig: ApplicationConfig, userDAO: UserDAO, proj
                         PAGE_ANNOTATE -> {
                             Page(
                                 documentDAO.countForAnnotation(
-                                    configs.filter { c -> c.userRoles.annotators.contains(user.userIdentifier) },
-                                    user.userIdentifier
+                                    projects.filter { c -> c.userRoles.annotators.contains(user.userIdentifier) },
+                                    user.userIdentifier, true
                                 )
                             )
                         }
                         PAGE_CURATE -> {
-                            Page(documentDAO.countForCuration(configs.filter { c ->
+                            Page(
+                                documentDAO.countForCuration(projects.filter { c ->
                                 c.userRoles.curators.contains(
                                     user.userIdentifier
-                                )
-                            }, user.userIdentifier))
+                                )}, user.userIdentifier)
+                            )
                         }
                         else -> Page()
                     })
-                }.toMap() + mapOf(/*PAGE_SEARCH to Page(), PAGE_MESSAGES to Page(badgeCount = messageDAO.countUnreadForRecipient(user.userIdentifier))// TODO Enable if implemented */),
+                }.toMap(),
                 userInfo = userDAO.getAll().map { it.userIdentifier to it.toUserInfoModel() }.toMap()
             )
             )

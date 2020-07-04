@@ -10,11 +10,11 @@ Model representing a search request
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `SearchRequest(configurationIDs: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>, filterCondition: `[`FilterCondition`](../../config.filter/-filter-condition/index.md)`?)`<br>Model representing a search request |
+| [&lt;init&gt;](-init-.md) | Model representing a search request`SearchRequest(projectIDs: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>, filterCondition: `[`FilterCondition`](../../project.filter/-filter-condition/index.md)`?)` |
 
 ### Properties
 
 | Name | Summary |
 |---|---|
-| [configurationIDs](configuration-i-ds.md) | `val configurationIDs: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>` |
-| [filterCondition](filter-condition.md) | `val filterCondition: `[`FilterCondition`](../../config.filter/-filter-condition/index.md)`?` |
+| [filterCondition](filter-condition.md) | `val filterCondition: `[`FilterCondition`](../../project.filter/-filter-condition/index.md)`?` |
+| [projectIDs](project-i-ds.md) | `val projectIDs: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>` |

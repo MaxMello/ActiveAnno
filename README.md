@@ -275,8 +275,24 @@ The backend code is structured in the following packages
 ## Frontend
 The frontend is written in Javascript/ES6, React and Redux.
 
+### Project structure
+
+* src/
+    * `index.js` Entrypoint into the react application
+    * `types/` Most Flow types are defined here ([Flow documentation](https://flow.org/))
+    * `language/dictionary.js` Localization (currenty 2 languages, english and german are supported)
+    * `helper/` Helper functions
+    * `constants/` Constants, objects that represent types, enums etc.
+    * `api/` Network communcation with the backend
+    * `redux/` Redux application state management: Reducer, actions / actionCreator
+    * `components/` All the React UI elements
+        * `App.js` React App root component
+        * `theme/Theme.js` Material theme + additional JSS declarations for the whole app
+        * `pages/` Main sub areas of the application like login page, landing page, annotate page etc.
+        * `elements/` Smaller UI elements like LoginForm, Header etc.
+
 ## Roadmap
-ActiveAnno is under active development.
+ActiveAnno is under active development in open source.
 
 ### New pages / views
 * Search page: Find documents (annotated and not annotated) for some project + additional parameters (full text search, time range, etc.)
@@ -288,27 +304,14 @@ ActiveAnno is under active development.
 ### Big features
 * Span-level annotations: Additionally to document-level annotations, enable annotations for specifics parts of a document text. Also allow for hybrid annotations which can be defined either on document- or span-level.
 * Hierarchical tag input: Right now, predefined tag inputs (like Sentiment scale, categories etc.) only allow one layer of depth. Hierarchical tag input would allow to specify a tag in a hierarchy like (Country > State > City)
-* Machine Learning integration
-  * Include predictions for labels as annotation results on the same level as if they were users (allowing for majority decision between algorithms and humans or multiple algorithms, curation of algorithms)
-  * Show predictions for labels inside the UI
-  * Pre-select buttons based on predictions inside the UI
 
 ### Smaller features
-* User error protection: Configurable minimum required time to spent per annotation etc.
 * Usability
-  * Configurable UI preferences (font size for document texts)
   * Keyboard shortcuts (possibly configurable)
-  * Swipe touch interactions (for limited cases, like spam / no spam)
-  * Alert before logout / leaving the site if not all results are saved on server
-* Easy setup of project pipelines. For example: Same kinds of documents, first get annotated for spam / no spam, and only in the no spam case, another project configuration will trigger and ask for additional labels like sentiment etc.
-* Language based on browser + switch language button
 * Better curation view with disagreement highlighting
-* Performance optimization for queries, especially if the DB grows large (add indices)
-
 
 ## Browser compatibility 
-WebAnno was mainly developed with Firefox (v69), but it was also tested in an up-to-date version of Chrome and Safari.
-
+WebAnno was mainly developed with Firefox (v76), but it was also tested in an up-to-date version of Chrome and Safari.
 
 ## Contributing
 

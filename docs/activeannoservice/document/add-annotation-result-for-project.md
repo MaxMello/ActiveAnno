@@ -1,0 +1,5 @@
+[activeannoservice](../index.md) / [document](index.md) / [addAnnotationResultForProject](./add-annotation-result-for-project.md)
+
+# addAnnotationResultForProject
+
+`suspend fun `[`Document`](-document/index.md)`.addAnnotationResultForProject(project: `[`Project`](../project/-project/index.md)`, annotationResult: `[`AnnotationResult`](../document.annotation/-annotation-result/index.md)`, checkWebHooks: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)`, applyPolicy: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)`, overwriteFinalizedAnnotations: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = false, curationRequest: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`? = null, annotationSchema: `[`DenormalizedAnnotationSchema`](../project.annotationschema/-denormalized-annotation-schema/index.md)`? = null): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)

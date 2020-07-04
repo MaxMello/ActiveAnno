@@ -4,4 +4,4 @@
 
 | Name | Summary |
 |---|---|
-| [getOrCreateCollection](get-or-create-collection.md) | `suspend fun <T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> CoroutineDatabase.getOrCreateCollection(collectionName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): CoroutineCollection<`[`T`](get-or-create-collection.md#T)`>` |
+| [getOrCreateCollection](get-or-create-collection.md) | Create a mongo collection if not exist and return it`suspend fun <T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> CoroutineDatabase.getOrCreateCollection(collectionName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): CoroutineCollection<T>` |

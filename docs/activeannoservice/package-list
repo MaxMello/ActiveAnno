@@ -1,53 +1,87 @@
 $dokka.format:gfm
 $dokka.linkExtension:md
+$dokka.location:annotationdefinition.generator.documenttarget$toTrainingData(kotlin.collections.Map((document.Document, kotlin.collections.List((kotlin.collections.MutableMap((kotlin.String, document.annotation.Annotation((annotationdefinition.target.Target)))))))), annotationdefinition.TagSetAnnotationDefinition, project.annotationschema.AnnotationStepKey)annotationdefinition.generator.documenttarget/kotlin.collections.-map/to-training-data.md
 $dokka.location:api.admin$admin(io.ktor.routing.Route, application.ApplicationConfig, document.DocumentDAO)api.admin/io.ktor.routing.-route/admin.md
-$dokka.location:api.annotate$annotate(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO)api.annotate/io.ktor.routing.-route/annotate.md
-$dokka.location:api.curate$curate(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO)api.curate/io.ktor.routing.-route/curate.md
-$dokka.location:api.export$export(io.ktor.routing.Route, application.ApplicationConfig, config.ProjectConfigDAO, document.DocumentDAO)api.export/io.ktor.routing.-route/export.md
+$dokka.location:api.annotate$annotate(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, project.ProjectDAO, document.DocumentDAO)api.annotate/io.ktor.routing.-route/annotate.md
+$dokka.location:api.annotate$curate(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, project.ProjectDAO, document.DocumentDAO)api.annotate/io.ktor.routing.-route/curate.md
+$dokka.location:api.annotate.dto$removeProbabilities(kotlin.collections.MutableMap((kotlin.String, document.annotation.Annotation((annotationdefinition.target.Target)))))api.annotate.dto/kotlin.collections.-mutable-map/remove-probabilities.md
+$dokka.location:api.export$export(io.ktor.routing.Route, application.ApplicationConfig, project.ProjectDAO, document.DocumentDAO)api.export/io.ktor.routing.-route/export.md
+$dokka.location:api.generators$generators(io.ktor.routing.Route, application.ApplicationConfig, project.ProjectDAO, document.DocumentDAO)api.generators/io.ktor.routing.-route/generators.md
 $dokka.location:api.import$import(io.ktor.routing.Route, application.ApplicationConfig, document.DocumentDAO)api.import/io.ktor.routing.-route/import.md
-$dokka.location:api.manage$manage(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO)api.manage/io.ktor.routing.-route/manage.md
-$dokka.location:api.pagesetup$pageSetup(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO, user.message.MessageDAO)api.pagesetup/io.ktor.routing.-route/page-setup.md
-$dokka.location:api.search$search(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, config.ProjectConfigDAO, document.DocumentDAO)api.search/io.ktor.routing.-route/search.md
+$dokka.location:api.manage$analyzeProjectResults(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, project.ProjectDAO, document.DocumentDAO)api.manage/io.ktor.routing.-route/analyze-project-results.md
+$dokka.location:api.manage$filterByRequestDocumentLevel(kotlin.collections.List((api.manage.AnalyzedDocument)), api.manage.AnalyzeProjectRequest)api.manage/kotlin.collections.-list/filter-by-request-document-level.md
+$dokka.location:api.manage$manage(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, project.ProjectDAO, document.DocumentDAO, annotationdefinition.AnnotationDefinitionDAO, annotationdefinition.generator.AnnotationGeneratorDAO)api.manage/io.ktor.routing.-route/manage.md
+$dokka.location:api.manage$manageAnnotationDefinition(io.ktor.routing.Route, application.ApplicationConfig, annotationdefinition.AnnotationDefinitionDAO)api.manage/io.ktor.routing.-route/manage-annotation-definition.md
+$dokka.location:api.manage$manageAnnotationGenerator(io.ktor.routing.Route, application.ApplicationConfig, annotationdefinition.generator.AnnotationGeneratorDAO)api.manage/io.ktor.routing.-route/manage-annotation-generator.md
+$dokka.location:api.manage$manageProject(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, project.ProjectDAO, document.DocumentDAO, annotationdefinition.AnnotationDefinitionDAO, annotationdefinition.generator.AnnotationGeneratorDAO)api.manage/io.ktor.routing.-route/manage-project.md
+$dokka.location:api.manage$projectDocumentExport(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, project.ProjectDAO, document.DocumentDAO)api.manage/io.ktor.routing.-route/project-document-export.md
+$dokka.location:api.manage$restrictedProjectDocuments(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, document.DocumentDAO, project.ProjectDAO)api.manage/io.ktor.routing.-route/restricted-project-documents.md
+$dokka.location:api.pagesetup$pageSetup(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, project.ProjectDAO, document.DocumentDAO, user.message.MessageDAO)api.pagesetup/io.ktor.routing.-route/page-setup.md
+$dokka.location:api.search$search(io.ktor.routing.Route, application.ApplicationConfig, user.UserDAO, project.ProjectDAO, document.DocumentDAO)api.search/io.ktor.routing.-route/search.md
 $dokka.location:application$module(io.ktor.application.Application)application/io.ktor.application.-application/module.md
 $dokka.location:application$setupApplication(io.ktor.application.Application)application/io.ktor.application.-application/setup-application.md
+$dokka.location:common$acceptedLocalesOrDefault(io.ktor.application.ApplicationCall)common/io.ktor.application.-application-call/accepted-locales-or-default.md
+$dokka.location:common$allAndNotEmpty(kotlin.collections.Iterable((common.allAndNotEmpty.T)), kotlin.Function1((common.allAndNotEmpty.T, kotlin.Boolean)))common/kotlin.collections.-iterable/all-and-not-empty.md
+$dokka.location:common$applyHttpAuthentication(io.ktor.client.request.HttpRequestBuilder, common.HttpAuthentication)common/io.ktor.client.request.-http-request-builder/apply-http-authentication.md
+$dokka.location:common$asAny(com.fasterxml.jackson.databind.JsonNode)common/com.fasterxml.jackson.databind.-json-node/as-any.md
+$dokka.location:common$computeIfAbsentAndGet(kotlin.collections.MutableMap((common.computeIfAbsentAndGet.K, common.computeIfAbsentAndGet.V)), common.computeIfAbsentAndGet.K, kotlin.Function0((common.computeIfAbsentAndGet.V)))common/kotlin.collections.-mutable-map/compute-if-absent-and-get.md
 $dokka.location:common$deleteAuthenticatedByJwt(io.ktor.routing.Route, kotlin.String, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/delete-authenticated-by-jwt.md
 $dokka.location:common$deleteAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/delete-authenticated-by-jwt.md
 $dokka.location:common$getAuthenticatedByJwt(io.ktor.routing.Route, kotlin.String, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/get-authenticated-by-jwt.md
 $dokka.location:common$getAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/get-authenticated-by-jwt.md
+$dokka.location:common$getMessageObject(io.ktor.application.ApplicationCall, kotlin.String, java.util.Locale)common/io.ktor.application.-application-call/get-message-object.md
+$dokka.location:common$getMessageString(io.ktor.application.ApplicationCall, kotlin.String, java.util.Locale)common/io.ktor.application.-application-call/get-message-string.md
+$dokka.location:common$getMessageStringArray(io.ktor.application.ApplicationCall, kotlin.String, java.util.Locale)common/io.ktor.application.-application-call/get-message-string-array.md
 $dokka.location:common$getNestedKey(com.fasterxml.jackson.databind.node.ObjectNode, kotlin.String, kotlin.String)common/com.fasterxml.jackson.databind.node.-object-node/get-nested-key.md
 $dokka.location:common$getOrCreateCollection(org.litote.kmongo.coroutine.CoroutineDatabase, kotlin.String)common/org.litote.kmongo.coroutine.-coroutine-database/get-or-create-collection.md
 $dokka.location:common$handleAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/handle-authenticated-by-jwt.md
+$dokka.location:common$isRemainderZero(kotlin.Double, kotlin.Double)common/kotlin.-double/is-remainder-zero.md
 $dokka.location:common$jwt#io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall))common/io.ktor.util.pipeline.-pipeline-context/jwt.md
 $dokka.location:common$mapInPlace(kotlin.collections.MutableList((common.mapInPlace.T)), kotlin.Function1((common.mapInPlace.T, )))common/kotlin.collections.-mutable-list/map-in-place.md
+$dokka.location:common$maxByOrNullIfNull(kotlin.collections.Iterable((common.maxByOrNullIfNull.T)), kotlin.Function1((common.maxByOrNullIfNull.T, common.maxByOrNullIfNull.R)))common/kotlin.collections.-iterable/max-by-or-null-if-null.md
 $dokka.location:common$postAuthenticatedByJwt(io.ktor.routing.Route, kotlin.String, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/post-authenticated-by-jwt.md
 $dokka.location:common$postAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/post-authenticated-by-jwt.md
+$dokka.location:common$preferredSupportedLocaleOrDefault(io.ktor.application.ApplicationCall)common/io.ktor.application.-application-call/preferred-supported-locale-or-default.md
 $dokka.location:common$protectedByRole(io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction0((kotlin.Unit)))common/io.ktor.util.pipeline.-pipeline-context/protected-by-role.md
 $dokka.location:common$putAuthenticatedByJwt(io.ktor.routing.Route, kotlin.String, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/put-authenticated-by-jwt.md
 $dokka.location:common$putAuthenticatedByJwt(io.ktor.routing.Route, kotlin.collections.List((kotlin.String)), kotlin.Boolean, kotlin.coroutines.SuspendFunction2((io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), , )))common/io.ktor.routing.-route/put-authenticated-by-jwt.md
+$dokka.location:common$putIfAbsentAndGet(kotlin.collections.MutableMap((common.putIfAbsentAndGet.K, common.putIfAbsentAndGet.V)), common.putIfAbsentAndGet.K, common.putIfAbsentAndGet.V)common/kotlin.collections.-mutable-map/put-if-absent-and-get.md
 $dokka.location:common$roles#com.auth0.jwt.interfaces.DecodedJWTcommon/com.auth0.jwt.interfaces.-decoded-j-w-t/roles.md
+$dokka.location:common$toDoubleOrNull(kotlin.Any)common/kotlin.-any/to-double-or-null.md
+$dokka.location:common$tryReadAsFileOrReturnValue(kotlin.String)common/kotlin.-string/try-read-as-file-or-return-value.md
 $dokka.location:common$userIdentifier#com.auth0.jwt.interfaces.DecodedJWTcommon/com.auth0.jwt.interfaces.-decoded-j-w-t/user-identifier.md
 $dokka.location:common$userName#com.auth0.jwt.interfaces.DecodedJWTcommon/com.auth0.jwt.interfaces.-decoded-j-w-t/user-name.md
 $dokka.location:common$validateRole(io.ktor.util.pipeline.PipelineContext((kotlin.Unit, io.ktor.application.ApplicationCall)), kotlin.collections.List((kotlin.String)), kotlin.Boolean)common/io.ktor.util.pipeline.-pipeline-context/validate-role.md
+annotationdefinition
+annotationdefinition.generator
+annotationdefinition.generator.documenttarget
+annotationdefinition.target
 api.admin
 api.annotate
-api.curate
+api.annotate.dto
 api.export
+api.generators
 api.import
 api.manage
+api.manage.dto
 api.pagesetup
 api.search
 application
 common
-config
-config.annotations
-config.export
-config.filter
-config.inputmapping
-config.layout
-config.policy
-config.sort
-config.userroles
 document
 document.annotation
+project
+project.annotationschema
+project.annotationschema.generator
+project.export
+project.filter
+project.inputmapping
+project.layout
+project.layout.elements.action
+project.layout.elements.display
+project.policy
+project.selection
+project.sort
+project.userroles
 user
 user.message

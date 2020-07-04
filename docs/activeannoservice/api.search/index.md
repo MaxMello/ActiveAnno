@@ -6,8 +6,8 @@
 
 | Name | Summary |
 |---|---|
-| [SearchRequest](-search-request/index.md) | `data class SearchRequest`<br>Model representing a search request |
-| [SearchResultDocument](-search-result-document/index.md) | `data class SearchResultDocument`<br>The [SearchResultDocument](-search-result-document/index.md) is a view on a document with all useful data for display in the search result area in the frontend. |
+| [SearchRequest](-search-request/index.md) | Model representing a search request`data class SearchRequest` |
+| [SearchResultDocument](-search-result-document/index.md) | The [SearchResultDocument](-search-result-document/index.md) is a view on a document with all useful data for display in the search result area in the frontend.`data class SearchResultDocument` |
 
 ### Extensions for External Classes
 
@@ -19,4 +19,4 @@
 
 | Name | Summary |
 |---|---|
-| [toSearchResultDocument](to-search-result-document.md) | `fun `[`Document`](../document/-document/index.md)`.toSearchResultDocument(config: `[`ProjectConfig`](../config/-project-config/index.md)`): `[`SearchResultDocument`](-search-result-document/index.md)<br>Convert a [Document](../document/-document/index.md) to a [SearchResultDocument](-search-result-document/index.md) |
+| [toSearchResultDocument](to-search-result-document.md) | Convert a [Document](../document/-document/index.md) to a [SearchResultDocument](-search-result-document/index.md)`fun `[`Document`](../document/-document/index.md)`.toSearchResultDocument(project: `[`Project`](../project/-project/index.md)`): `[`SearchResultDocument`](-search-result-document/index.md) |

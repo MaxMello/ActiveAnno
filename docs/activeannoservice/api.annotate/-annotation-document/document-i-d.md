@@ -2,4 +2,4 @@
 
 # documentID
 
-`val documentID: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)
+`val documentID: `[`DocumentID`](../../document/-document-i-d.md)

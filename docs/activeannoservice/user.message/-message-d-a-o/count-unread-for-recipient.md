@@ -2,4 +2,4 @@
 
 # countUnreadForRecipient
 
-`suspend fun countUnreadForRecipient(userIdentifier: `[`UserIdentifier`](../../config.userroles/-user-identifier.md)`): `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)
+`suspend fun countUnreadForRecipient(userIdentifier: `[`UserIdentifier`](../../project.userroles/-user-identifier.md)`): `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)

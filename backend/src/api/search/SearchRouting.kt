@@ -3,12 +3,9 @@ package api.search
 import application.ApplicationConfig
 import com.fasterxml.jackson.databind.node.ObjectNode
 import common.*
-import config.filter.FilterCondition
-import config.ProjectConfig
-import config.ProjectConfigDAO
-import document.ConfigAnnotationData
 import document.Document
 import document.DocumentDAO
+import document.ProjectAnnotationData
 import document.applyInputMapping
 import io.ktor.application.call
 import io.ktor.request.receive
@@ -17,6 +14,9 @@ import io.ktor.routing.Route
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import org.slf4j.LoggerFactory
+import project.Project
+import project.ProjectDAO
+import project.filter.FilterCondition
 import user.UserDAO
 
 private val logger = LoggerFactory.getLogger("SearchRouting")
@@ -27,29 +27,30 @@ private val logger = LoggerFactory.getLogger("SearchRouting")
  */
 data class SearchResultDocument(
     val documentID: String,
-    val configurationID: String,
+    val projectID: String,
     val storeTimestamp: Long,
     val originalDocument: ObjectNode,
     val documentData: Map<String, Any>,
-    val restrictedConfig: String? = null,
-    val configAnnotationData: ConfigAnnotationData? = null
+    val restrictedProjectID: String? = null,
+    val projectAnnotationData: ProjectAnnotationData? = null
 )
 
 /**
  * Model representing a search request
  */
 data class SearchRequest(
-    val configurationIDs: List<String>,
+    val projectIDs: List<String>,
     val filterCondition: FilterCondition?
 )
 
 /**
  * The search endpoint is available for all user roles, based on the role with limited scope of search. Searches
- * are restricted to a list of configs with additional filter conditions that can be defined in the frontend.
+ * are restricted to a list of projects with additional filter conditions that can be defined in the frontend.
  */
 @KtorExperimentalAPI
-fun Route.search(applicationConfig: ApplicationConfig, userDAO: UserDAO, projectConfigDAO: ProjectConfigDAO,
-                 documentDAO: DocumentDAO
+fun Route.search(
+    applicationConfig: ApplicationConfig, userDAO: UserDAO, projectDAO: ProjectDAO,
+    documentDAO: DocumentDAO
 ) {
     route("/search") {
         postAuthenticatedByJwt(
@@ -63,21 +64,21 @@ fun Route.search(applicationConfig: ApplicationConfig, userDAO: UserDAO, project
             val user = userDAO.createOrUpdate(jwt.userIdentifier, jwt.userName)
             val roles = jwt.roles
             val searchRequest = call.receive<SearchRequest>()
-            val configs = projectConfigDAO.getConfigsByIds(searchRequest.configurationIDs)
-            val userConfigs = projectConfigDAO.getConfigsForUser(user.userIdentifier)
-            val allowedConfigs = if (applicationConfig.jwt.roleGlobalSearch in roles
+            val projects = projectDAO.getProjectsByIds(searchRequest.projectIDs)
+            val userProjects = projectDAO.getProjectsForUser(user.userIdentifier)
+            val allowedProjects = if (applicationConfig.jwt.roleGlobalSearch in roles
                 || applicationConfig.jwt.roleAdmin in roles
             ) {
-                configs
+                projects
             } else {
-                configs.intersect(userConfigs)
+                projects.intersect(userProjects)
             }
-            call.respond(allowedConfigs.flatMap { c ->
+            call.respond(allowedProjects.flatMap { c ->
                 documentDAO.findForSearch(c, searchRequest.filterCondition).map { d ->
                     d.toSearchResultDocument(c)
                 }
-               }.sortedByDescending { it.storeTimestamp }
-                .sortedBy { it.configurationID })
+            }.sortedByDescending { it.storeTimestamp }
+                .sortedBy { it.projectID })
         }
     }
 }
@@ -85,9 +86,9 @@ fun Route.search(applicationConfig: ApplicationConfig, userDAO: UserDAO, project
 /**
  * Convert a [Document] to a [SearchResultDocument]
  */
-fun Document.toSearchResultDocument(config: ProjectConfig): SearchResultDocument {
+fun Document.toSearchResultDocument(project: Project): SearchResultDocument {
     return SearchResultDocument(
-        _id!!, config._id, storeTimestamp, originalDocument,
-        applyInputMapping(config.inputMapping), restrictedConfig, configAnnotationData[config._id]
+        id, project.id, storeTimestamp, originalDocument,
+        applyInputMapping(project.inputMapping), restrictedProjectID, projectAnnotationData[project.id]
     )
 }

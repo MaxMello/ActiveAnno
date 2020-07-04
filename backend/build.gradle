@@ -1,6 +1,9 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     
     dependencies {
@@ -21,7 +24,7 @@ mainClassName = "io.ktor.server.netty.EngineMain"
 
 dokka {
     outputFormat = 'gfm'
-    outputDirectory = "$buildDir/../../docs" // Will place Dokka docs directly in folder for github pages
+    outputDirectory = "$projectDir/../docs" // Will place Dokka docs directly in folder for github pages
 }
 
 shadowJar {
@@ -48,10 +51,17 @@ test {
     useJUnitPlatform()
 }
 
+// Workaround for mockk not working from IntelliJ because of an old ByteBuddy version
+configurations.all {
+    resolutionStrategy {
+        force "net.bytebuddy:byte-buddy:1.10.9"
+        force "net.bytebuddy:byte-buddy-agent:1.10.9"
+    }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "io.ktor:ktor-server-netty:$ktor_version"
-    compile "ch.qos.logback:logback-classic:$logback_version"
     compile "io.ktor:ktor-server-core:$ktor_version"
     compile "io.ktor:ktor-html-builder:$ktor_version"
     compile "org.jetbrains:kotlin-css-jvm:1.0.0-pre.31-kotlin-1.2.41"
@@ -61,6 +71,14 @@ dependencies {
     compile "io.ktor:ktor-auth-jwt:$ktor_version"
     compile "io.ktor:ktor-jackson:$ktor_version"
 
+    // logging
+    compile "ch.qos.logback:logback-classic:$logback_version"
+    compile "ch.qos.logback:logback-core:$logback_version"
+    compile "ch.qos.logback.contrib:logback-json-classic:0.1.5"
+    compile "ch.qos.logback.contrib:logback-jackson:0.1.5"
+    compile "net.logstash.logback:logstash-logback-encoder:4.9"
+    compile group: 'org.codehaus.janino', name: 'janino', version: '3.0.6'
+
     // MongoDB ORM
     compile 'org.litote.kmongo:kmongo:3.11.0'
     compile 'org.litote.kmongo:kmongo-coroutine:3.11.0'
@@ -69,17 +87,19 @@ dependencies {
     compile "io.ktor:ktor-client-cio:$ktor_version"
     compile "io.ktor:ktor-client-json:$ktor_version"
     compile "io.ktor:ktor-client-jackson:$ktor_version"
-    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0"
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.13.0"
+    
+    // Language detection
+    compile 'com.github.pemistahl:lingua:1.0.0'
 
     /*
       TEST DEPENDENCIES
      */
-    //testCompile 'net.bytebuddy:byte-buddy:1.10.1'
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
     testCompile "org.junit.jupiter:junit-jupiter-engine:5.2.0"
     testCompile "org.junit.jupiter:junit-jupiter-api:5.2.0"
     testCompile("org.assertj:assertj-core:3.11.1")
     testCompile "io.mockk:mockk:1.9.3"
-    testCompile "org.testcontainers:testcontainers:1.11.3"  // for IntegrationTest MongoDB
+    testCompile "org.testcontainers:testcontainers:1.12.5" // for IntegrationTest MongoDB
 
 }

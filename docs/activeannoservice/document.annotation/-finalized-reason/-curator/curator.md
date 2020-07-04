@@ -2,4 +2,4 @@
 
 # curator
 
-`val curator: `[`UserIdentifier`](../../../config.userroles/-user-identifier.md)
+`val curator: `[`UserIdentifier`](../../../project.userroles/-user-identifier.md)

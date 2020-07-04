@@ -10,7 +10,7 @@ Data class holding information about where and how often the annotations were ex
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `ExportStatistics(webHookStatistics: `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`WebHookExport`](../-web-hook-export/index.md)`> = mutableListOf(), restStatistics: `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`RestCall`](../-rest-call/index.md)`> = mutableListOf())`<br>Data class holding information about where and how often the annotations were exported. |
+| [&lt;init&gt;](-init-.md) | Data class holding information about where and how often the annotations were exported.`ExportStatistics(webHookStatistics: `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`WebHookExport`](../-web-hook-export/index.md)`> = mutableListOf(), restStatistics: `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`RestCall`](../-rest-call/index.md)`> = mutableListOf())` |
 
 ### Properties
 

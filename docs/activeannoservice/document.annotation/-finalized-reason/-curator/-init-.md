@@ -2,7 +2,7 @@
 
 # &lt;init&gt;
 
-`Curator(curator: `[`UserIdentifier`](../../../config.userroles/-user-identifier.md)`)`
+`Curator(curator: `[`UserIdentifier`](../../../project.userroles/-user-identifier.md)`)`
 
 FinalizedReason that a curator annotated the document.
 

@@ -1,3 +1,4 @@
+// @flow
 import {makeStyles, Typography} from "@material-ui/core";
 import React from "react";
 
@@ -7,7 +8,8 @@ type TextIllustrationProps = {
 
 const useStyles = makeStyles(theme => ({
     defaultTypography: {
-        fontWeight: 'inherit'
+        fontWeight: 'inherit',
+        fontFamily: 'inherit'
     }
 }));
 

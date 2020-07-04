@@ -2,7 +2,7 @@
 
 # &lt;init&gt;
 
-`UserInfo(userIdentifier: `[`UserIdentifier`](../../config.userroles/-user-identifier.md)`, userName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`? = null)`
+`UserInfo(userIdentifier: `[`UserIdentifier`](../../project.userroles/-user-identifier.md)`, userName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`? = null)`
 
 View on the [User](../-user/index.md) only containing the unique [userIdentifier](user-identifier.md) and the [userName](user-name.md)
 

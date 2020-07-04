@@ -6,13 +6,13 @@
 
 | Name | Summary |
 |---|---|
-| [ApplicationConfig](-application-config/index.md) | `class ApplicationConfig`<br>To have easy access to the configuration properties of the application, this class exists |
-| [Cors](-cors/index.md) | `data class Cors`<br>Data class representing the CORS config |
-| [JwtConfiguration](-jwt-configuration/index.md) | `data class JwtConfiguration`<br>Data class representing the JTW configuration |
-| [JwtValidation](-jwt-validation/index.md) | `data class JwtValidation`<br>Data class representing the JWT validation configuration |
-| [KtorHttpsConfig](-ktor-https-config/index.md) | `data class KtorHttpsConfig`<br>Data class representing the HTTPS config for ktor |
-| [LoggingConfig](-logging-config/index.md) | `data class LoggingConfig`<br>Data class representing the logging config |
-| [MongoConfig](-mongo-config/index.md) | `data class MongoConfig`<br>Data class representing the MongoDB config |
+| [ApplicationConfig](-application-config/index.md) | To have easy access to the configuration properties of the application, this class exists`class ApplicationConfig` |
+| [Cors](-cors/index.md) | Data class representing the CORS config`data class Cors` |
+| [FeaturesConfig](-features-config/index.md) | `data class FeaturesConfig` |
+| [JwtConfiguration](-jwt-configuration/index.md) | Data class representing the JTW configuration`data class JwtConfiguration` |
+| [JwtValidation](-jwt-validation/index.md) | Data class representing the JWT validation configuration`data class JwtValidation` |
+| [KtorHttpsConfig](-ktor-https-config/index.md) | Data class representing the HTTPS config for ktor`data class KtorHttpsConfig` |
+| [MongoConfig](-mongo-config/index.md) | Data class representing the MongoDB config`data class MongoConfig` |
 
 ### Extensions for External Classes
 
@@ -24,17 +24,19 @@
 
 | Name | Summary |
 |---|---|
-| [applicationConfig](application-config.md) | `lateinit var applicationConfig: `[`ApplicationConfig`](-application-config/index.md)<br>Top level variable with access to Application config values |
+| [annotationDefinitionDAO](annotation-definition-d-a-o.md) | `lateinit var annotationDefinitionDAO: `[`AnnotationDefinitionDAO`](../annotationdefinition/-annotation-definition-d-a-o/index.md) |
+| [annotationGeneratorDAO](annotation-generator-d-a-o.md) | `lateinit var annotationGeneratorDAO: `[`AnnotationGeneratorDAO`](../annotationdefinition.generator/-annotation-generator-d-a-o/index.md) |
+| [applicationConfig](application-config.md) | Top level variable with access to Application config values`lateinit var applicationConfig: `[`ApplicationConfig`](-application-config/index.md) |
 | [documentDAO](document-d-a-o.md) | `lateinit var documentDAO: `[`DocumentDAO`](../document/-document-d-a-o/index.md) |
-| [httpClient](http-client.md) | `lateinit var httpClient: HttpClient`<br>Instance of HttpClient to make requests to other services / web hooks |
-| [jsonMapper](json-mapper.md) | `lateinit var jsonMapper: ObjectMapper`<br>Global instance of correctly configured json mapper |
+| [httpClient](http-client.md) | Instance of HttpClient to make requests to other services / web hooks`lateinit var httpClient: HttpClient` |
+| [jsonMapper](json-mapper.md) | Global instance of correctly configured json mapper`lateinit var jsonMapper: ObjectMapper` |
 | [messageDAO](message-d-a-o.md) | `lateinit var messageDAO: `[`MessageDAO`](../user.message/-message-d-a-o/index.md) |
-| [projectConfigDAO](project-config-d-a-o.md) | `lateinit var projectConfigDAO: `[`ProjectConfigDAO`](../config/-project-config-d-a-o/index.md) |
+| [projectDAO](project-d-a-o.md) | `lateinit var projectDAO: `[`ProjectDAO`](../project/-project-d-a-o/index.md) |
 | [userDAO](user-d-a-o.md) | `lateinit var userDAO: `[`UserDAO`](../user/-user-d-a-o/index.md) |
 
 ### Functions
 
 | Name | Summary |
 |---|---|
-| [generateExampleProject](generate-example-project.md) | `fun generateExampleProject(): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html) |
-| [main](main.md) | `fun main(args: `[`Array`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)<br>Entry point into application |
+| [generateExampleProject](generate-example-project.md) | Generate an example project to show off the capabilities of ActiveAnno`fun generateExampleProject(applicationConfig: `[`ApplicationConfig`](-application-config/index.md)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html) |
+| [main](main.md) | Entry point into application`fun main(args: `[`Array`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html) |

@@ -1,17 +1,16 @@
 // @flow
-import {handleActions} from 'redux-actions';
+import {createAction, handleActions} from 'redux-actions';
 import type {Action} from '../types/Types';
-import {createAction} from 'redux-actions';
-import {load} from "../api/Endpoints";
-import FetchStatus from "../api/FetchStatus";
+import {load} from "../api/PageSetupRoutes";
+import FetchStatus from "../api/helper/FetchStatus";
 import {GlobalActionKey} from "./GlobalActions";
-import {jwtNetworkRequestSaga} from "../api/NetworkRequestSaga";
-import {
-    StoreAnnotationDataKey
-} from "./annotationData";
-import {StoreCurationDataKey} from "./curationData";
+import {jwtNetworkRequestSaga} from "../api/helper/NetworkRequestSaga";
+import {StoreAnnotationDataKey} from "./annotate/annotationData";
+import {StoreCurationDataKey} from "./annotate/curationData";
 import {delay, put, select} from "@redux-saga/core/effects";
-import type {PageSetupState} from "../types/PageSetupTypes";
+import type {PageSetupState} from "../types/redux/PageSetupState";
+import type {PageSetup} from "../types/pagesetup/PageSetupTypes";
+import type {AnnotationResultStoreResponse} from "../types/annotate/AnnotateTypes";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                                    A C T I O N S
@@ -64,7 +63,10 @@ export const pageSetupReducer = handleActions({
             }
         };
     },
-    [RequestPageSetupActionKey.RECEIVED]: (state: PageSetupState, action: Action): Function => {
+    [RequestPageSetupActionKey.RECEIVED]: (state: PageSetupState, action: {|
+        ...Action,
+        payload: PageSetup
+    |}): Function => {
         return {
             ...state,
             ...{
@@ -77,27 +79,32 @@ export const pageSetupReducer = handleActions({
         return {
             ...state,
             ...{
-                pageSetup: null,
                 fetchStatus: FetchStatus.ERROR
             }
         };
     },
-    [StoreAnnotationDataKey.RECEIVED]: (state: PageSetupState): Function => {
-        return {
-            ...state,
-            ...{
-                pageSetup: {
-                    ...state.pageSetup,
-                    pages: {
-                        ...state.pageSetup.pages,
-                        annotate: {
-                            ...state.pageSetup.pages.annotate,
-                            badgeCount: Math.max(0, state.pageSetup.pages.annotate.badgeCount - 1)
+    [StoreAnnotationDataKey.RECEIVED]: (state: PageSetupState,  action: {|
+        ...Action,
+        payload: AnnotationResultStoreResponse
+    |}): Function => {
+        if(action.payload.success) {
+            return {
+                ...state,
+                ...{
+                    pageSetup: {
+                        ...state.pageSetup,
+                        pages: {
+                            ...state.pageSetup?.pages,
+                            annotate: {
+                                ...state.pageSetup?.pages?.annotate,
+                                badgeCount: Math.max(0, (state.pageSetup?.pages?.annotate?.badgeCount ?? 0) - 1)
+                            }
                         }
-                    }
-                },
-                fetchStatus: FetchStatus.ERROR
+                    },
+                }
             }
+        } else {
+            return state;
         }
     },
     [StoreCurationDataKey.RECEIVED]: (state: PageSetupState): Function => {
@@ -107,14 +114,13 @@ export const pageSetupReducer = handleActions({
                 pageSetup: {
                     ...state.pageSetup,
                     pages: {
-                        ...state.pageSetup.pages,
+                        ...state.pageSetup?.pages,
                         curate: {
-                            ...state.pageSetup.pages.curate,
-                            badgeCount: Math.max(0, state.pageSetup.pages.curate.badgeCount - 1)
+                            ...state.pageSetup?.pages?.curate,
+                            badgeCount: Math.max(0, (state.pageSetup?.pages?.curate?.badgeCount ?? 0) - 1)
                         }
                     }
                 },
-                fetchStatus: FetchStatus.ERROR
             }
         }
     },
@@ -130,14 +136,15 @@ export const pageSetupReducer = handleActions({
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 export const onStartLoad: Function = function*() {
-    yield jwtNetworkRequestSaga(RequestPageSetupActionKey.START_LOAD, load, RequestPageSetupActions.received, RequestPageSetupActions.error);
+    yield jwtNetworkRequestSaga(RequestPageSetupActionKey.START_LOAD, load, RequestPageSetupActions.received,
+        RequestPageSetupActions.error);
 };
 const getAuthentication = (state) => state.authentication;
 const getPageSetup = (state) => state.pageSetup;
 
 export const periodicRefreshPageSetup: Function = function* () {
     while (true) {
-        yield delay(30000);
+        yield delay(60000);
         const authentication = yield select(getAuthentication);
         const pageSetup = yield select(getPageSetup);
         if(authentication.jwt !== null && (!pageSetup.pageSetup || pageSetup.fetchStatus !== FetchStatus.ACTIVE)) {

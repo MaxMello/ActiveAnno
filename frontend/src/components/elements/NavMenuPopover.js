@@ -1,3 +1,4 @@
+// @flow
 import {makeStyles} from "@material-ui/core";
 import React from "react";
 import PopupState, {bindMenu, bindPopover, bindTrigger} from "material-ui-popup-state";
@@ -28,16 +29,21 @@ const useStyles = makeStyles(theme => ({
     link: theme.link
 }));
 
+/**
+ * Mobile popover for menu actions
+ */
 export default function NavMenuPopover(props: NavMenuPopoverProps) {
     const classes = useStyles();
     return <PopupState variant="popover" popupId={`NavMenuPopover`}>
         {popupState => (
-            [<Box display={'inline'} {...bindTrigger(popupState)} key={"navMenuPopoverTarget"}>
+            [ /* $FlowIgnore because of spread operator */
+                <Box display={'inline'} {...bindTrigger(popupState)} key={"navMenuPopoverTarget"}>
                 <IconButton
                     className={classes.ellipsisButton}>
                     <MoreVert/>
                 </IconButton>
             </Box>,
+                /* $FlowIgnore because of spread operator */
                 <Popover
                     key={"navMenuPopoverPopover"}
                     {...bindPopover(popupState)}
@@ -53,20 +59,20 @@ export default function NavMenuPopover(props: NavMenuPopoverProps) {
                         <Menu {...bindMenu(popupState)}>
                             {Pages.ANNOTATE in props.pages ? <Link to={"/annotate"} className={classes.link}>
                                 <MenuItem onClick={popupState.close}>{props.localize('annotate.name')}</MenuItem>
-                            </Link> : null},
+                            </Link> : null}
                             {Pages.CURATE in props.pages ? <Link to={"/curate"} className={classes.link}>
                                 <MenuItem onClick={popupState.close}>{props.localize('curate.name')}</MenuItem>
-                            </Link> : null},
+                            </Link> : null}
                             {Pages.MANAGE in props.pages ? <Link to={"/manage"} className={classes.link}>
                                 <MenuItem onClick={popupState.close}>{props.localize('manage.name')}</MenuItem>
-                            </Link> : null},
+                            </Link> : null}
                             {Pages.ADMIN in props.pages ? <Link to={"/admin"} className={classes.link}>
                                 <MenuItem onClick={popupState.close}>{props.localize('admin.name')}</MenuItem>
-                            </Link> : null},
+                            </Link> : null}
                             {Pages.SEARCH in props.pages ? <Link to={"/search"} className={classes.link}>
                                 <MenuItem onClick={popupState.close}>{props.localize('search.name')}</MenuItem>
-                            </Link> : null},
-                            <Link to={"/login"} className={classes.link}>
+                            </Link> : null}
+                            <Link to={"/user"} className={classes.link}>
                                 <MenuItem onClick={popupState.close}>{props.localize('login.name')}</MenuItem>
                             </Link>
                         </Menu>

@@ -2,4 +2,7 @@
 
 # generateExampleProject
 
-`fun generateExampleProject(): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
+`fun generateExampleProject(applicationConfig: `[`ApplicationConfig`](-application-config/index.md)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
+
+Generate an example project to show off the capabilities of ActiveAnno
+

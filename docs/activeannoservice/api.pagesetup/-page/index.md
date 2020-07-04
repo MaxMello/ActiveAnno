@@ -11,7 +11,7 @@ are waiting for the user
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `Page(badgeCount: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`? = null)`<br>A [Page](./index.md) represents a UI page of the frontend, optionally with a [badgeCount](badge-count.md) to indicate how many interactions are waiting for the user |
+| [&lt;init&gt;](-init-.md) | A [Page](./index.md) represents a UI page of the frontend, optionally with a [badgeCount](badge-count.md) to indicate how many interactions are waiting for the user`Page(badgeCount: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`? = null)` |
 
 ### Properties
 

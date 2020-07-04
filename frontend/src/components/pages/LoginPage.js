@@ -1,7 +1,5 @@
 // @flow
-import React, {Component} from 'react';
-import type {AppState} from '../../types/Types';
-import {withStyles} from '@material-ui/core/styles';
+import React from 'react';
 import {withLocalization} from "react-localize";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
@@ -11,15 +9,22 @@ import LogoutForm from "../elements/LogoutForm";
 import LoginForm from "../elements/LoginForm";
 import {withRouter} from "react-router-dom";
 import {GlobalActions} from "../../redux/GlobalActions";
-import {userCredentials} from "../../types/TypeCreators";
+import type {UserCredentials} from "../../types/AuthenticationTypes";
+import type {AppState} from "../../types/redux/AppState";
+import type {
+    WithLocalizationComponentProps,
+    WithRouterComponentProps,
+    WithStylesComponentProps
+} from "../../types/Types";
+import {makeStyles} from "@material-ui/core";
 
-type ContentProps = {
+type LoginPageProps = WithStylesComponentProps & WithRouterComponentProps & WithLocalizationComponentProps & {
     viewState: number,
-    history: Object,
-    match: Object,
     pages: Object,
     username: string,
-    fetchStatus: number
+    fetchStatus: number,
+    handleLogin: Function,
+    handleLogout: Function
 };
 
 const ViewState = {
@@ -27,7 +32,7 @@ const ViewState = {
     SHOW_LOGOUT: 2
 };
 
-const style: Function = (theme: Object): Object => ({
+const useStyles = makeStyles(theme => ({
     root: theme.pageRoot,
     '@global': {
         body: {
@@ -40,35 +45,33 @@ const style: Function = (theme: Object): Object => ({
         flexDirection: 'column',
         alignItems: 'center',
     }
-});
+}));
 
-class LoginPage extends Component<ContentProps> {
+function LoginPage(props: LoginPageProps) {
+    const classes = useStyles();
 
-    componentWillReceiveProps(nextProps: ContentProps) {
-        if(nextProps.viewState === ViewState.SHOW_LOGOUT && nextProps.match.params.origin && nextProps.match.params.origin in nextProps.pages) {
-            nextProps.history.push("/" + nextProps.match.params.origin)
-        }
+    const handleRedirect = () => {
+        props.history.push("/");
+    };
+
+    let content;
+    if(props.viewState === ViewState.SHOW_LOGIN) {
+        content = <LoginForm username={props.username}
+                             onClick={props.handleLogin}
+                             handleRedirect={handleRedirect}
+                             fetchStatus={props.fetchStatus}
+        />;
+    } else if(props.viewState === ViewState.SHOW_LOGOUT) {
+        content = <LogoutForm username={props.username}
+                              onClick={props.handleLogout}
+        />;
     }
-
-    render() {
-        let content;
-        if(this.props.viewState === ViewState.SHOW_LOGIN) {
-            content = <LoginForm username={this.props.username}
-                                 onClick={this.props.handleLogin}
-                                 fetchStatus={this.props.fetchStatus}
-            />;
-        } else if(this.props.viewState === ViewState.SHOW_LOGOUT) {
-            content = <LogoutForm username={this.props.username}
-                                  onClick={this.props.handleLogout}
-            />;
-        }
-        return <Container component="main" maxWidth="xs" className={this.props.classes.root}>
-            <CssBaseline />
-            <div className={this.props.classes.paper}>
-                {content}
-            </div>
-        </Container>;
-    }
+    return <Container component="main" maxWidth="xs" className={classes.root}>
+        <CssBaseline />
+        <div className={classes.paper}>
+            {content}
+        </div>
+    </Container>;
 }
 
 const mapStateToProps = (state: AppState): Object => ({
@@ -77,6 +80,13 @@ const mapStateToProps = (state: AppState): Object => ({
     username: state.authentication.username,
     pages: state.pageSetup.pageSetup ? state.pageSetup.pageSetup.pages : {}
 });
+
+const userCredentials = (username: string, password: string): UserCredentials => {
+    return {
+        username,
+        password
+    }
+};
 
 const mapDispatchToProps = (dispatch: Function): Object => ({
     handleLogin: (username: string, password: string) => {
@@ -87,4 +97,4 @@ const mapDispatchToProps = (dispatch: Function): Object => ({
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withLocalization(withStyles(style)(LoginPage))));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withLocalization((LoginPage))));

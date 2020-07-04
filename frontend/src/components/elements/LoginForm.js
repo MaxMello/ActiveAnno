@@ -6,14 +6,16 @@ import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import TextField from "@material-ui/core/TextField";
-import FetchStatus from "../../api/FetchStatus";
+import FetchStatus from "../../api/helper/FetchStatus";
 import {withLocalization} from "react-localize";
-import type {WithStylesComponentProps} from "../../types/Types";
+import type {WithLocalizationComponentProps, WithStylesComponentProps} from "../../types/Types";
+import {GENERATE_SUPERUSER_ON_LOGIN} from "../../constants/Constants";
 
-type LoginFormProps = WithStylesComponentProps & {
+type LoginFormProps = WithStylesComponentProps & WithLocalizationComponentProps & {
     username: string,
     onClick: Function,
-    fetchStatus: number
+    fetchStatus: number,
+    handleRedirect: Function
 };
 
 type LoginFormState = {
@@ -28,14 +30,14 @@ const style: Function = (theme: Object): Object => ({
     },
     avatarSuccess: {
         margin: theme.spacing(1),
-        backgroundColor: theme.palette.success.main
+        backgroundColor: theme.palette.greenTone.main
     },
     avatarError: {
         margin: theme.spacing(1),
-        backgroundColor: theme.palette.error.main
+        backgroundColor: theme.palette.redTone.main
     },
     textSuccess: {
-        color: theme.palette.success.main
+        color: theme.palette.greenTone.main
     },
     form: {
         width: '100%', // Fix IE 11 issue.
@@ -64,6 +66,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
 
     handleLogin = () => {
         this.props.onClick(this.state.username, this.state.password);
+        this.props.handleRedirect();
     };
 
     handleUsernameChange = (e) => {
@@ -80,8 +83,16 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
         })
     };
 
+    onEnterPress = (e) => {
+        if(e.keyCode === 13 && e.shiftKey === false) {
+            e.preventDefault();
+            this.handleLogin();
+        }
+    };
+
     loginView = (isLoading: boolean) => {
-        return <form className={this.props.classes.form} noValidate key={"loginForm.form"}>
+        return <form className={this.props.classes.form} noValidate key={"loginForm.form"}
+                     onKeyDown={this.onEnterPress}>
             <TextField
                 variant="outlined"
                 margin="normal"
@@ -95,19 +106,21 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                 value={this.state.username}
                 onChange={this.handleUsernameChange}
             />
-            <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                ref="password"
-                id="password"
-                name="password"
-                label={this.props.localize('login.password')}
-                type="password"
-                value={this.state.password}
-                onChange={this.handlePasswordChange}
-            />
+            {!GENERATE_SUPERUSER_ON_LOGIN ?
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    ref="password"
+                    id="password"
+                    name="password"
+                    label={this.props.localize('login.password')}
+                    type="password"
+                    value={this.state.password}
+                    onChange={this.handlePasswordChange}
+                /> : null
+            }
             <Button
                 onClick={this.handleLogin}
                 fullWidth
@@ -133,7 +146,8 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
         let headline;
         let avatarClass;
         if (this.props.fetchStatus === FetchStatus.SUCCESS) {
-            headline = <Typography component="h1" variant="h5" className={this.props.classes.textSuccess} key={"loginForm.headline"}>
+            headline = <Typography component="h1" variant="h5" className={this.props.classes.textSuccess}
+                                   key={"loginForm.headline"}>
                 {this.props.localize('login.success')}
             </Typography>;
             avatarClass = this.props.classes.avatarSuccess;

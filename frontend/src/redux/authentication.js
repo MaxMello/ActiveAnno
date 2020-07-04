@@ -1,11 +1,13 @@
 // @flow
 import {createAction, handleActions} from 'redux-actions';
-import type {Action, ApplicationState} from '../types/Types';
-import FetchStatus from "../api/FetchStatus";
-import {getJWT} from "../api/Endpoints";
-import { takeLatest, put } from 'redux-saga/effects';
+import type {Action} from '../types/Types';
+import FetchStatus from "../api/helper/FetchStatus";
+import {put, takeLatest} from 'redux-saga/effects';
 import {GlobalActionKey} from "./GlobalActions";
-import type {AuthenticationState, JWT, UserCredentials} from "../types/AuthenticationTypes";
+import type {JWT, UserCredentials} from "../types/AuthenticationTypes";
+import type {AuthenticationState} from "../types/redux/AuthenticationState";
+import type {ApplicationState} from "../types/redux/ApplicationState";
+import {getJWT} from "../api/AuthenticationRoutes";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                                    A C T I O N S
@@ -18,7 +20,8 @@ export const RequestJwtActionKey = {
 };
 
 export const AuthenticationActions = {
-    start: createAction(RequestJwtActionKey.START, (userCredentials: UserCredentials): UserCredentials => userCredentials),
+    start: createAction(RequestJwtActionKey.START, (userCredentials: UserCredentials):
+    UserCredentials => userCredentials),
     received: createAction(RequestJwtActionKey.RECEIVED, (jwt: JWT): JWT => jwt),
     error: createAction(RequestJwtActionKey.ERROR)
 };
@@ -38,7 +41,10 @@ const initialState: AuthenticationState = {
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 export const authentication = handleActions({
-    [RequestJwtActionKey.START]: (state: ApplicationState, action: Action): Function => {
+    [RequestJwtActionKey.START]: (state: ApplicationState, action: {|
+        ...Action,
+        payload: UserCredentials
+    |}): Function => {
         return {
             ...state,
             ...{
@@ -47,7 +53,10 @@ export const authentication = handleActions({
             }
         };
     },
-    [RequestJwtActionKey.RECEIVED]: (state: ApplicationState, action: Action): Function => {
+    [RequestJwtActionKey.RECEIVED]: (state: ApplicationState, action: {
+        ...Action,
+        payload: JWT
+    }): Function => {
         return {
             ...state,
             ...{

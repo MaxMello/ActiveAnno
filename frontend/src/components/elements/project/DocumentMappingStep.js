@@ -2,28 +2,25 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {withLocalization} from "react-localize";
-import type {
-    WithLocalizationComponentProps,
-    WithStylesComponentProps
-} from "../../../types/Types";
+import type {WithLocalizationComponentProps, WithStylesComponentProps} from "../../../types/Types";
 import {Grid} from "@material-ui/core";
-import InteractionComponentWrapper from "../interaction/InteractionComponentWrapper";
-import type {InputMapping, ManageConfigFull} from "../../../types/ManageTypes";
+import type {InputMapping, ManageProject} from "../../../types/manage/ManageTypes";
 import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import ChipInput from "material-ui-chip-input";
-import type {Layout, LayoutArea} from "../../../types/LayoutConfigTypes";
 import {LayoutAreaTypes} from "../../../constants/LayoutAreaTypes";
 import {generateExampleDocument} from "./LayoutStep";
+import type {Layout, LayoutArea} from "../../../types/project/layout/Layout";
+import InputWrapper from "../InputWrapper";
 
 
 type DocumentMappingStepProps = WithStylesComponentProps & WithLocalizationComponentProps & {
     id: string,
-    updateConfigValue: Function,
-    isNewConfig: boolean,
+    updateProjectValue: Function,
+    isNewProject: boolean,
     inputMapping: InputMapping,
     layout: Layout,
-    config: ManageConfigFull
+    project: ManageProject
 };
 
 const style: Function = (theme: Object): Object => ({
@@ -40,10 +37,10 @@ function buildLayoutCommonArea(inputMapping: InputMapping): LayoutArea {
                     return {
                         width: {
                             xs: 12,
-                            sm: 6,
+                            sm: 12,
                             md: 6,
-                            lg: 4,
-                            xl: 3
+                            lg: 6,
+                            xl: 6
                         },
                         children: [
                             {
@@ -74,14 +71,15 @@ function buildLayoutCommonArea(inputMapping: InputMapping): LayoutArea {
     };
 }
 
-
 class DocumentMappingStep extends Component<DocumentMappingStepProps> {
 
 
     updateLayoutCommonArea() {
         const area = buildLayoutCommonArea(this.props.inputMapping);
-        this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "layoutAreas", LayoutAreaTypes.COMMON], area);
-        this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["layout", "exampleDocument"], generateExampleDocument(this.props.config, this.props.localize));
+        this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id, ["layout", "layoutAreas",
+            LayoutAreaTypes.COMMON], area);
+        this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id, ["layout", "exampleDocument"],
+            generateExampleDocument(this.props.project, this.props.localize));
     }
     
 
@@ -89,49 +87,57 @@ class DocumentMappingStep extends Component<DocumentMappingStepProps> {
         let currentMetaData = this.props.inputMapping.metaData;
         return <Grid container spacing={4}>
             <Grid item xs={12}>
-                <InteractionComponentWrapper name={this.props.localize('project.inputMapping.documentText.name')}
-                                             caption={ this.props.localize('project.inputMapping.documentText.caption')}>
+                <InputWrapper name={this.props.localize('project.inputMapping.documentText.name')}
+                                             caption={ this.props.localize('project.inputMapping.documentText.caption')}
+                                             disabled={false}
+                                             keyValue={"ICWDocumentMapping1"}>
                     <TextField
                         value={this.props.inputMapping.documentText.key}
                         onChange={(e) => {
-                            this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["inputMapping", "documentText", "key"], e.target.value);
+                            this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                ["inputMapping", "documentText", "key"], e.target.value);
+                            this.updateLayoutCommonArea();
                         }}
                         className={this.props.classes.defaultFormControl}
                         fullWidth
                         margin="normal"
                         variant="outlined"
                     />
-                </InteractionComponentWrapper>
+                </InputWrapper>
             </Grid>
             <Grid item xs={12}>
-                <InteractionComponentWrapper name={this.props.localize('project.inputMapping.metaData.name')}
-                                             caption={ this.props.localize('project.inputMapping.metaData.caption')}>
+                <InputWrapper name={this.props.localize('project.inputMapping.metaData.name')}
+                                             caption={ this.props.localize('project.inputMapping.metaData.caption')}
+                                             disabled={false}
+                                             keyValue={"ICWDocumentMapping2"}
+                >
                     <MuiThemeProvider><ChipInput
                         className={this.props.classes.chipInput}
                         value={currentMetaData.map(m => m.key)}
                         onAdd={(chip) => {
-                            chip = chip.trim();
+                            const chipTrimmed = chip.trim();
                             currentMetaData.push({
-                                key: chip,
-                                id: chip.replace(/\./g, "_")
+                                key: chipTrimmed,
+                                id: chipTrimmed.replace(/\./g, "_")
                             });
-                            this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["inputMapping", "metaData"], currentMetaData);
+                            this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                ["inputMapping", "metaData"], currentMetaData);
                             this.updateLayoutCommonArea();
                         }}
                         onDelete={(chip) => {
                             currentMetaData = currentMetaData.filter(c => c.key !== chip);
-                            this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["inputMapping", "metaData"], currentMetaData);
+                            this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                ["inputMapping", "metaData"], currentMetaData);
                             this.updateLayoutCommonArea();
                         }}
                         allowDuplicates={false}
                         fullWidth={true}
                         newChipKeyCodes={[13, 9]}
                     /></MuiThemeProvider>
-                </InteractionComponentWrapper>
+                </InputWrapper>
             </Grid>
         </Grid>;
     }
-
 }
 
 export default withLocalization(withStyles(style)(DocumentMappingStep));

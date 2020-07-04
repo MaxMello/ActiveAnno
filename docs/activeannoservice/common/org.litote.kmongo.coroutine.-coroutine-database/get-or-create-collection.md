@@ -2,4 +2,7 @@
 
 # getOrCreateCollection
 
-`suspend inline fun <reified T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> CoroutineDatabase.getOrCreateCollection(collectionName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): CoroutineCollection<`[`T`](get-or-create-collection.md#T)`>`
+`suspend fun <reified T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> CoroutineDatabase.getOrCreateCollection(collectionName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): CoroutineCollection<T>`
+
+Create a mongo collection if not exist and return it
+

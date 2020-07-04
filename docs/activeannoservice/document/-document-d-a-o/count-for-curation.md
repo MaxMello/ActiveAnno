@@ -2,7 +2,7 @@
 
 # countForCuration
 
-`suspend fun countForCuration(configs: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`ProjectConfig`](../../config/-project-config/index.md)`>, userIdentifier: `[`UserIdentifier`](../../config.userroles/-user-identifier.md)`): `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)
+`suspend fun countForCuration(projects: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`Project`](../../project/-project/index.md)`>, userIdentifier: `[`UserIdentifier`](../../project.userroles/-user-identifier.md)`): `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)
 
-Count number of curations required given a list of [configs](count-for-curation.md#document.DocumentDAO$countForCuration(kotlin.collections.List((config.ProjectConfig)), kotlin.String)/configs) and a [userIdentifier](count-for-curation.md#document.DocumentDAO$countForCuration(kotlin.collections.List((config.ProjectConfig)), kotlin.String)/userIdentifier).
+Count number of curations required given a list of [projects](count-for-curation.md#document.DocumentDAO$countForCuration(kotlin.collections.List((project.Project)), kotlin.String)/projects) and a [userIdentifier](count-for-curation.md#document.DocumentDAO$countForCuration(kotlin.collections.List((project.Project)), kotlin.String)/userIdentifier).
 

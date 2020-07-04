@@ -2,4 +2,4 @@
 
 # url
 
-`val url: `[`URL`](https://docs.oracle.com/javase/6/docs/api/java/net/URL.html)
+`val url: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)

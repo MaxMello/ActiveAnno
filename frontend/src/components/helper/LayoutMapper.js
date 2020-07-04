@@ -1,5 +1,6 @@
+// @flow
 import {LayoutElement} from "../../constants/LayoutElement";
-import React, {Component} from "react";
+import React from "react";
 import TextIllustration from "../elements/illustration/TextIllustration";
 import ApplyDateFormat from "../elements/illustration/ApplyDateFormat";
 import DocumentTextIllustration from "../elements/illustration/DocumentTextIllustration";
@@ -13,9 +14,12 @@ import Base64Image from "../elements/illustration/Base64Image";
 import Base64ImageMetaData from "../elements/illustration/Base64ImageMetaData";
 import UrlImage from "../elements/illustration/UrlImage";
 import UrlImageMetaData from "../elements/illustration/UrlImageMetaData";
+import MetaDataMappingElement from "../elements/illustration/MetaDataMappingElement";
 
-
-export const createIllustrationComponent = (element: Object, documentData: Object, key: string): Component => {
+/**
+ * From the DisplayElement definitions, built actual display element components
+ */
+export const createIllustrationComponent = (element: any, documentData: any, key: string): any => {
     switch(element.type) {
         case LayoutElement.TEXT: {
             return <TextIllustration element={element} key={key}/>;
@@ -37,6 +41,12 @@ export const createIllustrationComponent = (element: Object, documentData: Objec
         }
         case LayoutElement.TEXT_META_DATA: {
             return <TextMetaData element={element} documentData={documentData} key={key}/>
+        }
+        case LayoutElement.META_DATA_MAPPING: {
+            return <MetaDataMappingElement element={element}
+                                   documentData={documentData} key={key}
+                                   keyValue={key}
+                                   childMapperFunction={createIllustrationComponent}/>
         }
         case LayoutElement.DATE_META_DATA: {
             return <ApplyDateFormat element={element} documentData={documentData} key={key}/>

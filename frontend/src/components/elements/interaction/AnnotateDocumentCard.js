@@ -1,39 +1,48 @@
-import React, { Component } from "react";
+// @flow
+import React, {Component} from "react";
 import {withStyles} from "@material-ui/core";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 import {withLocalization} from "react-localize";
 import classNames from 'classnames';
-import SwipeableViews from 'react-swipeable-views';
 import Grid from '@material-ui/core/Grid';
-import {LayoutElement} from "../../../constants/LayoutElement";
-import {AnnotationType} from "../../../constants/AnnotationType";
-import PredefinedTagSetButtonGroup from "./PredefinedTagSetButtonGroup";
+import {ActionElements, NormalizedActionElements} from "../../../constants/LayoutElement";
+import type {
+    DenormalizedActionElement,
+    LayoutElement as LayoutElementType
+} from "../../../types/project/layout/LayoutElement";
+import TagSetButtonGroup from "./TagSetButtonGroup";
 import BooleanButtonGroup from "./BooleanButtonGroup";
-import {Target} from "../../../redux/annotationData";
+import type {TargetType} from "../../../redux/annotate/annotationData";
+import {Target} from "../../../redux/annotate/annotationData";
+import type {LayoutAreaType} from "../../../constants/LayoutAreaTypes";
 import {LayoutAreaTypes} from "../../../constants/LayoutAreaTypes";
 import {grey} from "@material-ui/core/colors";
 import OpenTextInput from "./OpenTextInput";
 import OpenTagInput from "./OpenTagInput";
-import NumberInput from "./NumberInput";
-import NumberSlider from "./NumberSlider";
+import OpenNumberInput from "./OpenNumberInput";
+import ClosedNumberSlider from "./ClosedNumberSlider";
 import DropdownInput from "./DropdownInput";
-import type {ValidationError} from "../../helper/ValidateAnnotations";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import {createIllustrationComponent} from "../../helper/LayoutMapper";
 import CardHeader from "@material-ui/core/CardHeader";
-import type {LayoutAreaType, Row} from "../../../types/LayoutConfigTypes";
-import type {AnnotationConfigFull, AnnotationDocument, DocumentToAnnotate} from "../../../types/AnnotationTypes";
+import type {AnnotateProject} from "../../../types/annotate/DTOTypes";
+import type {
+    AnnotationDocumentInState,
+    AnnotationEnableConditionResult
+} from "../../../types/redux/annotate/AnnotationDataState";
+import NumberRangeSlider from "./NumberRangeSlider";
+import type {Row} from "../../../types/project/layout/Layout";
+import type {Dictionary, WithLocalizationComponentProps, WithStylesComponentProps} from "../../../types/Types";
+import type {ValidationError} from "../../../types/annotate/ValidationError";
 
-type AnnotateDocumentCardProps = {
-    config: AnnotationConfigFull,
-    document: DocumentToAnnotate,
-    currentTarget: string,
-    setDocumentAnnotationValue: Function,
-    setSpanAnnotationValue: Function,
-    setCurrentTarget: Function,
+type AnnotateDocumentCardProps = WithStylesComponentProps & WithLocalizationComponentProps & {
+    project: AnnotateProject,
+    document: AnnotationDocumentInState,
+    setAnnotationValue: Function
+};
+
+type AnnotationDocumentCardState = {
+    tabIndex: ?number
 };
 
 const style: Function = (theme: Object): Object => {
@@ -47,33 +56,33 @@ const style: Function = (theme: Object): Object => {
         card: {
             maxWidth: 1280,
             backgroundColor: 'white',
-            margin: theme.spacing(2),
-            marginTop: theme.spacing(1),
+            margin: theme.spacing(1),
             flexGrow: 1,
         },
         cardTabContent: {
-            paddingTop: theme.spacing(2),
-            paddingBottom: theme.spacing(2),
             flexGrow: 1,
-            fontWeight: 400,
+            fontWeight: 400
         },
         tabBar: {
             backgroundColor: 'white'
         },
-        [LayoutAreaTypes.SHARED_TARGET]: {
+        [(LayoutAreaTypes.SHARED_TARGET: string)]: {
 
         },
-        [LayoutAreaTypes.DOCUMENT_TARGET]: {
+        [(LayoutAreaTypes.DOCUMENT_TARGET: string)]: {
 
         },
-        [LayoutAreaTypes.SPAN_TARGET]: {
+        [(LayoutAreaTypes.SPAN_TARGET: string)]: {
             backgroundColor: grey[200]
         },
     });
 };
 
 
-class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
+/**
+ * Card that displays interaction elements for the document
+ */
+class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps, AnnotationDocumentCardState> {
 
     constructor(props) {
         super(props);
@@ -82,127 +91,143 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
         };
     }
 
-    getValidationErrorsForComponent(element: Object): Array<ValidationError> {
-       if(this.props.document.validationErrors && this.props.document.validationErrors[element.referenceAnnotation]){
-           return this.props.document.validationErrors[element.referenceAnnotation].filter(e => e.target === this.props.currentTarget);
-       } else {
-           return [];
-       }
+    getValidationErrorsForComponent(element: DenormalizedActionElement): Array<ValidationError> {
+       return this.props.document?.validationErrors?.filter(v => v.annotationDefinitionID
+           === element.annotationDefinition.id) ?? [];
     }
 
-    mapLayoutElementsToComponent = (element: Object, documentData: Object, key: string): Array<Component> => {
+    matchTargetTypeToLayoutAreaType(layoutAreaType: LayoutAreaType, targetType: TargetType): boolean {
+        switch(layoutAreaType) {
+            case LayoutAreaTypes.DOCUMENT_TARGET:
+                return targetType === Target.DOCUMENT;
+            case LayoutAreaTypes.SPAN_TARGET:
+                return targetType === Target.SPAN;
+            default:
+                return false;
+        }
+    }
+
+    checkDisabledStatus(actionElement: DenormalizedActionElement, layoutAreaType: LayoutAreaType): boolean {
+        return this.props.document.annotationConditions?.find(
+            (c: AnnotationEnableConditionResult) => {
+                return !c.required &&
+                    c.annotationID === actionElement.annotationDefinition.id &&
+                    this.matchTargetTypeToLayoutAreaType(layoutAreaType,
+                        c.targetType)
+            }
+        ) != null
+    }
+
+    mapLayoutElementsToComponent = (element: LayoutElementType,
+                                    documentData: Dictionary<string, string>,
+                                    layoutAreaType: LayoutAreaType,
+                                    key: string): any => {
         const nonInteractiveComponent = createIllustrationComponent(element, documentData, key);
         if(nonInteractiveComponent === null) {
-            switch (element.type) {
-                case LayoutElement.BUTTON_GROUP: {
-                    if (this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.BooleanAnnotation) {
-                        return <BooleanButtonGroup localize={this.props.localize}
-                                                   configID={this.props.config.id}
-                                                   annotationConfig={this.props.config.annotations.annotationMap}
-                                                   documentID={this.props.document.documentID}
-                                                   target={this.props.currentTarget}
-                                                   annotations={this.props.currentTarget === Target.SPAN ? this.props.document.spanAnnotations : this.props.document.documentAnnotations}
-                                                   setAnnotationValue={this.props.currentTarget === Target.SPAN ? this.props.setSpanAnnotationValue : this.props.setDocumentAnnotationValue}
-                                                   element={element}
-                                                   validationErrors={this.getValidationErrorsForComponent(element)}
-                                                   key={key}
-                                                   keyValue={key}/>
-                    } else if (this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.PredefinedTagSetAnnotation) {
-                        return <PredefinedTagSetButtonGroup localize={this.props.localize}
-                                                            configID={this.props.config.id}
-                                                            annotationConfig={this.props.config.annotations.annotationMap}
-                                                            documentID={this.props.document.documentID}
-                                                            target={this.props.currentTarget}
-                                                            annotations={this.props.currentTarget === Target.SPAN ? this.props.document.spanAnnotations : this.props.document.documentAnnotations}
-                                                            setAnnotationValue={this.props.currentTarget === Target.SPAN ? this.props.setSpanAnnotationValue : this.props.setDocumentAnnotationValue}
-                                                            element={element}
-                                                            validationErrors={this.getValidationErrorsForComponent(element)}
-                                                            key={key}
-                                                            keyValue={key}/>
-                    } else {
-                        throw Error("Unsupported annotation type for ButtonGroup");
-                    }
+            const actionElement: DenormalizedActionElement = (element: any);
+            switch ((element.type: any)) {
+                case NormalizedActionElements.BOOLEAN_BUTTON_GROUP:
+                case ActionElements.BOOLEAN_BUTTON_GROUP: {
+                    return <BooleanButtonGroup localize={this.props.localize}
+                                               projectID={this.props.project.id}
+                                               documentID={this.props.document.documentID}
+                                               annotations={this.props.document.annotations}
+                                               setAnnotationValue={this.props.setAnnotationValue}
+                                               element={actionElement}
+                                               validationErrors={this.getValidationErrorsForComponent(actionElement)}
+                                               disabled={this.checkDisabledStatus(actionElement, layoutAreaType)}
+                                               key={key}
+                                               keyValue={key}/>
                 }
-                case LayoutElement.DROPDOWN: {
-                    if (this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.PredefinedTagSetAnnotation) {
-                        return <DropdownInput               localize={this.props.localize}
-                                                            configID={this.props.config.id}
-                                                            annotationConfig={this.props.config.annotations.annotationMap}
-                                                            documentID={this.props.document.documentID}
-                                                            target={this.props.currentTarget}
-                                                            annotations={this.props.currentTarget === Target.SPAN ? this.props.document.spanAnnotations : this.props.document.documentAnnotations}
-                                                            setAnnotationValue={this.props.currentTarget === Target.SPAN ? this.props.setSpanAnnotationValue : this.props.setDocumentAnnotationValue}
-                                                            element={element}
-                                                            validationErrors={this.getValidationErrorsForComponent(element)}
-                                                            key={key}
-                                                            keyValue={key}/>
-                    } else {
-                        throw Error("Unsupported annotation type for Dropdown");
-                    }
+                case NormalizedActionElements.TAG_SET_BUTTON_GROUP:
+                case ActionElements.TAG_SET_BUTTON_GROUP: {
+                    return <TagSetButtonGroup localize={this.props.localize}
+                                              projectID={this.props.project.id}
+                                              documentID={this.props.document.documentID}
+                                              annotations={this.props.document.annotations}
+                                              setAnnotationValue={this.props.setAnnotationValue}
+                                              element={actionElement}
+                                              validationErrors={this.getValidationErrorsForComponent(actionElement)}
+                                              disabled={this.checkDisabledStatus(actionElement, layoutAreaType)}
+                                              key={key}
+                                              keyValue={key}/>
                 }
-                case LayoutElement.TEXT_FIELD: {
-                    if(!(this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.OpenTextAnnotation)) {
-                        throw Error("Unsupported annotation type for OpenTextInput");
-                    }
-                    return <OpenTextInput   localize={this.props.localize}
-                                            configID={this.props.config.id}
-                                            annotationConfig={this.props.config.annotations.annotationMap}
+                case NormalizedActionElements.TAG_SET_DROPDOWN:
+                case ActionElements.TAG_SET_DROPDOWN: {
+                    return <DropdownInput localize={this.props.localize}
+                                projectID={this.props.project.id}
+                                documentID={this.props.document.documentID}
+                                annotations={this.props.document.annotations}
+                                setAnnotationValue={this.props.setAnnotationValue}
+                                element={actionElement}
+                                validationErrors={this.getValidationErrorsForComponent(actionElement)}
+                                disabled={this.checkDisabledStatus(actionElement, layoutAreaType)}
+                                key={key}
+                                keyValue={key}/>
+                }
+                case NormalizedActionElements.OPEN_TEXT_INPUT:
+                case ActionElements.OPEN_TEXT_INPUT: {
+                    return <OpenTextInput localize={this.props.localize}
+                                projectID={this.props.project.id}
+                                documentID={this.props.document.documentID}
+                                annotations={this.props.document.annotations}
+                                setAnnotationValue={this.props.setAnnotationValue}
+                                element={actionElement}
+                                validationErrors={this.getValidationErrorsForComponent(actionElement)}
+                                disabled={this.checkDisabledStatus(actionElement, layoutAreaType)}
+                                documentData={documentData}
+                                key={key}
+                                keyValue={key}/>
+                   }
+                case NormalizedActionElements.OPEN_NUMBER_INPUT:
+                case ActionElements.OPEN_NUMBER_INPUT: {
+                    return <OpenNumberInput localize={this.props.localize}
+                                            projectID={this.props.project.id}
                                             documentID={this.props.document.documentID}
-                                            target={this.props.currentTarget}
-                                            annotations={this.props.currentTarget === Target.SPAN ? this.props.document.spanAnnotations : this.props.document.documentAnnotations}
-                                            setAnnotationValue={this.props.currentTarget === Target.SPAN ? this.props.setSpanAnnotationValue : this.props.setDocumentAnnotationValue}
-                                            element={element}
-                                            validationErrors={this.getValidationErrorsForComponent(element)}
-                                            documentText={documentData["DOCUMENT_TEXT"]}
+                                            annotations={this.props.document.annotations}
+                                            setAnnotationValue={this.props.setAnnotationValue}
+                                            element={actionElement}
+                                            validationErrors={this.getValidationErrorsForComponent(actionElement)}
+                                            disabled={this.checkDisabledStatus(actionElement, layoutAreaType)}
                                             key={key}
                                             keyValue={key}/>
                 }
-                case LayoutElement.NUMBER_FIELD: {
-                    if(!(this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.ClosedNumberAnnotation || this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.OpenNumberAnnotation)) {
-                        throw Error("Unsupported annotation type for NumberInput");
-                    }
-                    return <NumberInput     localize={this.props.localize}
-                                            configID={this.props.config.id}
-                                            annotationConfig={this.props.config.annotations.annotationMap}
-                                            documentID={this.props.document.documentID}
-                                            target={this.props.currentTarget}
-                                            annotations={this.props.currentTarget === Target.SPAN ? this.props.document.spanAnnotations : this.props.document.documentAnnotations}
-                                            setAnnotationValue={this.props.currentTarget === Target.SPAN ? this.props.setSpanAnnotationValue : this.props.setDocumentAnnotationValue}
-                                            element={element}
-                                            validationErrors={this.getValidationErrorsForComponent(element)}
-                                            key={key}
-                                            keyValue={key}/>
+                case NormalizedActionElements.CLOSED_NUMBER_SLIDER:
+                case ActionElements.CLOSED_NUMBER_SLIDER: {
+                    return <ClosedNumberSlider localize={this.props.localize}
+                                               projectID={this.props.project.id}
+                                               documentID={this.props.document.documentID}
+                                               annotations={this.props.document.annotations}
+                                               setAnnotationValue={this.props.setAnnotationValue}
+                                               element={actionElement}
+                                               validationErrors={this.getValidationErrorsForComponent(actionElement)}
+                                               disabled={this.checkDisabledStatus(actionElement, layoutAreaType)}
+                                               key={key}
+                                               keyValue={key}/>
                 }
-                case LayoutElement.SLIDER: {
-                    if(!(this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.ClosedNumberAnnotation || this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.NumberRangeAnnotation)) {
-                        throw Error("Unsupported annotation type for NumberSlider");
-                    }
-                    return <NumberSlider    isRange={this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.NumberRangeAnnotation}
-                                            localize={this.props.localize}
-                                            configID={this.props.config.id}
-                                            annotationConfig={this.props.config.annotations.annotationMap}
-                                            documentID={this.props.document.documentID}
-                                            target={this.props.currentTarget}
-                                            annotations={this.props.currentTarget === Target.SPAN ? this.props.document.spanAnnotations : this.props.document.documentAnnotations}
-                                            setAnnotationValue={this.props.currentTarget === Target.SPAN ? this.props.setSpanAnnotationValue : this.props.setDocumentAnnotationValue}
-                                            element={element}
-                                            validationErrors={this.getValidationErrorsForComponent(element)}
-                                            key={key}
-                                            keyValue={key}/>
+                case NormalizedActionElements.NUMBER_RANGE_SLIDER:
+                case ActionElements.NUMBER_RANGE_SLIDER: {
+                    return <NumberRangeSlider  localize={this.props.localize}
+                                               projectID={this.props.project.id}
+                                               documentID={this.props.document.documentID}
+                                               annotations={this.props.document.annotations}
+                                               setAnnotationValue={this.props.setAnnotationValue}
+                                               element={actionElement}
+                                               validationErrors={this.getValidationErrorsForComponent(actionElement)}
+                                               disabled={this.checkDisabledStatus(actionElement, layoutAreaType)}
+                                               key={key}
+                                               keyValue={key}/>
                 }
-                case LayoutElement.CHIPS: {
-                    if(!(this.props.config.annotations.annotationMap[element.referenceAnnotation].type === AnnotationType.OpenTagAnnotation)) {
-                        throw Error("Unsupported annotation type for OpenTagInput");
-                    }
+                case NormalizedActionElements.OPEN_TAG_CHIP_INPUT:
+                case ActionElements.OPEN_TAG_CHIP_INPUT: {
                     return <OpenTagInput    localize={this.props.localize}
-                                            configID={this.props.config.id}
-                                            annotationConfig={this.props.config.annotations.annotationMap}
+                                            projectID={this.props.project.id}
                                             documentID={this.props.document.documentID}
-                                            target={this.props.currentTarget}
-                                            annotations={this.props.currentTarget === Target.SPAN ? this.props.document.spanAnnotations : this.props.document.documentAnnotations}
-                                            setAnnotationValue={this.props.currentTarget === Target.SPAN ? this.props.setSpanAnnotationValue : this.props.setDocumentAnnotationValue}
-                                            element={element}
-                                            validationErrors={this.getValidationErrorsForComponent(element)}
+                                            annotations={this.props.document.annotations}
+                                            setAnnotationValue={this.props.setAnnotationValue}
+                                            element={actionElement}
+                                            validationErrors={this.getValidationErrorsForComponent(actionElement)}
+                                            disabled={this.checkDisabledStatus(actionElement, layoutAreaType)}
                                             key={key}
                                             keyValue={key}/>
                 }
@@ -214,14 +239,10 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
         }
     };
 
-    createRow(layoutAreaType: LayoutAreaType, document: AnnotationDocument, row: Row, rowIndex: number, key: string) {
-        let cssClass;
-        if(this.props.currentTarget === Target.SPAN && layoutAreaType === LayoutAreaTypes.SHARED_TARGET) {
-            cssClass = this.props.classes[LayoutAreaTypes.SPAN_TARGET];
-        } else {
-            cssClass = this.props.classes[layoutAreaType];
-        }
-        return <Grid container spacing={4} className={classNames(this.props.classes.row, cssClass)}
+    createRow(layoutAreaType: LayoutAreaType, document: AnnotationDocumentInState, row: Row,
+              rowIndex: number, key: string) {
+        let cssClass = this.props.classes[layoutAreaType];
+        return <Grid container spacing={2} className={classNames(this.props.classes.row, cssClass)}
                      key={`${key}Row${rowIndex}`}>
             {row.cols.map((c, columnIndex) => {
                 return [<Grid item
@@ -233,7 +254,9 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
                               className={this.props.classes.column}
                               key={`${key}Row${rowIndex}Column${columnIndex}`}>
                     {c.children.map((child, index) => {
-                        return this.mapLayoutElementsToComponent(child, document.documentData, `${key}Row${rowIndex}Column${columnIndex}Element${index}`)
+                        console.log("child", child);
+                        return this.mapLayoutElementsToComponent(child, document.documentData, layoutAreaType,
+                            `${key}Row${rowIndex}Column${columnIndex}Element${index}`)
                     })}
                 </Grid>]
             })}
@@ -241,81 +264,34 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps> {
     }
 
     render() {
-        const config = this.props.config;
-        if(!config.layout) {
+        const project = this.props.project;
+        if(!project.layout) {
             return null;
         }
         const document = this.props.document;
         let documentContent = [];
-        const spanContent = [];
-        if(LayoutAreaTypes.SHARED_TARGET in config.layout.layoutAreas) {
+        if(LayoutAreaTypes.DOCUMENT_TARGET in project.layout.layoutAreas) {
             documentContent.push(
-                config.layout.layoutAreas[LayoutAreaTypes.SHARED_TARGET].rows.map((r, rowIndex) => {
-                    return this.createRow(LayoutAreaTypes.SHARED_TARGET, document, r, rowIndex, `config${config.id}Document${document.documentID}LayoutSharedTarget`);
-                })
-            );
-            spanContent.push(
-                config.layout.layoutAreas[LayoutAreaTypes.SHARED_TARGET].rows.map((r, rowIndex) => {
-                    return this.createRow(LayoutAreaTypes.SHARED_TARGET, document, r, rowIndex, `config${config.id}Document${document.documentID}LayoutSharedTarget`);
+                // $FlowIgnore Symbol problem
+                project.layout.layoutAreas[LayoutAreaTypes.DOCUMENT_TARGET].rows.map((r, rowIndex) => {
+                    return this.createRow(LayoutAreaTypes.DOCUMENT_TARGET, document, r, rowIndex,
+                        `project${project.id}Document${document.documentID}LayoutDocumentTarget`);
                 })
             );
         }
-        if(this.props.currentTarget === Target.DOCUMENT && LayoutAreaTypes.DOCUMENT_TARGET in config.layout.layoutAreas) {
-            documentContent.push(
-                config.layout.layoutAreas[LayoutAreaTypes.DOCUMENT_TARGET].rows.map((r, rowIndex) => {
-                    return this.createRow(LayoutAreaTypes.DOCUMENT_TARGET, document, r, rowIndex, `config${config.id}Document${document.documentID}LayoutDocumentTarget`);
-                })
-            );
-        }
-        if(this.props.currentTarget === Target.SPAN && LayoutAreaTypes.SPAN_TARGET in config.layout.layoutAreas) {
-            spanContent.push(
-                config.layout.layoutAreas[LayoutAreaTypes.SPAN_TARGET].rows.map((r, rowIndex) => {
-                    return this.createRow(LayoutAreaTypes.SPAN_TARGET, document, r, rowIndex, `config${config.id}Document${document.documentID}LayoutSpanTarget`);
-                })
-            );
-        }
-        if(documentContent.length === 0 && spanContent.length === 0) {
+        if(documentContent.length === 0) {
             return null;
         }
         return <div className={this.props.classes.wrapper}>
             <Card className={this.props.classes.card} raised={false}>
-                { (documentContent.length > 0 && spanContent.length > 0) ?
-                    [<AppBar position="static" color="default" className={this.props.classes.tabBar} key={`${config.id}Document${document.documentID}AppBar`}>
-                        <Tabs
-                            value={this.state.tabIndex !== null ? this.state.tabIndex : (documentContent.length > 0 ? 0 : 1)}
-                            onChange={(e, index) => {
-                                this.setState({
-                                    tabIndex: index
-                                })
-                            }}
-                            indicatorColor="primary"
-                            textColor="primary"
-                            variant="fullWidth"
-                        >
-                            <Tab label={this.props.localize("card.documentInteractionTitle")}/>
-                            <Tab label={this.props.localize("card.spanInteractionTitle")}/>
-                        </Tabs>
-                    </AppBar>,
-                    <SwipeableViews
-                        axis={'x'}
-                        index={this.state.tabIndex}
-                        key={`${config.id}Document${document.documentID}SwipeableView`}
-                        onChangeIndex={(index) => {
-                            this.setState({
-                                tabIndex: index
-                            })
-                        }}>
-                        <CardContent className={this.props.classes.cardTabContent}>{documentContent}</CardContent>
-                        <CardContent className={this.props.classes.cardTabContent}>{spanContent}</CardContent>
-                    </SwipeableViews>]
-                    : [(documentContent.length > 0 ? [
-                        <CardHeader title={this.props.localize("card.documentInteractionTitle")} key={`${config.id}Document${document.documentID}DocCardTitle`}/>,
-                        <CardContent className={this.props.classes.cardTabContent} key={`${config.id}Document${document.documentID}DocCardContent`}>{documentContent}</CardContent>
-                    ] : null),
-                        (spanContent.length > 0 ? [
-                            <CardHeader title={this.props.localize("card.spanInteractionTitle")} subheader={this.props.localize("card.spanInteractionSubtitle")} key={`${config.id}Document${document.documentID}SpanCardHeader`}/>,
-                            <CardContent className={this.props.classes.cardTabContent} key={`${config.id}Document${document.documentID}SpanCardContent`}>{spanContent}</CardContent>
-                        ] : null)]
+                { documentContent.length > 0 && [
+                        <CardHeader title={this.props.localize("card.documentInteractionTitle")}
+                                    key={`${project.id}Document${document.documentID}DocCardTitle`}/>,
+                        <CardContent className={this.props.classes.cardTabContent}
+                                     key={`${project.id}Document${document.documentID}DocCardContent`}>
+                            {documentContent}
+                        </CardContent>
+                    ]
                 }
             </Card>
         </div>;

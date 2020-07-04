@@ -1,7 +1,6 @@
 package api
 
 import application.*
-import document.DocumentDAO
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -18,9 +17,11 @@ internal const val authorizationHeader2 = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUz
 
 internal fun mockDAOs() {
     documentDAO = mockk(relaxed = true)
-    projectConfigDAO = mockk(relaxed = true)
+    projectDAO = mockk(relaxed = true)
     userDAO = mockk(relaxed = true)
     messageDAO = mockk(relaxed = true)
+    annotationDefinitionDAO = mockk(relaxed = true)
+    annotationGeneratorDAO = mockk(relaxed = true)
 }
 
 @KtorExperimentalAPI

@@ -1,16 +1,78 @@
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-    <root level="trace">
-        <appender-ref ref="STDOUT"/>
-    </root>
-    <logger name="org.eclipse.jetty" level="INFO"/>
-    <logger name="io.netty" level="INFO"/>
-    <logger name="org.mongodb.driver.cluster" level="INFO" />
-    <logger name="org.mongodb.driver.connection" level="INFO"/>
-    <logger name="org.mongodb.driver.protocol.command" level="DEBUG">
-    </logger>
+    <if condition='"${ENVIRONMENT:-local}".equals("local") || "${ENVIRONMENT:-local}".equals("dev")'>
+        <then>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                    <!-- Minimum logging level to be presented in the console logs-->
+                    <level>${LOGGING_LEVEL:-TRACE}</level>
+                </filter>
+                <encoder>
+                    <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] [%X{X-Request-ID}] %-5level %logger{36} - %msg%n
+                    </pattern>
+                </encoder>
+            </appender>
+            <root level="trace">
+                <appender-ref ref="STDOUT"/>
+            </root>
+            <logger name="org.eclipse.jetty" level="INFO"/>
+            <logger name="io.netty" level="INFO"/>
+            <logger name="org.mongodb.driver.cluster" level="DEBUG" />
+            <logger name="org.mongodb.driver.connection" level="DEBUG"/>
+            <logger name="org.mongodb.driver.protocol.command" level="DEBUG"/>
+            <logger name="org.eclipse.jetty" level="INFO"/>
+            <logger name="io.netty" level="INFO"/>
+        </then>
+        <else>
+            <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
+                <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                    <!-- Minimum logging level to be presented in the console logs-->
+                    <level>${LOGGING_LEVEL:-INFO}</level>
+                </filter>
+                <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                    <providers>
+                        <!-- https://github.com/logstash/logstash-logback-encoder#providers-for-loggingevents -->
+                        <mdc/>
+                        <contextName/>
+                        <version>
+                            <version>${VERSION:-0}</version>
+                        </version>
+                        <loggerName>
+                            <fieldName>logger</fieldName>
+                        </loggerName>
+                        <logLevel/>
+                        <timestamp>
+                            <timeZone>UTC</timeZone>
+                        </timestamp>
+                        <pattern>
+                            <!-- https://cloud.spring.io/spring-cloud-sleuth/single/spring-cloud-sleuth.html#_json_logback_with_logstash-->
+                            <pattern>
+                                {
+                                "serviceName": "activeannoservice"
+                                }
+                            </pattern>
+                        </pattern>
+                        <threadName>
+                            <fieldName>thread</fieldName>
+                        </threadName>
+                        <message/>
+                        <logstashMarkers/>
+                        <arguments/>
+                        <stackTrace>
+                            <fieldName>stackTrace</fieldName>
+                        </stackTrace>
+                    </providers>
+                </encoder>
+            </appender>
+            <logger name="org.eclipse.jetty" level="INFO"/>
+            <logger name="io.netty" level="INFO"/>
+            <root level="TRACE">
+                <appender-ref ref="json"/>
+            </root>
+            <logger name="org.mongodb.driver.cluster" level="INFO" />
+            <logger name="org.mongodb.driver.connection" level="INFO"/>
+            <logger name="org.mongodb.driver.protocol.command" level="INFO"/>
+            <logger name="org.eclipse.jetty" level="INFO"/>
+            <logger name="io.netty" level="INFO"/>
+        </else>
+    </if>
 </configuration>

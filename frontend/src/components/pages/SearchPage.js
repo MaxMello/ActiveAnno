@@ -3,17 +3,18 @@ import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {Typography} from '@material-ui/core';
 import {withLocalization} from "react-localize";
+import type {WithLocalizationComponentProps, WithStylesComponentProps} from "../../types/Types";
 
 
-type ContentProps = {
-    history: Array<string>
+type SearchPageProps = WithStylesComponentProps & WithLocalizationComponentProps & {
+
 };
 
 const style: Function = (theme: Object): Object => ({
     root: theme.pageRoot,
 });
 
-class SearchPage extends Component<ContentProps> {
+class SearchPage extends Component<SearchPageProps> {
 
     render() {
         return <div className={this.props.classes.root}>

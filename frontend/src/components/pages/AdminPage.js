@@ -3,9 +3,10 @@ import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {Typography} from '@material-ui/core';
 import {withLocalization} from "react-localize";
+import type {WithLocalizationComponentProps, WithStylesComponentProps} from "../../types/Types";
 
 
-type ContentProps = {
+type AdminPageProps = WithStylesComponentProps & WithLocalizationComponentProps & {
     history: Array<string>
 };
 
@@ -13,7 +14,7 @@ const style: Function = (theme: Object): Object => ({
     root: theme.pageRoot
 });
 
-class AdminPage extends Component<ContentProps> {
+class AdminPage extends Component<AdminPageProps> {
 
     render() {
         return <div className={this.props.classes.root}>

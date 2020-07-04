@@ -1,38 +1,30 @@
 package application
 
+import annotationdefinition.AnnotationDefinitionDAO
+import annotationdefinition.generator.AnnotationGeneratorDAO
 import api.admin.admin
 import api.annotate.annotate
-import api.curate.curate
+import api.annotate.curate
 import api.export.export
+import api.generators.generators
 import api.import.import
 import api.manage.manage
 import api.pagesetup.pageSetup
 import api.search.search
+import com.auth0.jwt.exceptions.JWTDecodeException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import common.AuthenticationException
-import common.AuthorizationException
-import config.*
-import config.annotations.*
-import config.export.*
-import config.inputmapping.DocumentText
-import config.inputmapping.InputMapping
-import config.inputmapping.MetaData
-import config.layout.*
-import config.policy.FinalizeAnnotationPolicy
-import config.policy.Policy
-import config.sort.Order
-import config.sort.Sort
-import config.sort.SortElement
-import config.userroles.UserRoles
+import common.*
 import document.DocumentDAO
+import document.updateIndexes
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.application.log
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.HttpTimeout
 import io.ktor.client.features.defaultRequest
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
@@ -47,16 +39,20 @@ import io.ktor.response.respond
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.coroutine
+import org.litote.kmongo.id.jackson.IdJacksonModule
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import org.slf4j.event.Level
-import user.message.MessageDAO
+import project.ProjectDAO
 import user.UserDAO
-
+import user.message.MessageDAO
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 /**
  * Entry point into application
@@ -90,33 +86,35 @@ lateinit var jsonMapper: ObjectMapper
  * DAOs
  */
 
-lateinit var projectConfigDAO: ProjectConfigDAO
+lateinit var projectDAO: ProjectDAO
 lateinit var documentDAO: DocumentDAO
 lateinit var userDAO: UserDAO
 lateinit var messageDAO: MessageDAO
+lateinit var annotationDefinitionDAO: AnnotationDefinitionDAO
+lateinit var annotationGeneratorDAO: AnnotationGeneratorDAO
 
 private val logger = LoggerFactory.getLogger("Application")
 
 /*
  * Application module
  */
-
 @KtorExperimentalAPI
 fun Application.module() {
     applicationConfig = ApplicationConfig(environment)
 
     val mongoClient: CoroutineClient by lazy {
-        org.litote.kmongo.reactivestreams.KMongo.createClient(applicationConfig.mongo.connectionString)
-            .coroutine
+        org.litote.kmongo.reactivestreams.KMongo.createClient(applicationConfig.mongo.connectionString).coroutine
     }
     val database: CoroutineDatabase by lazy {
         mongoClient.getDatabase(applicationConfig.mongo.databaseName)
     }
 
     documentDAO = DocumentDAO(database)
-    projectConfigDAO = ProjectConfigDAO(database)
+    projectDAO = ProjectDAO(database)
     userDAO = UserDAO(database)
     messageDAO = MessageDAO(database)
+    annotationDefinitionDAO = AnnotationDefinitionDAO(database)
+    annotationGeneratorDAO = AnnotationGeneratorDAO(database)
 
     if (applicationConfig.ktorHttpsConfig.redirect) {
         install(HttpsRedirect) {
@@ -128,26 +126,50 @@ fun Application.module() {
     } else {
         logger.info("HTTPS redirect disabled")
     }
+
     setupApplication()
-    generateExampleProject()
+
+    generateExampleProject(applicationConfig)
+
+    // Periodically update the dynamic indexes of the mongoDB
+    launch(Dispatchers.IO) {
+        while(true) {
+            updateIndexes()
+            delay(Random(42).nextLong(600_000, 1_200_000))    // Every 10 - 20 minutes
+        }
+    }
 }
 
 @KtorExperimentalAPI
 fun Application.setupApplication() {
 
+    // HttpClient to send requests to external services, for example for webhooks
     httpClient = HttpClient(CIO) {
         install(JsonFeature) {
-            serializer = JacksonSerializer()
+            serializer = JacksonSerializer {
+                    enable(SerializationFeature.INDENT_OUTPUT)
+                    disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
+                    disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                    disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                    enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES) // "NULL" long should not be auto 0, instead explicitly 0 or fail
+                    // KMongo type safe IDs
+                    registerModule(IdJacksonModule())
+                }
         }
         engine {
-            maxConnectionsCount = 1000 // Maximum number of socket connections.
+            maxConnectionsCount = 10000 // Maximum number of socket connections.
             endpoint.apply {
-                maxConnectionsPerRoute = 100 // Maximum number of requests for a specific endpoint route.
-                pipelineMaxSize = 20 // Max number of opened endpoints.
+                maxConnectionsPerRoute = 1000 // Maximum number of requests for a specific endpoint route.
+                pipelineMaxSize = 100 // Max number of opened endpoints.
                 keepAliveTime = 5000 // Max number of milliseconds to keep each connection alive.
                 connectTimeout = 5000 // Number of milliseconds to wait trying to connect to the server.
-                connectRetryAttempts = 5 // Maximum number of attempts for retrying a connection.
+                requestTimeout = TimeUnit.HOURS.toMillis(1) // Set to 1 hour by default
+                connectRetryAttempts = 3 // Maximum number of attempts for retrying a connection.
             }
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 60_000
         }
         defaultRequest {
             // if we have a correlation id add it to outgoing requests - useful for tracking requests through multiple services
@@ -168,7 +190,6 @@ fun Application.setupApplication() {
     }
 
     install(CallLogging) {
-        level = Level.valueOf(applicationConfig.loggingConfig.level)
         filter { call -> call.request.path().startsWith("/") }
     }
 
@@ -179,8 +200,17 @@ fun Application.setupApplication() {
         method(HttpMethod.Get)
         method(HttpMethod.Post)
         method(HttpMethod.Delete)
+        header(HttpHeaders.AccessControlAllowHeaders)
+        header(HttpHeaders.AccessControlAllowOrigin)
+        header(HttpHeaders.AccessControlRequestHeaders)
+        header(HttpHeaders.AccessControlRequestMethod)
         header(HttpHeaders.ContentType)
         header(HttpHeaders.Authorization)
+        header(HttpHeaders.Origin)
+        header(HttpHeaders.Pragma)
+        header(HttpHeaders.UserAgent)
+        header(HttpHeaders.Referrer)
+        header(HttpHeaders.Connection)
         allowCredentials = true
         applicationConfig.cors.hosts.forEach { host ->
             host(host, listOf("http", "https"))
@@ -198,339 +228,62 @@ fun Application.setupApplication() {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
             disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+            enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES) // "NULL" long should not be auto 0, instead explicitly 0 or fail
+            // KMongo type safe IDs
+            registerModule(IdJacksonModule())
             jsonMapper = this
+        }
+    }
+
+    install(StatusPages) {
+        exception<JWTDecodeException> { cause ->
+            log.error("JWTDecodeException handling ${this.context.request.path()} with cause", cause)
+            call.respond(HttpStatusCode.Unauthorized, HttpErrorResponse("Unauthorized", ErrorCode.UNAUTHORIZED_JWT_INVALID))
+        }
+        exception<UnauthorizedException> { cause ->
+            log.error("AuthenticationException handling ${this.context.request.path()} with cause", cause)
+            call.respond(HttpStatusCode.Unauthorized, HttpErrorResponse("Unauthorized", cause.errorCode))
+        }
+        exception<ForbiddenException> { cause ->
+            log.error("AuthorizationException handling ${this.context.request.path()} with cause", cause)
+            call.respond(HttpStatusCode.Forbidden, HttpErrorResponse("Forbidden", cause.errorCode))
+        }
+        exception<NotFoundException> { cause ->
+            log.error("NotFoundException handling ${this.context.request.path()} with cause", cause)
+            call.respond(HttpStatusCode.NotFound, HttpErrorResponse("Not Found"))
+        }
+        exception<GoneException> { cause ->
+            log.error("GoneException handling ${this.context.request.path()} with cause", cause)
+            call.respond(HttpStatusCode.Gone, HttpErrorResponse("Gone", cause.errorCode))
+        }
+        exception<BadRequestException> { cause ->
+            log.error("BadRequestException handling ${this.context.request.path()} with cause", cause)
+            call.respond(HttpStatusCode.BadRequest, HttpErrorResponse("Bad Request"))
+        }
+        exception<IllegalArgumentException> { cause ->
+            log.error("IllegalArgumentException handling ${this.context.request.path()} with cause", cause)
+            call.respond(HttpStatusCode.BadRequest, HttpErrorResponse("Bad Request"))
+        }
+        exception<Throwable> { cause ->
+            log.error("Exception handling ${this.context.request.path()} with cause", cause)
+            call.respond(HttpStatusCode.InternalServerError, HttpErrorResponse("Internal Server Error"))
         }
     }
 
     routing {
         route("/api/v1/") {
-            pageSetup(applicationConfig, userDAO, projectConfigDAO, documentDAO, messageDAO)
+            pageSetup(applicationConfig, userDAO, projectDAO, documentDAO, messageDAO)
 
-            annotate(applicationConfig, userDAO, projectConfigDAO, documentDAO)
-            curate(applicationConfig, userDAO, projectConfigDAO, documentDAO)
-            manage(applicationConfig, userDAO, projectConfigDAO, documentDAO)
+            annotate(applicationConfig, userDAO, projectDAO, documentDAO)
+            curate(applicationConfig, userDAO, projectDAO, documentDAO)
+            manage(applicationConfig, userDAO, projectDAO, documentDAO, annotationDefinitionDAO, annotationGeneratorDAO)
             admin(applicationConfig, documentDAO)
-            search(applicationConfig, userDAO, projectConfigDAO, documentDAO)
+            search(applicationConfig, userDAO, projectDAO, documentDAO)
 
             import(applicationConfig, documentDAO)
-            export(applicationConfig, projectConfigDAO, documentDAO)
-        }
-    }
+            export(applicationConfig, projectDAO, documentDAO)
 
-    install(StatusPages) {
-        exception<AuthenticationException> { cause ->
-            log.error("AuthenticationException handling ${this.context.request.path()} with cause", cause)
-            call.respond(HttpStatusCode.Unauthorized, cause.message ?: "Unauthorized")
-        }
-        exception<AuthorizationException> { cause ->
-            log.error("AuthorizationException handling ${this.context.request.path()} with cause", cause)
-            call.respond(HttpStatusCode.Forbidden, cause.message ?: "Forbidden")
-        }
-        exception<Throwable> { cause ->
-            log.error("Exception handling ${this.context.request.path()} with cause", cause)
-            call.respond(HttpStatusCode.InternalServerError)
-        }
-    }
-
-}
-
-@KtorExperimentalAPI
-fun generateExampleProject() {
-    logger.info("Check generateExampleProject=${applicationConfig.generateExampleProject}")
-    if (applicationConfig.generateExampleProject) {
-        runBlocking {
-            try {
-                val project = projectConfigDAO.getConfigById("EXAMPLE_PROJECT_APP_REVIEWS")
-                logger.info("Example project already exists: $project")
-            } catch (e: NotFoundException) {
-                logger.info("Create example project")
-                val exampleProject = ProjectConfig(
-                    "EXAMPLE_PROJECT_APP_REVIEWS",
-                    "Example project: App reviews",
-                    "This is an automatically generated example project. It shows the different capabilities of ActiveAnno. " +
-                            "The setup is based on the Paper 'How Do Users Like this Feature? A Fine Grained Sentiment Analysis of App Reviews' " +
-                            "by Guzman and Maalej. The difference to the paper setup is that sentiment is assigned here on a document level, " +
-                            "not on a per-feature level. Also, we additionally ask to label the review as spam / no spam and to define a " +
-                            "usefulness scale for software engineers.",
-                    "admin",
-                    System.currentTimeMillis(), System.currentTimeMillis(), 0, true,
-                    UserRoles(
-                        listOf("admin", "testmanager"),
-                        listOf("admin", "testcurator"),
-                        listOf("admin", "testannotator")
-                    ),
-                    InputMapping(
-                        DocumentText("review", false), listOf(
-                            MetaData("timestamp", "timestamp"),
-                            MetaData("appName", "appName"),
-                            MetaData("reviewer", "reviewer"),
-                            MetaData("stars", "stars")
-                        )
-                    ), null, Sort(listOf(SortElement("originalDocument.timestamp", Order.DESC))),
-                    Annotations(
-                        mapOf(
-                            "IS_SPAM" to BooleanAnnotation(
-                                "IS_SPAM",
-                                "Is spam",
-                                "Spam",
-                                setOf(DocumentTarget()),
-                                false
-                            ),
-                            "SENTIMENT" to PredefinedTagSetAnnotation(
-                                "SENTIMENT", "Sentiment", "Sentiment", setOf(DocumentTarget()),
-                                1, 1, listOf(
-                                    TagSetOption("VERY_NEGATIVE", "Very negative", "-2"),
-                                    TagSetOption("NEGATIVE", "Negative", "-1"),
-                                    TagSetOption("NEUTRAL", "Neutral", "0"),
-                                    TagSetOption("POSITIVE", "Positive", "+1"),
-                                    TagSetOption("VERY_POSITIVE", "Very positive", "+2")
-                                )
-                            ),
-                            "REVIEW_CONTAINS" to PredefinedTagSetAnnotation(
-                                "REVIEW_CONTAINS",
-                                "This review contains a",
-                                "Contains",
-                                setOf(DocumentTarget()),
-                                0,
-                                3,
-                                listOf(
-                                    TagSetOption(
-                                        "FEATURE_FEEDBACK",
-                                        "Feedback about a feature",
-                                        "Feedback"
-                                    ),
-                                    TagSetOption("BUG_REPORT", "Bug report", "Bug"),
-                                    TagSetOption("FEATURE_REQUEST", "Feature request", "Request")
-                                )
-                            ),
-                            "REVIEW_CONTAINS_OTHER" to OpenTextAnnotation(
-                                "REVIEW_CONTAINS_OTHER",
-                                "Other things this review contains",
-                                "Other",
-                                setOf(DocumentTarget()),
-                                1,
-                                100,
-                                false,
-                                false,
-                                true
-                            ),
-                            "FEATURES" to OpenTagAnnotation(
-                                "FEATURES",
-                                "Mentioned features",
-                                "Features",
-                                setOf(DocumentTarget()),
-                                0,
-                                10,
-                                true,
-                                CaseBehavior.CAPITALIZE,
-                                false,
-                                mutableListOf()
-                            ),
-                            "USEFULNESS" to ClosedNumberAnnotation(
-                                "USEFULNESS",
-                                "How useful is this review for software engineers?",
-                                "Usefulness",
-                                setOf(DocumentTarget()),
-                                1.0,
-                                5.0,
-                                1.0,
-                                false
-                            )
-                        )
-                    ), Layout(
-                        mapOf(
-                            LayoutAreaType.Common to LayoutArea(
-                                LayoutAreaType.Common, listOf(
-                                    Row(
-                                        listOf(
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 6, 4, 4
-                                                ), listOf(
-                                                    Text("Review for the App "),
-                                                    Bold(TextMetaData("appName"))
-                                                )
-                                            ),
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 6, 4, 4
-                                                ), listOf(
-                                                    Text("Reviewer: "), TextMetaData("reviewer")
-                                                )
-                                            ),
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 6, 4, 4
-                                                ), listOf(
-                                                    Text("Stars: "),
-                                                    Bold(TextMetaData("stars"))
-                                                )
-                                            ),
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 6, 4, 4
-                                                ), listOf(
-                                                    Text("Date: "),
-                                                    DateMetaData("YYYY-MM-DD", "timestamp")
-                                                )
-                                            )
-                                        )
-                                    ),
-                                    Row(
-                                        listOf(
-                                            Column(
-                                                ColumnSizes(
-                                                    12
-                                                ), listOf(
-                                                    DocumentTextElement("Review text")
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            ),
-                            LayoutAreaType.DocumentTarget to LayoutArea(
-                                LayoutAreaType.DocumentTarget, listOf(
-                                    Row(
-                                        listOf(
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 6, 6, 6
-                                                ), listOf(
-                                                    ButtonGroup("IS_SPAM")
-                                                )
-                                            ),
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 6, 6, 6
-                                                ), listOf(
-                                                    Slider("USEFULNESS")
-                                                )
-                                            ),
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 6, 6, 6
-                                                ), listOf(
-                                                    ButtonGroup("REVIEW_CONTAINS")
-                                                )
-                                            ),
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 6, 6, 6
-                                                ), listOf(
-                                                    TextField("REVIEW_CONTAINS_OTHER")
-                                                )
-                                            ),
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 12, 6, 6
-                                                ), listOf(
-                                                    Dropdown("SENTIMENT")
-                                                )
-                                            ),
-                                            Column(
-                                                ColumnSizes(
-                                                    12, 12, 12, 6, 6
-                                                ), listOf(
-                                                    Chips("FEATURES")
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    ), Policy(
-                        numberOfAnnotatorsPerDocument = 1,
-                        allowManualEscalationToCurator = false,
-                        finalizeAnnotationPolicy = FinalizeAnnotationPolicy.ALWAYS_REQUIRE_CURATION
-                    ), Export(
-                        listOf(),
-                        RestConfig(
-                            ExportFormat(), RestAuthentication.None
-                        ),
-                        onOverwrittenFinalizedAnnotationBehavior = OnOverwrittenFinalizedAnnotationBehavior.TRIGGER_EXPORT_AGAIN
-                    )
-                )
-                projectConfigDAO.insertOne(exampleProject)
-                logger.info("Inserted $exampleProject")
-                logger.info("Generate example data")
-            }
-            if(documentDAO.getAll().isEmpty()) {
-                // These reviews are made up, not actual app reviews
-                documentDAO.insertMany(jsonMapper.createArrayNode().apply {
-                    this.addAll(listOf(jsonMapper.createObjectNode().apply {
-                        put("review", "Great app, I like the fast upload speed and pdf viewer!")
-                        put("timestamp", 1506594690000)
-                        put("appName", "Dropbox")
-                        put("reviewer", "Anonymous")
-                        put("stars", 5)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "Good game, but the ads are annoying.")
-                        put("timestamp", 1509532290000)
-                        put("appName", "Angry Birds")
-                        put("reviewer", "Karl W.")
-                        put("stars", 3)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "The app is just so ugly, I don't like the colors and the layout at all.")
-                        put("timestamp", 1514889090000)
-                        put("appName", "Telegram")
-                        put("reviewer", "Peter S.")
-                        put("stars", 1)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "Bad sfhjs 3fnfs 34r")
-                        put("timestamp", 1519295490000)
-                        put("appName", "Dropbox")
-                        put("reviewer", "Anna B.")
-                        put("stars", 1)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "The game is too easy for me, not challenging at all. Also the graphics are lame.")
-                        put("timestamp", 1523529090000)
-                        put("appName", "Angry Birds")
-                        put("reviewer", "Gamemaster01")
-                        put("stars", 2)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "I would like there to be a way to mute individual people in a group.")
-                        put("timestamp", 1525343490000)
-                        put("appName", "Telegram")
-                        put("reviewer", "Andrew")
-                        put("stars", 3)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "Instantly closes when I try to open it....so bad")
-                        put("timestamp", 1527940800000)
-                        put("appName", "Dropbox")
-                        put("reviewer", "Amy K.")
-                        put("stars", 1)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "I like it but I tried to send a video and it was too big so it wouldn't let me send it.")
-                        put("timestamp", 1530964800000)
-                        put("appName", "Telegram")
-                        put("reviewer", "Natalie")
-                        put("stars", 4)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "I love it!")
-                        put("timestamp", 1538308800000)
-                        put("appName", "Angry Birds")
-                        put("reviewer", "Tom F.")
-                        put("stars", 5)
-                    },
-                    jsonMapper.createObjectNode().apply {
-                        put("review", "I like the stickers and that I can also use it on my computer. Better than WhatsApp!")
-                        put("timestamp", 1546257600000)
-                        put("appName", "Telegram")
-                        put("reviewer", "User#23265")
-                        put("stars", 5)
-                    }))
-                }, "EXAMPLE_PROJECT_APP_REVIEWS")
-            }
+            generators(applicationConfig, projectDAO, documentDAO)
         }
     }
 }

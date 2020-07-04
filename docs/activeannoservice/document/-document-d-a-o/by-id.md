@@ -2,4 +2,4 @@
 
 # byId
 
-`suspend fun byId(id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): `[`Document`](../-document/index.md)`?`
+`suspend fun byId(id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): `[`Document`](../-document/index.md)

@@ -1,6 +1,6 @@
 package user
 
-import config.userroles.UserIdentifier
+import project.userroles.UserIdentifier
 
 /**
  * View on the [User] only containing the unique [userIdentifier] and the [userName]
@@ -22,4 +22,5 @@ data class User(
     val userIdentifier: UserIdentifier,
     val userName: String? = null,
     val _id: String? = null,
-    val lastAccessTimestamp: Long? = null)
+    val lastAccessTimestamp: Long? = null
+)

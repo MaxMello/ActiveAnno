@@ -10,7 +10,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.url
-import io.ktor.client.response.HttpResponse
+import io.ktor.client.statement.HttpStatement
 import io.ktor.features.BadRequestException
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -32,12 +32,12 @@ import java.net.URL
 private val logger = LoggerFactory.getLogger("Security")
 
 /**
- * Extract the JWT Base64 string from the request header or throw [AuthenticationException] if missing
+ * Extract the JWT Base64 string from the request header or throw [UnauthorizedException] if missing
  */
 @KtorExperimentalAPI
 fun jwtFromHeader(call: ApplicationCall): String {
     return call.request.header("Authorization")?.substringAfter("Bearer ")
-        ?: throw AuthenticationException("Missing Authorization Header")
+        ?: throw UnauthorizedException("Missing Authorization Header")
 }
 
 /**
@@ -46,13 +46,13 @@ fun jwtFromHeader(call: ApplicationCall): String {
  */
 @KtorExperimentalAPI
 suspend fun isTokenStillValid(client: HttpClient, jwt: String): Boolean {
-    return applicationConfig.jwt.validation.acceptAllTokens || client.post<HttpResponse> {
+    return applicationConfig.jwt.validation.acceptAllTokens || client.post<HttpStatement> {
         url(URL(applicationConfig.jwt.validation.url))
         contentType(ContentType.Application.Json)
         headers {
             append("Authorization", "Bearer $jwt")
         }
-    }.status == HttpStatusCode.OK
+    }.execute().status == HttpStatusCode.OK
 }
 
 /**
@@ -92,19 +92,14 @@ suspend fun PipelineContext<Unit, ApplicationCall>.protectedByRole(
     requiredRoles: List<String>, onlyOneMustMatch: Boolean = false,
     block: suspend () -> Unit
 ) {
-    val enterCondition = if(applicationConfig.jwt.useRoleProtection) {
+    val enterCondition = if (applicationConfig.jwt.useRoleProtection) {
         validateRole(requiredRoles, onlyOneMustMatch)
     } else {
         logger.warn("Role protection disabled, allow all requests")
         true
     }
     if (enterCondition) {
-        try {
-            block()
-        } catch (e: Exception) {
-            logger.error("Could not handle request", e)
-            call.respond(HttpStatusCode.InternalServerError)
-        }
+        block()
     } else {
         call.respond(HttpStatusCode.Unauthorized, "Role missing")
     }
@@ -116,7 +111,15 @@ suspend fun PipelineContext<Unit, ApplicationCall>.protectedByRole(
 @KtorExperimentalAPI
 fun PipelineContext<Unit, ApplicationCall>.validateRole(requiredRoles: List<String>, onlyOneMustMatch: Boolean = false): Boolean {
     val jwt = call.request.header("Authorization")?.substringAfter("Bearer ")
-        ?: throw BadRequestException("JWT no present")
+        ?: throw UnauthorizedException("JWT missing")
+    return validateRole(jwt, requiredRoles, onlyOneMustMatch)
+}
+
+/**
+ * Top level function to validate the roles for a JWT
+ */
+@KtorExperimentalAPI
+fun validateRole(jwt: String, requiredRoles: List<String>, onlyOneMustMatch: Boolean = false): Boolean {
     val decoded = JWT.decode(jwt)
     val roles = decoded.roles
     return if (onlyOneMustMatch) {
@@ -195,34 +198,42 @@ fun Route.postAuthenticatedByJwt(
 
 @ContextDsl
 @KtorExperimentalAPI
-fun Route.putAuthenticatedByJwt(path: String,
-              requiredRoles: List<String> = listOf(),
-              onlyOneMustMatch: Boolean = false,
-              body: PipelineInterceptor<Unit, ApplicationCall>): Route {
+fun Route.putAuthenticatedByJwt(
+    path: String,
+    requiredRoles: List<String> = listOf(),
+    onlyOneMustMatch: Boolean = false,
+    body: PipelineInterceptor<Unit, ApplicationCall>
+): Route {
     return route(path, HttpMethod.Put) { handleAuthenticatedByJwt(requiredRoles, onlyOneMustMatch, body) }
 }
 
 @ContextDsl
 @KtorExperimentalAPI
-fun Route.putAuthenticatedByJwt(requiredRoles: List<String> = listOf(),
-              onlyOneMustMatch: Boolean = false,
-              body: PipelineInterceptor<Unit, ApplicationCall>): Route {
+fun Route.putAuthenticatedByJwt(
+    requiredRoles: List<String> = listOf(),
+    onlyOneMustMatch: Boolean = false,
+    body: PipelineInterceptor<Unit, ApplicationCall>
+): Route {
     return method(HttpMethod.Put) { handleAuthenticatedByJwt(requiredRoles, onlyOneMustMatch, body) }
 }
 
 @ContextDsl
 @KtorExperimentalAPI
-fun Route.deleteAuthenticatedByJwt(path: String,
-                                requiredRoles: List<String> = listOf(),
-                                onlyOneMustMatch: Boolean = false,
-                                body: PipelineInterceptor<Unit, ApplicationCall>): Route {
+fun Route.deleteAuthenticatedByJwt(
+    path: String,
+    requiredRoles: List<String> = listOf(),
+    onlyOneMustMatch: Boolean = false,
+    body: PipelineInterceptor<Unit, ApplicationCall>
+): Route {
     return route(path, HttpMethod.Delete) { handleAuthenticatedByJwt(requiredRoles, onlyOneMustMatch, body) }
 }
 
 @ContextDsl
 @KtorExperimentalAPI
-fun Route.deleteAuthenticatedByJwt(requiredRoles: List<String> = listOf(),
-                                onlyOneMustMatch: Boolean = false,
-                                body: PipelineInterceptor<Unit, ApplicationCall>): Route {
+fun Route.deleteAuthenticatedByJwt(
+    requiredRoles: List<String> = listOf(),
+    onlyOneMustMatch: Boolean = false,
+    body: PipelineInterceptor<Unit, ApplicationCall>
+): Route {
     return method(HttpMethod.Delete) { handleAuthenticatedByJwt(requiredRoles, onlyOneMustMatch, body) }
 }

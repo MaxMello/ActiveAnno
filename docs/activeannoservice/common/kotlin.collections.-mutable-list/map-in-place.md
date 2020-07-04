@@ -2,7 +2,7 @@
 
 # mapInPlace
 
-`inline fun <T> `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`T`](map-in-place.md#T)`>.mapInPlace(mutator: (`[`T`](map-in-place.md#T)`) -> `[`T`](map-in-place.md#T)`): `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<`[`T`](map-in-place.md#T)`>`
+`inline fun <T> `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<T>.mapInPlace(mutator: (T) -> T): `[`MutableList`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html)`<T>`
 
 Extension function to map a mutable list in place by using an iterator
 

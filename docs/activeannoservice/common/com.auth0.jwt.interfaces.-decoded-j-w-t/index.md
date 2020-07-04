@@ -4,6 +4,6 @@
 
 | Name | Summary |
 |---|---|
-| [roles](roles.md) | `val DecodedJWT.roles: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>`<br>Extension value to easily access the list of roles from the JWT |
-| [userIdentifier](user-identifier.md) | `val DecodedJWT.userIdentifier: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>Extension value to easily access the userIdentifier from the JWT |
-| [userName](user-name.md) | `val DecodedJWT.userName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?`<br>Extension value to easily access the userName from the JWT |
+| [roles](roles.md) | Extension value to easily access the list of roles from the JWT`val DecodedJWT.roles: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>` |
+| [userIdentifier](user-identifier.md) | Extension value to easily access the userIdentifier from the JWT`val DecodedJWT.userIdentifier: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html) |
+| [userName](user-name.md) | Extension value to easily access the userName from the JWT`val DecodedJWT.userName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?` |

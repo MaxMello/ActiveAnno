@@ -2,4 +2,4 @@
 
 # creator
 
-`val creator: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`AnnotationResultCreator`](../-annotation-result-creator/index.md)`>`
+`val creator: `[`AnnotationResultCreator`](../-annotation-result-creator/index.md)

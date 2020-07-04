@@ -1,10 +1,10 @@
 package user.message
 
-import config.userroles.UserIdentifier
 import document.annotation.AnnotationResult
+import project.userroles.UserIdentifier
 
 /**
- * A message is a text between two users, relating to an [AnnotationResult]
+ * A message is a text between two users, optionally relating to an [AnnotationResult]
  */
 data class Message(
     val recipient: UserIdentifier,
@@ -13,4 +13,5 @@ data class Message(
     val annotatedDocument: AnnotationResult?,
     val timestamp: Long = System.currentTimeMillis(),
     var read: Boolean = false,
-    val _id: String? = null)
+    val _id: String? = null
+)

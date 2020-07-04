@@ -10,7 +10,7 @@ Information about an export via rest call, mainly the route called, how often, a
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `RestCall(route: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, calls: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)` = 0, createdTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`, updatedTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`)`<br>Information about an export via rest call, mainly the route called, how often, and when. |
+| [&lt;init&gt;](-init-.md) | Information about an export via rest call, mainly the route called, how often, and when.`RestCall(route: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, calls: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)` = 0, createdTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`, updatedTimestamp: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`)` |
 
 ### Properties
 

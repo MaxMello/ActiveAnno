@@ -2,4 +2,4 @@
 
 # userInfo
 
-`val userInfo: `[`Map`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html)`<`[`UserIdentifier`](../../config.userroles/-user-identifier.md)`, `[`UserInfo`](../../user/-user-info/index.md)`>`
+`val userInfo: `[`Map`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html)`<`[`UserIdentifier`](../../project.userroles/-user-identifier.md)`, `[`UserInfo`](../../user/-user-info/index.md)`>`

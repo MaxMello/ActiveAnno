@@ -1,98 +1,84 @@
-import type {ValidationError} from "../components/helper/ValidateAnnotations";
-import type {CurationConfigState, CurationDataState} from "./CurateTypes";
-import type {Annotations} from "./AnnotationConfigTypes";
-import type {AnnotationConfigState, AnnotationDataState} from "./AnnotationTypes";
-import type {PageSetupState} from "./PageSetupTypes";
-import type {AuthenticationState} from "./AuthenticationTypes";
-import type {ManageState} from "./ManageTypes";
-
+// @flow
+import type {Annotation} from "./document/annotation/Annotation";
 
 /******************************************************************
- * 2. General purpose
+ * General purpose
  ******************************************************************/
 
 export type Dictionary<A, B> = {
     [A]: B
 };
 
-/******************************************************************
- * 2. Type aliases
- ******************************************************************/
-
-export type configurationID = string;
-export type documentID = string;
-export type annotationID = string;
-export type userIdentifier = string;
-
-/******************************************************************
- * 2. Redux
- ******************************************************************/
-
-export type Action = {
-    type: string,
-    payload?: Object,
-    meta?: Object,
-    error?: boolean
+export type AnyObject = {
+   [key: string]: any
 }
 
 /******************************************************************
- * 3. API usage
+ * Type aliases
  ******************************************************************/
 
-export type HttpError = {
+export type ProjectID = string;
+export type DocumentID = string;
+export type AnnotationID = string;
+export type UserIdentifier = string;
+export type AnnotationMap = Dictionary<AnnotationID, Annotation>;
+
+/******************************************************************
+ * Redux
+ ******************************************************************/
+
+export type Action = {|
+    +type: string,
+|}
+
+export type ActionWithPayload = {|
+    ...Action,
+    payload: any
+|}
+
+/******************************************************************
+ * API usage
+ ******************************************************************/
+
+export type HttpError = {|
     statusCode: number,
     statusText: string
-}
+|}
 
 /******************************************************************
- * 4. React component props
+ * React component props
  ******************************************************************/
 
 export type WithStylesComponentProps = {
-    classes: Object
+    classes: any 
 }
 
 export type WithRouterComponentProps = {
-    history: Object,
-    location: Object,
-    match: Object
+    history: ReactRouterHistory,
+    location: ReactRouterHistoryLocation,
+    match: Function
 }
 
 export type WithLocalizationComponentProps = {
     localize: Function
 }
 
-export type AnnotationInteractionProps = {
-    localize: Function,
-    configID: string,
-    annotationConfig: Annotations,
-    documentID: string,
-    target: string,
-    annotations: Dictionary<string, any>,
-    setAnnotationValue: Function,
-    element: any,
-    keyValue: string,
-    validationErrors: Array<ValidationError>
-};
-
-/******************************************************************
- * 5. States
- ******************************************************************/
-
-export type ApplicationState = {
-    language: {
-        selected: string,
-        available: Array<string>
-    }
+export type ReactRouterHistory = {
+    action: string,
+    length: number,
+    location: ReactRouterHistoryLocation,
+    block: Function,
+    createHref: Function,
+    go: Function,
+    goBack: Function,
+    goForward: Function,
+    listen: Function,
+    push: Function,
+    replace: Function
 }
 
-export type AppState = {
-    authentication: AuthenticationState,
-    application: ApplicationState,
-    pageSetup: PageSetupState,
-    annotationConfig: AnnotationConfigState,
-    annotationData: AnnotationDataState,
-    curationConfig: CurationConfigState,
-    curationData: CurationDataState,
-    manage: ManageState
+export type ReactRouterHistoryLocation = {
+    pathname: string,
+    search: string,
+    hash: string
 }

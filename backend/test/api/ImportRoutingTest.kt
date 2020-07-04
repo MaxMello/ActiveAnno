@@ -4,9 +4,7 @@ import application.*
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationCall
-import io.mockk.Runs
 import io.mockk.coEvery
-import io.mockk.just
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -22,12 +20,13 @@ class ImportRoutingTest {
         applicationConfig = ApplicationConfig(JwtConfiguration(
             useRoleProtection = false, validation = JwtValidation(true, "")
         ), Cors(listOf()), MongoConfig("", "activeanno_test"),
-            KtorHttpsConfig(false), LoggingConfig("DEBUG"), false)
-        coEvery { documentDAO.insert(any()) } just Runs
-        coEvery { documentDAO.insertMany(any()) } just Runs
+            KtorHttpsConfig(false), FeaturesConfig(false))
+        coEvery { documentDAO.insert(any()) } returns "1"
+        coEvery { documentDAO.insertMany(any()) } returns listOf("1", "2")
     }
 
-    private fun testImportBase(body: String, asserts: TestApplicationCall.() -> Unit): Unit = testPost("/api/v1/import", body, authorizationHeader, asserts)
+    private fun testImportBase(body: String, asserts: TestApplicationCall.() -> Unit): Unit = testPost("/api/v1/import/document", body,
+        authorizationHeader, asserts)
 
     @Test
     fun `test empty json object results in BadRequest 400`() = testImportBase("{}") {

@@ -1,14 +1,14 @@
 package user.message
 
 import common.getOrCreateCollection
-import config.filter.And
-import config.filter.Equals
-import config.userroles.UserIdentifier
 import kotlinx.coroutines.runBlocking
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
+import project.filter.And
+import project.filter.Equals
+import project.userroles.UserIdentifier
 
-private const val MESSAGE_COLLECTION = "message"
+private const val MESSAGE_COLLECTION = "messages"
 
 /**
  * DAO for the [Message] model, controlling access to the message collection.
@@ -43,7 +43,8 @@ class MessageDAO(database: CoroutineDatabase) {
             And(
                 Equals("recipient", userIdentifier),
                 Equals("read", false)
-            ).buildQuery().toString()).toList()
+            ).buildQuery().toString()
+        ).toList()
     }
 
     suspend fun getAllForSender(userIdentifier: UserIdentifier): List<Message> {
@@ -55,6 +56,7 @@ class MessageDAO(database: CoroutineDatabase) {
             And(
                 Equals("recipient", userIdentifier),
                 Equals("read", false)
-            ).buildQuery().toString())
+            ).buildQuery().toString()
+        )
     }
 }

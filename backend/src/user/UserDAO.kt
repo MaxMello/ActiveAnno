@@ -2,20 +2,23 @@ package user
 
 import com.mongodb.client.model.IndexOptions
 import common.getOrCreateCollection
-import config.filter.Equals
-import config.userroles.UserIdentifier
 import kotlinx.coroutines.runBlocking
 import org.bson.BsonDocument
 import org.bson.BsonInt32
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.slf4j.LoggerFactory
+import project.filter.Equals
+import project.userroles.UserIdentifier
 
 
 private val logger = LoggerFactory.getLogger("UserDAO")
 
-private const val USER_COLLECTION = "user"
+private const val USER_COLLECTION = "users"
 
+/**
+ * DAO for accessing the user collection
+ */
 class UserDAO(database: CoroutineDatabase) {
 
     private val userCollection: CoroutineCollection<User> = runBlocking {
@@ -32,7 +35,7 @@ class UserDAO(database: CoroutineDatabase) {
         return userCollection.find().batchSize(10).toList()
     }
 
-    private suspend fun byUserIdentifier(userIdentifier: UserIdentifier): User? {
+    suspend fun byUserIdentifier(userIdentifier: UserIdentifier): User? {
         return userCollection.findOne(Equals("userIdentifier", userIdentifier).buildQuery().toString())
     }
 

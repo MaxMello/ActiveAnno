@@ -10,7 +10,7 @@ Data class representing the JWT validation configuration
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `JwtValidation(acceptAllTokens: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = true, url: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`)`<br>Data class representing the JWT validation configuration |
+| [&lt;init&gt;](-init-.md) | Data class representing the JWT validation configuration`JwtValidation(acceptAllTokens: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = true, url: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`)` |
 
 ### Properties
 

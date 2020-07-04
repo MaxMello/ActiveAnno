@@ -2,16 +2,12 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {withLocalization} from "react-localize";
-import type {
-    WithLocalizationComponentProps,
-    WithStylesComponentProps
-} from "../../../types/Types";
+import type {WithLocalizationComponentProps, WithStylesComponentProps} from "../../../types/Types";
 import {Grid, OutlinedInput, Typography} from "@material-ui/core";
-import InteractionComponentWrapper from "../interaction/InteractionComponentWrapper";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import {Check, Close} from "@material-ui/icons";
-import type {FilterCondition, Sort} from "../../../types/ManageTypes";
+import type {FilterCondition, Sort} from "../../../types/manage/ManageTypes";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import OverflowMenuItem from "../OverflowMenuItem";
@@ -23,23 +19,35 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import {colorButtonClasses} from "../colorButtonClasses";
+import {
+    ButtonColors,
+    disabledFullWidthColorButton,
+    fullWidthColorButton,
+    selectedFullWidthColorButton
+} from "../../../constants/ButtonColors";
+import InputWrapper from "../InputWrapper";
 
 
 type FilterAndSortStepProps = WithStylesComponentProps & WithLocalizationComponentProps & {
     id: string,
-    updateConfigValue: Function,
-    isNewConfig: boolean,
+    updateProjectValue: Function,
+    isNewProject: boolean,
     filter?: FilterCondition,
     sort: Sort
 };
 
+type FilterAndSortStepState = {
+    filterExpanded: boolean,
+    sortExpanded: boolean
+}
+
 const style: Function = (theme: Object): Object => ({
+    ...theme.buttons,
     buttonGroup: theme.defaultFullWidthButtonGroup,
-    toggleButton: theme.defaultFullWidthToggleButton,
-    toggleButtonSelected: theme.defaultToggleButtonSelected,
-    toggleButtonDisabled: theme.defaultToggleButtonDisabled,
     defaultFormControl: theme.defaultFormControl,
     chipInput: theme.defaultChipInput,
+    primaryDisabledSelectedButton: theme.primaryDisabledSelectedButton
 });
 
 const ProjectType = {
@@ -113,14 +121,13 @@ const FilterConditionToDataTypeOptions = {
     ]
 };
 
-
 const SortOrder = {
     ASC: "ASC",
     DESC: "DESC"
 };
 
 
-class FilterAndSortStep extends Component<FilterAndSortStepProps> {
+class FilterAndSortStep extends Component<FilterAndSortStepProps, FilterAndSortStepState> {
 
     constructor(props) {
         super(props);
@@ -133,29 +140,38 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     renderOperator() {
         if(this.props.filter != null) {
             return <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
-                    <InteractionComponentWrapper name={this.props.localize('project.filterCondition.operator.name')}
+                    <InputWrapper name={this.props.localize('project.filterCondition.operator.name')}
                                                  caption={
-                                                     <span dangerouslySetInnerHTML={{__html: this.props.localize('project.filterCondition.operator.caption')}}/>
-                                                 }>
+                                                     // $FlowIgnore
+                                                     <span dangerouslySetInnerHTML={{__html:
+                                                        this.props
+                                                            .localize('project.filterCondition.operator.caption')}
+                                                     }/>
+                                                 }
+                                                 keyValue={"ICWrenderOperator"}>
                             <FormControl className={this.props.classes.defaultFormControl} variant="outlined" fullWidth>
-                                <Select value={this.props.filter.operator ? this.props.filter.operator : undefined}
+                                <Select value={this.props.filter?.operator ? this.props.filter.operator : undefined}
                                         onChange={event => {
-                                             this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "operator"], event.target.value);
-                                             this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "dataType"], FilterConditionToDataTypeOptions[event.target.value][0]);
-                                             this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], undefined);
+                                             this.props.updateProjectValue(this.props.isNewProject ? null :
+                                                 this.props.id, ["filter", "operator"], event.target.value);
+                                             this.props.updateProjectValue(this.props.isNewProject ? null :
+                                                 this.props.id, ["filter", "dataType"],
+                                                 FilterConditionToDataTypeOptions[event.target.value][0]);
+                                             this.props.updateProjectValue(this.props.isNewProject ? null :
+                                                 this.props.id, ["filter", "value"], undefined);
                                         }}
                                         input={<OutlinedInput notched={false} labelWidth={50}
                                                               name="operatorInput"/>}>
                                     {
-                                        Object.values(FilterConditionTypes).map(t => {
-                                            return <OverflowMenuItem value={t}>
+                                        (Object.values(FilterConditionTypes): any).map((t: string) => {
+                                            return <OverflowMenuItem value={t} key={`filterConOp${t}`}>
                                                 {this.props.localize(`project.filterCondition.type.${t}`)}
                                             </OverflowMenuItem>
                                         })
                                     }
                                 </Select>
                             </FormControl>
-                    </InteractionComponentWrapper>
+                    </InputWrapper>
                 </Grid>;
         } else {
             return null;
@@ -165,21 +181,27 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     renderKeyInput() {
         if(this.props.filter != null) {
             return <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
-                <InteractionComponentWrapper name={this.props.localize('project.filterCondition.key.name')}
+                <InputWrapper name={this.props.localize('project.filterCondition.key.name')}
                                              caption={
-                                                 <span dangerouslySetInnerHTML={{__html: this.props.localize('project.filterCondition.key.caption')}}/>
-                                             }>
+                                                 // $FlowIgnore
+                                                 <span dangerouslySetInnerHTML={{__html:
+                                                         this.props
+                                                             .localize('project.filterCondition.key.caption')}
+                                                 }/>
+                                             }
+                                             keyValue={"ICWrenderKeyInput"}>
                     <TextField
-                        value={this.props.filter.key ? this.props.filter.key : ""}
+                        value={this.props.filter?.key ?? ""}
                         onChange={event => {
-                            this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "key"], event.target.value)
+                            this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                ["filter", "key"], event.target.value)
                         }}
                         className={this.props.classes.defaultFormControl}
                         fullWidth
                         margin="normal"
                         variant="outlined"
                     />
-                </InteractionComponentWrapper>
+                </InputWrapper>
             </Grid>;
         } else {
             return null;
@@ -188,27 +210,39 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
 
     renderDataTypeInput() {
         if(this.props.filter && this.props.filter.operator) {
-            const currentVal = this.props.filter.dataType ? this.props.filter.dataType : FilterConditionToDataTypeOptions[this.props.filter.operator][0];
+            const currentVal = (this.props.filter.dataType ? this.props.filter.dataType :
+                // $FlowIgnore
+                FilterConditionToDataTypeOptions[this.props.filter.operator][0]);
             return <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
-                <InteractionComponentWrapper name={this.props.localize('project.filterCondition.dataType.name')}
+                <InputWrapper name={this.props.localize('project.filterCondition.dataType.name')}
                                              caption={
-                                                 <span dangerouslySetInnerHTML={{__html: this.props.localize('project.filterCondition.dataType.caption')}}/>
-                                             }>
+                                                 // $FlowIgnore
+                                                 <span dangerouslySetInnerHTML={{__html:
+                                                         this.props
+                                                             .localize('project.filterCondition.dataType.caption')}
+                                                 }/>
+                                             }
+                                             keyValue={"ICWrenderDataTypeInput"}>
                     <FormControl className={this.props.classes.defaultFormControl} variant="outlined" fullWidth>
                         <Select value={ currentVal }
                                 onChange={event => {
-                                    this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "dataType"], event.target.value);
+                                    this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                        ["filter", "dataType"], event.target.value);
                                     if(event.target.value === DataTypeOptions.NULL) {
-                                        this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], null);
+                                        this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                            ["filter", "value"], null);
                                     } else {
-                                        this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], undefined);
+                                        this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                            ["filter", "value"], undefined);
                                     }
                                 }}
                                 input={<OutlinedInput notched={false} labelWidth={50}
                                                       name="dataTypeInput"/>}>
                             {
-                                Object.values(FilterConditionToDataTypeOptions[this.props.filter.operator]).map(t => {
-                                    return <OverflowMenuItem value={t}>
+                                // $FlowIgnore
+                                Object.values(FilterConditionToDataTypeOptions[this.props.filter.operator])
+                                    .map((t: any) => {
+                                    return <OverflowMenuItem value={t} key={`filterDataType${t}`}>
                                         {this.props.localize(`project.filterCondition.dataType.${t}`)}
                                     </OverflowMenuItem>
                                 })
@@ -216,7 +250,7 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
 
                         </Select>
                     </FormControl>
-                </InteractionComponentWrapper>
+                </InputWrapper>
             </Grid>;
         } else {
             return null;
@@ -225,9 +259,10 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
 
     renderTextValueInput() {
         return <TextField
-            value={this.props.filter.value ? this.props.filter.value : ""}
+            value={this.props.filter?.value ?? ""}
             onChange={(e) => {
-                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], e.target.value)
+                this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id, ["filter", "value"],
+                    e.target.value)
             }}
             className={this.props.classes.defaultFormControl}
             fullWidth
@@ -238,9 +273,10 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
 
     renderNumberValueInput() {
         return <TextField
-            value={this.props.filter.value ? this.props.filter.value : ""}
+            value={this.props.filter?.value ?? ""}
             onChange={(e) => {
-                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], e.target.value)
+                this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id, ["filter", "value"],
+                    e.target.value)
             }}
             type="number"
             className={this.props.classes.defaultFormControl}
@@ -251,20 +287,20 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     }
 
     renderBooleanValueInput() {
-        return <ToggleButtonGroup value={(this.props.filter.value !== null && this.props.filter.value !== undefined) ? this.props.filter.value : true}
+        return <ToggleButtonGroup value={(this.props.filter?.value !== null && this.props.filter?.value !== undefined)
+            ? this.props.filter.value : true}
                                   exclusive
                                   className={this.props.classes.buttonGroup}
                                   onChange={(_, newValue) => {
-                                      this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], newValue)
+                                      this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                          ["filter", "value"], newValue)
                                     }
                                   }>
-            <ToggleButton value={true} className={this.props.classes.toggleButton} fullWidth
-                          classes={{selected: this.props.classes.toggleButtonSelected}}>
+            <ToggleButton value={true} classes={colorButtonClasses(this.props.classes)}>
                 <Check/>
                 {this.props.localize('true')}
             </ToggleButton>
-            <ToggleButton value={false} className={this.props.classes.toggleButton} fullWidth
-                          classes={{selected: this.props.classes.toggleButtonSelected}}>
+            <ToggleButton value={false} classes={colorButtonClasses(this.props.classes)}>
                 <Close/>
                 {this.props.localize('false')}
             </ToggleButton>
@@ -283,22 +319,24 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     }
 
     renderListOfNumberValueInput() {
-        let currentValues = this.props.filter.value && isArray(this.props.filter.value) ? this.props.filter.value : [];
+        let currentValues = this.props.filter?.value && isArray(this.props.filter.value) ? this.props.filter.value : [];
         return <MuiThemeProvider><ChipInput
             className={this.props.classes.chipInput}
             value={currentValues}
             onAdd={(chip) => {
-                chip = Number(chip);
-                if(!Number.isNaN(chip)) {
-                    currentValues.push(chip);
-                    this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], currentValues);
+                const numberChip = Number(chip);
+                if(!Number.isNaN(numberChip)) {
+                    currentValues.push(numberChip);
+                    this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id, ["filter", "value"],
+                        currentValues);
                 }
             }}
             onDelete={(chip) => {
-                chip = Number(chip);
-                if(!Number.isNaN(chip)) {
-                    currentValues = currentValues.filter(c => c !== chip);
-                    this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], currentValues);
+                const numberChip = Number(chip);
+                if(!Number.isNaN(numberChip)) {
+                    currentValues = currentValues.filter(c => c !== numberChip);
+                    this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id, ["filter", "value"],
+                        currentValues);
                 }
             }}
             allowDuplicates={true}
@@ -308,17 +346,19 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     }
 
     renderListOfStringValueInput() {
-        let currentValues = this.props.filter.value && isArray(this.props.filter.value) ? this.props.filter.value : [];
+        let currentValues = this.props.filter?.value && isArray(this.props.filter.value) ? this.props.filter.value : [];
         return <MuiThemeProvider><ChipInput
             className={this.props.classes.chipInput}
             value={currentValues}
             onAdd={(chip) => {
                 currentValues.push(chip);
-                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], currentValues);
+                this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id, ["filter", "value"],
+                    currentValues);
             }}
             onDelete={(chip) => {
                 currentValues = currentValues.filter(c => c !== chip);
-                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter", "value"], currentValues);
+                this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id, ["filter", "value"],
+                    currentValues);
             }}
             allowDuplicates={true}
             fullWidth={true}
@@ -327,17 +367,17 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     }
 
     renderInputBasedOnType() {
-        if(this.props.filter.dataType === DataTypeOptions.STRING) {
+        if(this.props.filter?.dataType === DataTypeOptions.STRING) {
             return this.renderTextValueInput()
-        } else if(this.props.filter.dataType === DataTypeOptions.NUMBER) {
+        } else if(this.props.filter?.dataType === DataTypeOptions.NUMBER) {
             return this.renderNumberValueInput()
-        } else if(this.props.filter.dataType === DataTypeOptions.BOOLEAN) {
+        } else if(this.props.filter?.dataType === DataTypeOptions.BOOLEAN) {
             return this.renderBooleanValueInput()
-        } else if(this.props.filter.dataType === DataTypeOptions.NULL) {
+        } else if(this.props.filter?.dataType === DataTypeOptions.NULL) {
             return this.renderNullValueInput()
-        } else if(this.props.filter.dataType === DataTypeOptions.LIST_OF_NUMBER) {
+        } else if(this.props.filter?.dataType === DataTypeOptions.LIST_OF_NUMBER) {
             return this.renderListOfNumberValueInput()
-        } else if(this.props.filter.dataType === DataTypeOptions.LIST_OF_STRING) {
+        } else if(this.props.filter?.dataType === DataTypeOptions.LIST_OF_STRING) {
             return this.renderListOfStringValueInput()
         } else {
             return null;
@@ -347,12 +387,13 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     renderValueInput() {
         if(this.props.filter && this.props.filter.operator && this.props.filter.dataType) {
             return <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
-                <InteractionComponentWrapper name={this.props.localize('project.filterCondition.value.name')}
-                                             caption={this.props.localize('project.filterCondition.value.caption')}>
+                <InputWrapper name={this.props.localize('project.filterCondition.value.name')}
+                                             caption={this.props.localize('project.filterCondition.value.caption')}
+                                             keyValue={"ICWrenderValueInput"}>
                     {
                         this.renderInputBasedOnType()
                     }
-                </InteractionComponentWrapper>
+                </InputWrapper>
             </Grid>;
         } else {
             return null;
@@ -361,7 +402,8 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
 
     renderFilterCondition() {
         if(this.props.filter) {
-            return <ExpansionPanel defaultExpanded={true}  className={this.props.classes.panel} onChange={(_, expanded) => {
+            return <ExpansionPanel defaultExpanded={true}  className={this.props.classes.panel}
+                                   onChange={(_, expanded) => {
                 this.setState({
                     sortExpanded: this.state.sortExpanded,
                     filterExpanded: expanded
@@ -385,7 +427,8 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     }
     
     renderSort() {
-        return <ExpansionPanel defaultExpanded={true}  className={this.props.classes.panel} onChange={(_, expanded) => {
+        return <ExpansionPanel defaultExpanded={true}  className={this.props.classes.panel}
+                               onChange={(_, expanded) => {
             this.setState({
                 filterExpanded: this.state.filterExpanded,
                 sortExpanded: expanded
@@ -397,44 +440,47 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
             <ExpansionPanelDetails className={this.props.classes.panelDetails}>
                 <Grid container spacing={4}>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                        <InteractionComponentWrapper name={this.props.localize('project.sort.key.name')}
-                                                     caption={this.props.localize('project.sort.key.caption')}>
+                        <InputWrapper name={this.props.localize('project.sort.key.name')}
+                                                     caption={this.props.localize('project.sort.key.caption')}
+                                                     keyValue={"ICWrenderSort1"}>
                         <TextField
                             value={this.props.sort.sorts[0] ? this.props.sort.sorts[0].key : undefined}
                             onChange={(e) => {
                                 const currentFirstSort = this.props.sort.sorts[0] ? this.props.sort.sorts[0] : {};
                                 currentFirstSort.key = e.target.value;
-                                this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["sort", "sorts"], [currentFirstSort])
+                                this.props.updateProjectValue(this.props.isNewProject ? null : this.props.id,
+                                    ["sort", "sorts"], [currentFirstSort])
                             }}
                             className={this.props.classes.defaultFormControl}
                             fullWidth
                             margin="normal"
                             variant="outlined"
                         />
-                        </InteractionComponentWrapper>
+                        </InputWrapper>
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                        <InteractionComponentWrapper name={this.props.localize('project.sort.order.name')}
-                                                     caption={this.props.localize('project.sort.order.caption')}>
+                        <InputWrapper name={this.props.localize('project.sort.order.name')}
+                                                     caption={this.props.localize('project.sort.order.caption')}
+                                                     keyValue={"ICWrenderSort2"}>
                         <ToggleButtonGroup value={this.props.sort.sorts[0] ? this.props.sort.sorts[0].order : undefined}
                                            exclusive
                                            className={this.props.classes.buttonGroup}
                                            onChange={(_, newValue) => {
-                                               const currentFirstSort = this.props.sort.sorts[0] ? this.props.sort.sorts[0] : {};
+                                               const currentFirstSort = this.props.sort.sorts[0] ?
+                                                   this.props.sort.sorts[0] : {};
                                                currentFirstSort.order = newValue;
-                                               this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["sort", "sorts"], [currentFirstSort]);
+                                               this.props.updateProjectValue(this.props.isNewProject ? null :
+                                                   this.props.id, ["sort", "sorts"], [currentFirstSort]);
                                            }
                                            }>
-                            <ToggleButton value={SortOrder.ASC} className={this.props.classes.toggleButton} fullWidth
-                                          classes={{selected: this.props.classes.toggleButtonSelected}}>
+                            <ToggleButton value={SortOrder.ASC} classes={colorButtonClasses(this.props.classes)}>
                                 {this.props.localize('project.sort.asc')}
                             </ToggleButton>
-                            <ToggleButton value={SortOrder.DESC} className={this.props.classes.toggleButton} fullWidth
-                                          classes={{selected: this.props.classes.toggleButtonSelected}}>
+                            <ToggleButton value={SortOrder.DESC} classes={colorButtonClasses(this.props.classes)}>
                                 {this.props.localize('project.sort.desc')}
                             </ToggleButton>
                         </ToggleButtonGroup>
-                        </InteractionComponentWrapper>
+                        </InputWrapper>
                     </Grid>
                 </Grid>
             </ExpansionPanelDetails>
@@ -444,33 +490,43 @@ class FilterAndSortStep extends Component<FilterAndSortStepProps> {
     render() {
         return <Grid container spacing={4}>
             <Grid item xs={12}>
-                <InteractionComponentWrapper name={this.props.localize('project.projectType.name')}
+                <InputWrapper name={this.props.localize('project.projectType.name')}
                                              caption={this.props.localize('project.projectType.caption')}
-                                             validationErrors={""}
-                                             keyValue={"projectConfigActive"}>
+                                             keyValue={"projectActive"}>
                     <ToggleButtonGroup value={this.props.filter == null ? ProjectType.ONE_OFF : ProjectType.CONTINUOUS}
                                        exclusive
                                        className={this.props.classes.buttonGroup}
                                        onChange={(_, newValue) => {
                                            if(newValue === ProjectType.CONTINUOUS) {
-                                               this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter"], {})
+                                               this.props.updateProjectValue(this.props.isNewProject ? null :
+                                                   this.props.id, ["filter"], {})
                                            } else {
-                                               this.props.updateConfigValue(this.props.isNewConfig ? null : this.props.id, ["filter"], null)
+                                               this.props.updateProjectValue(this.props.isNewProject ? null :
+                                                   this.props.id, ["filter"], null)
                                            }
                                        }
                                        }>
-                        <ToggleButton value={ProjectType.ONE_OFF} className={this.props.classes.toggleButton}
-                                      disabled={!this.props.isNewConfig}
-                                      classes={{selected: this.props.classes.toggleButtonSelected, disabled: this.props.classes.toggleButtonDisabled}}>
+                        <ToggleButton value={ProjectType.ONE_OFF} classes={{
+                            root: this.props.classes[fullWidthColorButton(ButtonColors.PRIMARY)],
+                            selected: this.props.classes[selectedFullWidthColorButton(ButtonColors.PRIMARY)],
+                            disabled: this.props.filter == null ?
+                                this.props.classes[selectedFullWidthColorButton(ButtonColors.PRIMARY)] :
+                                this.props.classes[disabledFullWidthColorButton(ButtonColors.PRIMARY)]
+                        }}
+                                      disabled={!this.props.isNewProject}>
                             {this.props.localize('project.projectType.oneOff')}
                         </ToggleButton>
-                        <ToggleButton value={ProjectType.CONTINUOUS} className={this.props.classes.toggleButton}
-                                      disabled={!this.props.isNewConfig}
-                                      classes={{selected: this.props.classes.toggleButtonSelected, disabled: this.props.classes.toggleButtonDisabled}}>
+                        <ToggleButton value={ProjectType.CONTINUOUS} classes={{
+                            root: this.props.classes[fullWidthColorButton(ButtonColors.PRIMARY)],
+                            selected: this.props.classes[selectedFullWidthColorButton(ButtonColors.PRIMARY)],
+                            disabled: this.props.filter != null ?
+                                this.props.classes[selectedFullWidthColorButton(ButtonColors.PRIMARY)] :
+                                this.props.classes[disabledFullWidthColorButton(ButtonColors.PRIMARY)]
+                        }} disabled={!this.props.isNewProject}>
                             {this.props.localize('project.projectType.continuous')}
                         </ToggleButton>
                     </ToggleButtonGroup>
-                </InteractionComponentWrapper>
+                </InputWrapper>
             </Grid>
             <Grid item xs={12}>
                 {this.renderFilterCondition()}

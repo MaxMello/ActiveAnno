@@ -10,12 +10,5 @@ Sealed class with two options why a annotation can be finalized
 
 | Name | Summary |
 |---|---|
-| [Curator](-curator/index.md) | `data class Curator : `[`FinalizedReason`](./index.md)<br>FinalizedReason that a curator annotated the document. |
-| [Policy](-policy.md) | `object Policy : `[`FinalizedReason`](./index.md)<br>FinalizedReason that the Policy logic decided that the annotations are finished. |
-
-### Inheritors
-
-| Name | Summary |
-|---|---|
-| [Curator](-curator/index.md) | `data class Curator : `[`FinalizedReason`](./index.md)<br>FinalizedReason that a curator annotated the document. |
-| [Policy](-policy.md) | `object Policy : `[`FinalizedReason`](./index.md)<br>FinalizedReason that the Policy logic decided that the annotations are finished. |
+| [Curator](-curator/index.md) | FinalizedReason that a curator annotated the document.`data class Curator : `[`FinalizedReason`](./index.md) |
+| [Policy](-policy.md) | FinalizedReason that the Policy logic decided that the annotations are finished.`object Policy : `[`FinalizedReason`](./index.md) |

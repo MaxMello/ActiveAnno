@@ -1,3 +1,4 @@
+// @flow
 import {makeStyles, Typography} from "@material-ui/core";
 import React from "react";
 
@@ -8,10 +9,14 @@ type TextMetaDataProps = {
 
 const useStyles = makeStyles(theme => ({
     defaultTypography: {
-        fontWeight: 'inherit'
+        fontWeight: 'inherit',
+        fontFamily: 'inherit'
     }
 }));
 
+/**
+ * Display the value of a metadata key
+ */
 export default function TextMetaData(props: TextMetaDataProps) {
     const classes = useStyles();
     return <Typography className={classes.defaultTypography}

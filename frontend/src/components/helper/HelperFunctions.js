@@ -1,17 +1,21 @@
-export function isArray (value) {
-    return value && typeof value === 'object' && value.constructor === Array;
+// @flow
+import type {AnyObject} from "../../types/Types";
+
+export function isArray (value: mixed): boolean {
+    return value !== null && typeof value === 'object' && value.constructor === Array;
 }
 
-export function buildDeepObject(keys: Array<string>, obj: Object, newValue: any, index: number) {
+export function buildDeepObject(keys: Array<string>, obj: AnyObject, newValue: any, index: number) {
+    const key: string = keys[index]
     if(index === keys.length - 1) {
         return {
             ...obj,
-            [[keys[index]]]: newValue
+            [key]: newValue
         }
     } else if(index < keys.length - 1) {
         return {
             ...obj,
-            [[keys[index]]]: {
+            [key]: {
                 ...buildDeepObject(keys, obj[keys[index]], newValue, index + 1)
             }
         }

@@ -6,8 +6,8 @@
 
 | Name | Summary |
 |---|---|
-| [Page](-page/index.md) | `data class Page`<br>A [Page](-page/index.md) represents a UI page of the frontend, optionally with a [badgeCount](-page/badge-count.md) to indicate how many interactions are waiting for the user |
-| [PageSetup](-page-setup/index.md) | `data class PageSetup`<br>Model for frontend communication representing the PageSetup, controlling the layout and core data for the page setup of the frontend |
+| [Page](-page/index.md) | A [Page](-page/index.md) represents a UI page of the frontend, optionally with a [badgeCount](-page/badge-count.md) to indicate how many interactions are waiting for the user`data class Page` |
+| [PageSetup](-page-setup/index.md) | Model for frontend communication representing the PageSetup, controlling the layout and core data for the page setup of the frontend`data class PageSetup` |
 
 ### Extensions for External Classes
 

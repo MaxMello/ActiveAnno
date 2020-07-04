@@ -6,8 +6,9 @@ import Button from "@material-ui/core/Button";
 import LockOpenOutlinedIcon from "@material-ui/icons/LockOpenOutlined";
 import Avatar from "@material-ui/core/Avatar";
 import {withLocalization} from "react-localize";
+import type {WithLocalizationComponentProps, WithStylesComponentProps} from "../../types/Types";
 
-type ContentProps = {
+type LogoutFormProps = WithStylesComponentProps & WithLocalizationComponentProps & {
     username: string,
     onClick: Function
 };
@@ -26,14 +27,15 @@ const style: Function = (theme: Object): Object => ({
     }
 });
 
-class LogoutForm extends Component<ContentProps> {
+class LogoutForm extends Component<LogoutFormProps> {
     render() {
         return ([
                 <Avatar className={this.props.classes.avatar} key={"logoutForm.avatar"}>
                     <LockOpenOutlinedIcon/>
                 </Avatar>,
                 <Typography variant="h5" key={"logoutForm.greeting"}>
-                    {this.props.localize('login.greeting')} {this.props.username ? this.props.username : this.props.localize('login.defaultUserName')}!
+                    {this.props.localize('login.greeting')} {this.props.username
+                    ? this.props.username : this.props.localize('login.defaultUserName')}!
                 </Typography>,
                 <form className={this.props.classes.form} noValidate key={"logoutForm.form"}>
                     <Button

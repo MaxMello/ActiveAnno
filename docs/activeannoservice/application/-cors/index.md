@@ -10,7 +10,7 @@ Data class representing the CORS config
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `Cors(hosts: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>)`<br>Data class representing the CORS config |
+| [&lt;init&gt;](-init-.md) | Data class representing the CORS config`Cors(hosts: `[`List`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`>)` |
 
 ### Properties
 

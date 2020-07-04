@@ -1,3 +1,4 @@
+// @flow
 import React, {Component} from 'react';
 import {AppBar, Badge, Button, Toolbar, Typography, withStyles} from '@material-ui/core';
 import classNames from 'classnames';
@@ -15,11 +16,15 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Hidden from "@material-ui/core/Hidden";
 import {HideOnScroll} from "../helper/HideOnScroll";
 import NavMenuPopover from "./NavMenuPopover";
-import withWidth, {isWidthDown} from "@material-ui/core/withWidth";
-import type {PageSetupState} from "../../types/PageSetupTypes";
+import withWidth, {isWidthDown, WithWidth} from "@material-ui/core/withWidth";
+import type {PageSetupState} from "../../types/redux/PageSetupState";
+import type {
+    WithLocalizationComponentProps,
+    WithRouterComponentProps,
+    WithStylesComponentProps
+} from "../../types/Types";
 
-type HeaderProps = {
-    history: Array<string>,
+type HeaderProps = WithLocalizationComponentProps & WithRouterComponentProps & WithStylesComponentProps & WithWidth & {
     pageSetup: PageSetupState,
     loading: boolean
 }
@@ -94,14 +99,15 @@ class Header extends Component<HeaderProps> {
     }
 
     getBadgeContent(path: string) {
-        if(this.props.pageSetup.pageSetup && this.props.pageSetup.pageSetup.pages && this.props.pageSetup.pageSetup.pages[path]) {
+        if(this.props.pageSetup.pageSetup && this.props.pageSetup.pageSetup.pages
+            && this.props.pageSetup.pageSetup.pages[path]) {
             return this.props.pageSetup.pageSetup.pages[path].badgeCount;
         } else {
             return 0;
         }
     }
 
-    getMobileTitle(): string {
+    getTitleText(): string {
         const locationPath = this.props.history.location.pathname;
         if (locationPath.startsWith("/annotate")) {
             return this.props.localize('annotate.name')
@@ -111,7 +117,7 @@ class Header extends Component<HeaderProps> {
             return this.props.localize('manage.name')
         } else if (locationPath.startsWith("/admin")) {
             return this.props.localize('admin.name')
-        } else if (locationPath.startsWith("/login")) {
+        } else if (locationPath.startsWith("/user")) {
             return this.props.localize('login.name')
         } else if(locationPath.startsWith('/search')) {
             return this.props.localize('search.name')
@@ -120,7 +126,7 @@ class Header extends Component<HeaderProps> {
         }
     }
 
-    wrapInHideOnScroll(component: Component) {
+    wrapInHideOnScroll(component: AppBar) {
         if(isWidthDown("sm", this.props.width)) {
             return <HideOnScroll>
                 {component}
@@ -132,7 +138,9 @@ class Header extends Component<HeaderProps> {
 
     render() {
         const annotationButton = <Link to={'/annotate'} className={this.props.classes.link} key={'headerLinkAnnotate'}>
-                    <Badge badgeContent={this.getBadgeContent("annotate")} color="secondary" showZero={false} max={99}>
+                    <Badge badgeContent={
+                        this.getBadgeContent("annotate")} color="secondary" showZero={false} max={999}
+                    >
                         <Button classes={{root: this.getActiveClassForButton('/annotate')}}
                                 size="small">
                             {this.props.localize('annotate.name')}
@@ -140,7 +148,7 @@ class Header extends Component<HeaderProps> {
                     </Badge>
         </Link>;
         const curationButton = <Link to={'/curate'} className={this.props.classes.link} key={'headerLinkCurate'}>
-                <Badge badgeContent={this.getBadgeContent("curate")} color="secondary" showZero={false} max={99}>
+                <Badge badgeContent={this.getBadgeContent("curate")} color="secondary" showZero={false} max={999}>
                     <Button classes={{root: this.getActiveClassForButton('/curate')}}
                             size="small">
                         {this.props.localize('curate.name')}
@@ -196,19 +204,14 @@ class Header extends Component<HeaderProps> {
                             <Typography variant={'h6'} color={'inherit'} noWrap classes={{
                                 root: this.props.classes.title
                             }}>
-                                <Hidden smDown>
-                                    {this.props.localize('title')}
-                                </Hidden>
-                                <Hidden mdUp>
-                                    {this.getMobileTitle()}
-                                </Hidden>
+                                {this.getTitleText()}
                             </Typography>
                         </Link>
                         <div className={this.props.classes.grow}/>
                         <Hidden smDown>
                             <div className={{root: this.props.classes.sectionDesktop}}>
                                 {navButtons}
-                                <Link to={"/login"} className={this.props.classes.link}>
+                                <Link to={"/user"} className={this.props.classes.link}>
                                     <IconButton
                                         color="secondary">
                                         <AccountCircle/>
@@ -217,7 +220,8 @@ class Header extends Component<HeaderProps> {
                             </div>
                         </Hidden>
                         <Hidden mdUp>
-                            <NavMenuPopover localize={this.props.localize} pages={this.props.pageSetup.pageSetup ? this.props.pageSetup.pageSetup.pages : {}}/>
+                            <NavMenuPopover localize={this.props.localize} pages={this.props.pageSetup.pageSetup
+                                ? this.props.pageSetup.pageSetup.pages : {}}/>
                         </Hidden>
                     </Toolbar>
             {this.props.loading ? <LinearProgress color={"primary"} className={this.props.classes.progressBar}

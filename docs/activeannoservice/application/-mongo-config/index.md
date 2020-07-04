@@ -10,7 +10,7 @@ Data class representing the MongoDB config
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `MongoConfig(connectionString: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, databaseName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)` = "activeanno")`<br>Data class representing the MongoDB config |
+| [&lt;init&gt;](-init-.md) | Data class representing the MongoDB config`MongoConfig(connectionString: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, databaseName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)` = "activeanno")` |
 
 ### Properties
 

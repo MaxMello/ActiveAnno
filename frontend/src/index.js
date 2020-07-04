@@ -1,6 +1,7 @@
+// @flow
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {createStore, applyMiddleware, combineReducers} from 'redux';
+import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {Provider} from 'react-redux';
 import localforage from 'localforage';
 import './index.css';
@@ -11,18 +12,54 @@ import cookies from 'js-cookie';
 import createSagaMiddleware from 'redux-saga';
 import {applicationReducer} from './redux/application';
 import {authentication, onGetJWT} from './redux/authentication';
-import {all} from 'redux-saga/effects';
 import type {AllEffect, GenericAllEffect} from 'redux-saga/effects';
+import {all} from 'redux-saga/effects';
 import AppWrapper from "./components/App";
 import {onStartLoad, pageSetupReducer, periodicRefreshPageSetup} from "./redux/pageSetup";
-import {annotationConfigReducer, onLoadAnnotationConfig, onLoadAnnotationConfigList} from "./redux/annotationConfig";
-import {annotationDataReducer, onLoadAnnotationData, sendFinishedAnnotations} from "./redux/annotationData";
-import {refreshAnnotationPageSaga} from "./redux/annotation";
-import {curationConfigReducer, onLoadCurationConfig, onLoadCurationConfigList} from "./redux/curationConfig";
-import {curationDataReducer, onLoadCurationData, sendFinishedCurations} from "./redux/curationData";
-import {refreshCurationPageSaga} from "./redux/curation";
-import {manageReducer, onCreateConfig, onLoadManageConfig, onLoadManageConfigList, onSaveConfig} from "./redux/manage";
+import {
+    annotateCheckEnableConditions,
+    annotateOnValueCheckCheckEnableCondition,
+    annotationDataReducer,
+    onLoadAnnotationData,
+    sendFinishedAnnotationResult
+} from "./redux/annotate/annotationData";
+import {refreshAnnotationPageSaga} from "./redux/annotate/annotationRefresh";
+import {
+    curateCheckEnableConditions,
+    curateOnValueCheckCheckEnableCondition,
+    curationDataReducer,
+    onLoadCurationData,
+    sendAcceptedAnnotationResult,
+    sendAnnotationResultAsCurator
+} from "./redux/annotate/curationData";
+import {refreshCurationPageSaga} from "./redux/annotate/curationRefresh";
+import {
+    manageReducer,
+    onCreateProject,
+    onLoadManageProject,
+    onLoadManageProjectList,
+    onRequestProjectResultAnalysis,
+    onSaveProject,
+    uploadDocumentsForProject
+} from "./redux/manage/manage";
 import {WEB_DATABASE} from "./constants/Constants";
+import {
+    annotationProjectReducer,
+    onLoadAnnotationProject,
+    onLoadAnnotationProjectList
+} from "./redux/annotate/annotationProject";
+import {
+    curationProjectReducer,
+    onLoadCurationProject,
+    onLoadCurationProjectList
+} from "./redux/annotate/curationProject";
+import {composeWithDevTools} from "redux-devtools-extension";
+import {
+    onLoadAnnotationDefinition,
+    onLoadAnnotationDefinitions,
+    onStoreAnnotationDefinition,
+    onUpdateAnnotationDefinition
+} from "./redux/manage/manageAnnotationDefinitions";
 
 /************************************************************************************************
  * 1. Web app database configuration
@@ -52,10 +89,10 @@ const authenticationPersistConfig = {
     blacklist: ['fetchStatus']
 };
 
-const annotationConfigPersistConfig = {
-    key: `${WEB_DATABASE}.annotationConfig`,
+const annotationProjectPersistConfig = {
+    key: `${WEB_DATABASE}.annotationProject`,
     storage: localforage,
-    blacklist: ['listFetchStatus', 'configFetchStatus']
+    blacklist: ['listFetchStatus', 'projectFetchStatus']
 };
 
 const annotationDataPersistConfig = {
@@ -64,10 +101,10 @@ const annotationDataPersistConfig = {
     blacklist: ['fetchStatus']
 };
 
-const curationConfigPersistConfig = {
-    key: `${WEB_DATABASE}.curationConfig`,
+const curationProjectPersistConfig = {
+    key: `${WEB_DATABASE}.curationProject`,
     storage: localforage,
-    blacklist: ['listFetchStatus', 'configFetchStatus']
+    blacklist: ['listFetchStatus', 'projectFetchStatus']
 };
 
 const curationDataPersistConfig = {
@@ -85,7 +122,8 @@ const pageSetupPersistConfig = {
 const managePersistConfig = {
     key: `${WEB_DATABASE}.manage`,
     storage: localforage,
-    blacklist: ['listFetchStatus', 'configFetchStatus']
+    blacklist: ['listFetchStatus', 'projectFetchStatus', 'annotationDefinitionFetchStatus',
+        'projectAnalysisFetchStatus', 'uploadProjectStatus']
 };
 
 /************************************************************************************************
@@ -105,9 +143,9 @@ const reducer = combineReducers({
         application: persistReducer(applicationPersistConfig, applicationReducer),
         authentication: persistReducer(authenticationPersistConfig, authentication),
         pageSetup: persistReducer(pageSetupPersistConfig, pageSetupReducer),
-        annotationConfig: persistReducer(annotationConfigPersistConfig, annotationConfigReducer),
+        annotationProject: persistReducer(annotationProjectPersistConfig, annotationProjectReducer),
         annotationData: persistReducer(annotationDataPersistConfig, annotationDataReducer),
-        curationConfig: persistReducer(curationConfigPersistConfig, curationConfigReducer),
+        curationProject: persistReducer(curationProjectPersistConfig, curationProjectReducer),
         curationData: persistReducer(curationDataPersistConfig, curationDataReducer),
         manage: persistReducer(managePersistConfig, manageReducer)
 });
@@ -119,7 +157,7 @@ const reducer = combineReducers({
  * Default: Redux Saga, Cookie middleware and Web Socket middleware
  ************************************************************************************************/
 
-const middleware = applyMiddleware(sagaMiddleware, createCookieMiddleware(cookies));
+const middleware = composeWithDevTools(applyMiddleware(sagaMiddleware, createCookieMiddleware(cookies)));
 
 /************************************************************************************************
  * 5. Create redux store
@@ -134,11 +172,20 @@ const store = createStore(reducer, middleware);
  * The saga middleware must be created before the store is created, but the saga itself must
  * be run after the store creation.
  ************************************************************************************************/
+
 const rootSaga = function*(): Generator<AllEffect, GenericAllEffect<any>, any> {
     yield all([onGetJWT(), onStartLoad(), periodicRefreshPageSetup(),
-        onLoadAnnotationConfigList(), onLoadAnnotationConfig(), onLoadAnnotationData(), refreshAnnotationPageSaga(), sendFinishedAnnotations(),
-        onLoadCurationConfigList(), onLoadCurationConfig(), onLoadCurationData(), refreshCurationPageSaga(), sendFinishedCurations(),
-        onLoadManageConfigList(), onLoadManageConfig(), onCreateConfig(), onSaveConfig()])
+        onLoadAnnotationProjectList(), onLoadAnnotationProject(), onLoadAnnotationData(), refreshAnnotationPageSaga(),
+        sendFinishedAnnotationResult(), annotateCheckEnableConditions(), annotateOnValueCheckCheckEnableCondition(),
+        onLoadCurationProjectList(), onLoadCurationProject(), onLoadCurationData(),
+        refreshCurationPageSaga(), sendAnnotationResultAsCurator(), sendAcceptedAnnotationResult(),
+        curateCheckEnableConditions(), curateOnValueCheckCheckEnableCondition(),
+        onLoadManageProjectList(), onLoadManageProject(), onRequestProjectResultAnalysis(),
+        uploadDocumentsForProject(),
+        onCreateProject(), onSaveProject(),
+        onLoadAnnotationDefinitions(), onLoadAnnotationDefinition(), onUpdateAnnotationDefinition(),
+        onStoreAnnotationDefinition()
+    ])
 };
 sagaMiddleware.run(rootSaga);
 

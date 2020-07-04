@@ -30,7 +30,9 @@ services:
     environment:
       PORT: 8080
       HTTPS_REDIRECT: "false"
-      MONGO_CONNECTION_STRING: mongodb://user:password@activeannomongo:27017
+      MONGO_USER: user
+      MONGO_PASSWORD: password
+      MONGO_CONNECTION: activeannomongo:27017
       MONGO_DATABASE_NAME: activeanno
       JWT_USE_ROLE_PROTECTION: "true"
       JWT_ROLES_KEY: roles

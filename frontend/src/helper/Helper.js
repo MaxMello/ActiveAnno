@@ -1,11 +1,11 @@
 // @flow
 
-import type {Dictionary} from "../types/Types";
+import type {AnyObject} from "../types/Types";
 import CryptoJS from "crypto-js";
 import moment from "moment";
 
-export const normalize: Function = (array: Array<Object>, injected?: Object, idKey: string = "id") => {
-    const normalized: Dictionary = {};
+export const normalize: Function = (array: Array<AnyObject>, injected?: Object, idKey: string = "id") => {
+    const normalized: AnyObject = {};
     array.forEach(element => normalized[element[idKey]] = {...element, ...(injected !== undefined ? injected : {})});
     return normalized;
 };
@@ -46,7 +46,8 @@ export const generateSuperUserJWT: Function = (userIdentifier: string) => {
     const secret = "This it not secure";
 
     function base64url(source) {
-        return CryptoJS.enc.Base64.stringify(source).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+        return CryptoJS.enc.Base64.stringify(source).replace(/=+$/, '')
+            .replace(/\+/g, '-').replace(/\//g, '_');
     }
 
     const encodedHeader = base64url(CryptoJS.enc.Utf8.parse(JSON.stringify(header)));
@@ -56,7 +57,7 @@ export const generateSuperUserJWT: Function = (userIdentifier: string) => {
 };
 
 
-export function formatByMoment(d: string, formatString: string) {
+export function formatByMoment(d: string | number, formatString: string) {
     let dateInput;
     if(isNaN(d)) {
         dateInput = d;

@@ -1,7 +1,11 @@
-import React, { Component } from "react";
+// @flow
+import React, {Component} from "react";
 import {MenuItem} from "@material-ui/core";
 
-class OverflowMenuItem extends Component {
+/**
+ * MenuItem with text overflow
+ */
+class OverflowMenuItem extends Component<any, any> {
     render() {
         return <MenuItem {...this.props}>
             <div style={{overflow: "hidden", textOverflow: "ellipsis"}}>

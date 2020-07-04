@@ -10,7 +10,7 @@ Data class representing the HTTPS config for ktor
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `KtorHttpsConfig(redirect: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = false)`<br>Data class representing the HTTPS config for ktor |
+| [&lt;init&gt;](-init-.md) | Data class representing the HTTPS config for ktor`KtorHttpsConfig(redirect: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = false)` |
 
 ### Properties
 

@@ -10,10 +10,10 @@ FinalizedReason that a curator annotated the document.
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `Curator(curator: `[`UserIdentifier`](../../../config.userroles/-user-identifier.md)`)`<br>FinalizedReason that a curator annotated the document. |
+| [&lt;init&gt;](-init-.md) | FinalizedReason that a curator annotated the document.`Curator(curator: `[`UserIdentifier`](../../../project.userroles/-user-identifier.md)`)` |
 
 ### Properties
 
 | Name | Summary |
 |---|---|
-| [curator](curator.md) | `val curator: `[`UserIdentifier`](../../../config.userroles/-user-identifier.md) |
+| [curator](curator.md) | `val curator: `[`UserIdentifier`](../../../project.userroles/-user-identifier.md) |

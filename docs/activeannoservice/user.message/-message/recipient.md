@@ -2,4 +2,4 @@
 
 # recipient
 
-`val recipient: `[`UserIdentifier`](../../config.userroles/-user-identifier.md)
+`val recipient: `[`UserIdentifier`](../../project.userroles/-user-identifier.md)
