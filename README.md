@@ -28,64 +28,76 @@ and changing the `activeannofrontend.ports` mapping. (Then, you also need to add
 #### Login
 By default, the `local.docker-compose.yml` is configured for local run only, not for production purposes. Therefore, the authentication
 mechanism is disabled so that any username will automatically generate a super user account. Once opening `localhost:3000`, you
-will be redirected to `localhost:3000/login` and can provide any username you want (password can be empty / will be ignored).
+will be redirected to `localhost:3000/login` and can provide any username you want.
 If you want to instantly see an example project, chose the username `admin`. For this user, an existing project with a project
 configuration as well as some example data is provided.
 
 Login page on mobile
 
-<img src="screenshots/login_xs_cropped.png" alt="Login" width="300"/>
+<img src="screenshots/AA_login_mobile.png" alt="Login" width="300"/>
 
 #### Navigation / Usage
 Overview page on desktop / tablet
 
-<img src="screenshots/overview_md_cropped.png" alt="Overview Desktop" width="600"/> 
+<img src="screenshots/AA_landingpage.png" alt="Overview Desktop" width="600"/> 
 
 Overview page on mobile
 
-<img src="screenshots/overview_xs_cropped.png" alt="Overview Mobile" width="300"/> 
+<img src="screenshots/AA_home_mobile.png" alt="Overview Mobile" width="300"/> 
 
 * As a super user, you can see all areas of ActiveAnno. 
+* You can switch the language between English and German.
 
 Manage page on desktop
 
-<img src="screenshots/manage_md_cropped.png" alt="Manage Desktop" width="600"/>
+<img src="screenshots/AA_manage_overview.png" alt="Manage Desktop" width="600"/>
 
-* To get a feel about the types of projects that can be created, navigate to the `Manage` page and inspect the existing project or create a new one.
-* After that, you can go to the `Annotate` page and annotate some documents. 
-
+* To get a feel about the types of projects that can be created, navigate to the `Manage` page
+* You can see the existing Annotation Definitions from the example project. Look into them to see the possibilities
+* Additionally, you can see the example project below. Click on it to see the different configuration options
+* After that, you can go to the `Annotate` page and annotate some documents.
 
 Annotate page on desktop / tablet (before annotating)
 
-<img src="screenshots/annotate_md.png" alt="Annotate Desktop" width="600"/>
+<img src="screenshots/AA_annotate.png" alt="Annotate Desktop" width="600"/>
 
 Annotate page on desktop / tablet (after annotating)
 
-<img src="screenshots/annotate_selected_md.png" alt="Annotate Desktop selected" width="600"/> 
+<img src="screenshots/AA_annotate_annotated.png" alt="Annotate Desktop selected" width="600"/> 
 
-* When you are the annotator of a specific document, you won't be able to also be the curator for that document. Therefore, 
-for the example project, you won't be able to see any documents you annotated up for curation under the `Curate` page.
+* The example project is configured to require two annotators per document. Please go to the login page and logout. After that, login with `testannotator1`. Go back to the annotate page and annotate the same documents again.
+* After that, you want to use the Curate feature. For this, do the following:
   * The example project has another user defined as a curator, named `testcurator`. 
   * Go to the User page and logout. Now, login with the username `testcurator`.
   * Go to the Curate page and view the annotation results previously created.
 
-Curate page (Annotation result copied and modified)
+Curate page
 
-<img src="screenshots/curate_sm.png" alt="Curate Tablet Portait" width="600"/> 
+<img src="screenshots/AA_curate_full.png" alt="Curate full view" width="700"/> 
 
 * The new user will now see the documents previously annotated under the Curate page (example project is configured 
 to `ALWAYS_REQUIRE_CURATION`, this can be changed in the Manage section, so that no curator is necessary.)
 * As a curator, you can either **accept** the annotation result of an annotator, **copy** that annotators result and change it, or just
 annotate the document yourself.
-  
+
+Analyze results page
+
+<img src="screenshots/AA_analyze_full.png" alt="Analyze results full view" width="700"/> 
+
+* Once you did the curation work, you can analyze the results (duration, accuracy, IAA etc.)
+* For this, logout. Login again as `admin`. Go to Manage > Projects > Project Example project: App Reviews > "Analyze Results" Button
+* Click on "Start Analysis" (You can ignore the additional filter possibilities for now). 
+* Now you can see duration, IAA, accuracy and every single correctness / agreement in a table.
+* Because the demo project has some dummy "generated" data for the SPAM annotation, you can also see the accuracy for the generator.
+
 ## Use cases
 - One-off projects (Create project, upload documents, annotate (and optionally curate) annotations and download results via UI)
 - (Micro-)Service integration (Create project, push documents via REST interface, annotate (and optionally curate)), consume annotations via REST or send on finished via WebHooks
 - Single user: One person is creator of project and uses the application to annotate the documents
 - Multi user: Multiple annotators, optionally curators (or majority decision from annotators)
 - Crowd sourcing: A lof of annotators with a few (or no) curators
-- Algorithm only (future use case): Integrate multiple ML/NLP algorithms to annotate documents, build majorities through the application and curate differences with human in the loop (Active Learning)
-- Multi user with algorithms (future use case): Treat ML/NLP algorithms as users, combine with annotators and curators to annotate documents and generate new training data for algorithms (Active Learning)
+- Algorithm only: Integrate multiple ML/NLP algorithms to annotate documents, build majorities through the application and curate differences with human in the loop (Active Learning)
+- Multi user with algorithms: Treat ML/NLP algorithms as users, combine with annotators and curators to annotate documents and generate new training data for algorithms (Active Learning)
 
 ## API
 Additionally to the endpoints of the backend used by the frontend, there are additional endpoints that are relevant, especially when
