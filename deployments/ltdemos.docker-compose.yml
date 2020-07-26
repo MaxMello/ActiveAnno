@@ -18,17 +18,18 @@ services:
     ports:
       - 27017:27017
   activeannofrontend:
-    image: maxmello/activeannofrontend:1.0-ltdemos
+    image: maxmello/activeannofrontend:2.0-ltdemos
     ports:
       - 3000:80
     container_name: activeannofrontend
   activeannoservice:
-    image: maxmello/activeannoservice:1.0
+    image: maxmello/activeannoservice:2.0
     ports:
       - 3001:8080
     container_name: activeannoservice
     environment:
       PORT: 8080
+      HOST: '0.0.0.0'
       HTTPS_REDIRECT: "false"
       MONGO_USER: user
       MONGO_PASSWORD: password

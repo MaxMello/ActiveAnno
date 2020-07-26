@@ -37,7 +37,8 @@
     "redux-cookie": "^0.5.9",
     "redux-persist": "^5.10.0",
     "redux-saga": "1.0.3",
-    "utility-types": "^3.10.0"
+    "utility-types": "^3.10.0",
+    "env-cmd": "10.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -54,6 +55,7 @@
   "scripts": {
     "start": "./node_modules/react-scripts/bin/react-scripts.js start",
     "build": "./node_modules/react-scripts/bin/react-scripts.js build",
+    "build:ltdemos": "env-cmd -f .env.ltdemos npm run build",
     "test": "./node_modules/react-scripts/bin/react-scripts.js test",
     "eject": "./node_modules/react-scripts/bin/react-scripts.js eject",
     "flow": "flow"
