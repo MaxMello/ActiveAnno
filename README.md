@@ -106,7 +106,7 @@ ActiveAnno is used in a microservice context. Here, the endpoints are documented
 There are two ways to get documents to annotate into the application. Either create a One-off project and upload the documents inside the Manage UI,
 or create a project for continuous annotation of streams of documents. For this, the Import API is available.
 ```
-POST /api/v1/import
+POST /api/v1/import/document
 ```
 The endpoint is protected via `JWT` authentication and authorization. In a production setup, the user needs to have the role `activeanno_producer` (configurable via env variables).
 Typical use cases would be another service pushing data to this endpoint, or pushing data manually via curl, Postman etc. For both cases a JWT with this role is required.
@@ -158,7 +158,7 @@ The other relevant API is for exporting documents with their created annotations
 use the REST API or webhooks.
 First, lets demonstrate the REST api.
 ```
-GET /api/v1/export/config/{configID}            // configID, for example EXAMPLE_PROJECT_APP_REVIEWS
+GET /api/v1/export/project/{projectID}            // projectID, for example EXAMPLE_PROJECT_APP_REVIEWS
 Optional get parameters:
 includeUnfinished=true|false  // Include document that not yet have been fully annotated in the export
 since=12345                   // UTC timestamp in millis, will include every document greater than or equal the timestamp (if includeUnfinished is true, will use the timestamp of the any existing annotation, if false, then from the officially chosen (by curator or algorithm) annotation 
@@ -236,8 +236,11 @@ locally, you will also need to change the `image` reference inside the `docker-c
 Additionally to the environment variables related the authentication mentioned above, there are further ones that can be set inside the docker-compose file. Here is an overview:
 ```
 PORT: 8080
+HOST: '0.0.0.0'
 HTTPS_REDIRECT: "false"
-MONGO_CONNECTION_STRING: mongodb://user:password@activeannomongo:27017
+MONGO_CONNECTION: localhost:27017
+MONGO_USER: user
+MONGO_PASSWORD: password
 MONGO_DATABASE_NAME: activeanno
 LOGGING_LEVEL: DEBUG
 GENERATE_EXAMPLE_PROJECT: "true"
@@ -277,10 +280,11 @@ inside the /docs folder and push to github to update the Github pages site.
 
 ### Project structure
 The backend code is structured in the following packages
+- `/annotationDefinition` containts all the annotation definitions and generators
 - `/api` contains all the routing endpoints
 - `/application` contains the `Application` class, entry point to the application as well as the access to the application config
 - `/common` contains utility code as well as the security code for JWT verification
-- `/config` contains the `ProjectConfig`, different view data classes on it and the DAO for it
+- `/project` contains the `Project`, different view data classes on it and the DAO for it
 - `/document` contains the `Document` class with its DAO, and the models for storing the `AnnotationResult` for the documents
 - `/user` contains the `User` model and DAO as well as the `Message` model and DAO for communication between users
 
@@ -323,7 +327,7 @@ ActiveAnno is under active development in open source.
 * Better curation view with disagreement highlighting
 
 ## Browser compatibility 
-WebAnno was mainly developed with Firefox (v76), but it was also tested in an up-to-date version of Chrome and Safari.
+WebAnno was mainly developed with Firefox, but it was also tested in an up-to-date version of Chrome and Safari.
 
 ## Contributing
 
