@@ -174,6 +174,13 @@ The full export result is stored under [example_export.json](./documentation/exa
 For **webhook** exports, we need to define the WebHook configuration inside the Manage UI. There, you define a list of URLs where any new finalized document annotation result will be posted to.
 For this, you need to define a URL, a behavior how to handle a failure (retry on next finished or ignore), the export format and the kind of authentication required for the web hook. At 
 the moment, no authentication and HTTP Basic Auth are supported, though an OAuth2 approach with clientID and clientSecret as well as token URL is planned to be supported in the future.
+### Access to newer features
+Some newer features are currently only available through the API of ActiveAnno, not yet in the UI. This includes:
+* Customized layout options (colored buttons, bold text, etc.)
+* Annotation Generators (Machine Learning Integration)
+* Enable Conditions (Conditions between annotation definitions)
+
+To have access to them, please refer to the documentation inside [the api folder](./backend/src/api) or use the JavaDoc / Dokka: https://maxmello.github.io/ActiveAnno/activeannoservice/
 
 ## Production setup
 For an actual production setup, some more steps are required. The first and biggest one is that an external Authentication service
