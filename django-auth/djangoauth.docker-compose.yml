@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  django-auth-standalone:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py createsu && python manage.py runserver 0.0.0.0:8051"
+    environment:
+      ADMIN_PASSWORD: 'mysecretpassword'
+    volumes:
+      - .:/code
+    ports:
+      - 8051:8051
