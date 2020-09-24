@@ -4,14 +4,15 @@ version: '3.4'
 
 volumes:
   activeanno-data:
+  djangoauth-data:
 
 services:
   activeannomongo:
     container_name: activeannomongo
     image: mongo:4
+    env_file:
+      - activeanno.env
     environment:
-      MONGO_INITDB_ROOT_USERNAME: user
-      MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: activeanno
     volumes:
       - activeanno-data:/data/db
@@ -27,12 +28,12 @@ services:
     ports:
       - 3001:8080
     container_name: activeannoservice
+    env_file:
+      - activeanno.env
     environment:
       PORT: 8080
       HOST: '0.0.0.0'
       HTTPS_REDIRECT: "false"
-      MONGO_USER: user
-      MONGO_PASSWORD: password
       MONGO_CONNECTION: activeannomongo:27017
       MONGO_DATABASE_NAME: activeanno
       JWT_USE_ROLE_PROTECTION: "true"
@@ -45,8 +46,17 @@ services:
       JWT_ROLE_GLOBAL_SEARCH: activeanno_global_search
       JWT_USER_IDENTIFIER_KEY: sub
       JWT_USER_NAME: name
-      JWT_VALIDATION_ACCEPT_ALL_TOKENS: "true"
-      JWT_VALIDATION_URL:
+      JWT_VALIDATION_ACCEPT_ALL_TOKENS: "false"
+      JWT_VALIDATION_URL: http://djangoauth:8050/api/token/verify/
       CORS_HOSTS_LIST: 'ltdemos.informatik.uni-hamburg.de'
       LOGGING_LEVEL: DEBUG
       GENERATE_EXAMPLE_PROJECT: "true"
+  djangoauth:
+    image: maxmello/activeannoauth:0.1
+    command: bash -c "python manage.py migrate && python manage.py createsu && python manage.py runserver 0.0.0.0:8050"
+    volumes:
+      - djangoauth-data:/data
+    env_file:
+      - activeanno.env
+    ports:
+      - 8050:8050

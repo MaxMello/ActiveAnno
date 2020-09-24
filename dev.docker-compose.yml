@@ -1,0 +1,25 @@
+version: '3.4'
+
+# compose file for only running the mongo DB and auth service inside a container.
+# Then, you can run the backend and frontend directly.
+
+services:
+  mongo:
+    container_name: mongo
+    image: mongo:4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: activeanno
+    ports:
+      - 27017:27017
+  djangoauth-dev:
+    image: maxmello/activeannoauth:0.1
+    command: bash -c "python manage.py migrate && python manage.py createsu && python manage.py runserver 0.0.0.0:8053"
+    volumes:
+      - djangoauth-image-data:/data
+    environment:
+      ADMIN_PASSWORD: mysecretpassword
+      DATA_PATH: /data
+    ports:
+      - 8053:8053

@@ -4,6 +4,7 @@ version: '3.4'
 
 volumes:
   activeanno-data:
+  djangoauth-local-data:
 
 services:
   activeannomongo:
@@ -45,8 +46,18 @@ services:
       JWT_ROLE_GLOBAL_SEARCH: activeanno_global_search
       JWT_USER_IDENTIFIER_KEY: sub
       JWT_USER_NAME: name
-      JWT_VALIDATION_ACCEPT_ALL_TOKENS: "true"
-      JWT_VALIDATION_URL:
+      JWT_VALIDATION_ACCEPT_ALL_TOKENS: "false"
+      JWT_VALIDATION_URL: http://djangoauth-local:8050/api/token/verify/
       CORS_HOSTS_LIST: 'localhost,localhost:3000,0.0.0.0,0.0.0.0:3000'
       LOGGING_LEVEL: DEBUG
       GENERATE_EXAMPLE_PROJECT: "true"
+  djangoauth-local:
+    image: maxmello/activeannoauth:0.1
+    command: bash -c "python manage.py migrate && python manage.py createsu && python manage.py runserver 0.0.0.0:8050"
+    volumes:
+      - djangoauth-local-data:/data
+    environment:
+      ADMIN_PASSWORD: mysecretpassword
+      DATA_PATH: /data
+    ports:
+      - 8050:8050
