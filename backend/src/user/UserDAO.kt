@@ -48,4 +48,8 @@ class UserDAO(database: CoroutineDatabase) {
             byUserIdentifier(userIdentifier) ?: it.also { logger.error("Could not store user, will return new User object anyway") }
         }
     }
+
+    suspend fun clear() {
+        userCollection.deleteMany("{}")
+    }
 }

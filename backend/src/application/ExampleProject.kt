@@ -2,8 +2,12 @@ package application
 
 import annotationdefinition.*
 import annotationdefinition.generator.FinalizeCondition
+import annotationdefinition.generator.UpdatableAnnotationGeneratorVersion
+import annotationdefinition.generator.UpdateResponse
+import annotationdefinition.generator.UpdateState
 import annotationdefinition.generator.documenttarget.TagSetDocumentTargetUpdatableGeneratorModel
 import annotationdefinition.target.DocumentTarget
+import com.fasterxml.jackson.databind.node.ArrayNode
 import common.HttpAuthentication
 import document.Document
 import document.addAnnotationResultForProject
@@ -47,8 +51,8 @@ private val logger = LoggerFactory.getLogger("ExampleProject")
  * Generate an example project to show off the capabilities of ActiveAnno
  */
 @KtorExperimentalAPI
-fun generateExampleProject(applicationConfig: ApplicationConfig) {
-    if (applicationConfig.featuresConfig.generateExampleProject) {
+fun generateExampleProject(applicationConfig: ApplicationConfig, doExecute: Boolean = false) {
+    if (applicationConfig.featuresConfig.generateExampleProject || doExecute) {
         runBlocking {
             // Create annotation definitions
             val isSpamAnnotationDefinition = BooleanAnnotationDefinition(
@@ -445,6 +449,7 @@ fun generateExampleProject(applicationConfig: ApplicationConfig) {
                         )
                     )
                 }, "EXAMPLE_PROJECT_APP_REVIEWS")
+                logger.info("Generate annotations")
                 val denormalizedAnnotationSchema = exampleProject.annotationSchema.denormalize()
                 ids.forEachIndexed { index, id ->
                     documentDAO.byId(id).let { doc ->
@@ -470,4 +475,169 @@ fun generateExampleProject(applicationConfig: ApplicationConfig) {
             }
         }
     }
+}
+
+@KtorExperimentalAPI
+fun generateOffensEvalProject(applicationConfig: ApplicationConfig, doExecute: Boolean = false) {
+    if (applicationConfig.featuresConfig.generateExampleProject || doExecute) {
+        logger.info("Generating OffensEval project")
+        runBlocking {
+            // Create annotation definitions
+            val isOffensiveAnnotationDefinition = TagSetAnnotationDefinition(
+                "IS_OFFENSIVE", "Is offensive", "Offensive?", System.currentTimeMillis(),
+                1, 1, listOf(
+                    TagSetAnnotationDefinition.TagSetOption("OFF", "Offensive", "Off."),
+                    TagSetAnnotationDefinition.TagSetOption("NOT", "Not offensive", "Not")
+                )
+            )
+            annotationDefinitionDAO.save(isOffensiveAnnotationDefinition)
+            // Create prediction models
+            val isOffensiveModel = TagSetDocumentTargetUpdatableGeneratorModel(
+                "OFFENS_EVAL_2019_IS_OFFENSIVE_MODEL",
+                "IS_OFFENSIVE",
+                "OffensEval 2019 Is Offensive Model",
+                "Model corresponding to the IS_OFFENSIVE annotation definition, having 2 classes.",
+                applicationConfig.featuresConfig.examplePredictUrl,
+                applicationConfig.featuresConfig.exampleTrainUrl,
+                null,
+                HttpAuthentication.None,
+                testSize = 0.0,
+                startThreshold = 0,
+                updateThreshold = -1000,
+                dataFilter = Equals(Document::originalDocument.name + ".dataset", "offenseval2019_test_a"),
+                versions = mutableListOf(UpdatableAnnotationGeneratorVersion(
+                    updateState = UpdateState.UPDATED, updateResponse =  UpdateResponse(
+                        score = null, numberOfExamples = 1000, version = 1
+                ))),
+                input = OriginalDocumentKey("tweet"),
+                finalizeCondition = FinalizeCondition.Always)
+            annotationGeneratorDAO.save(isOffensiveModel)
+
+            logger.info("Create OffensEval project")
+            val exampleProject = Project(
+                "OFFENS_EVAL_2019_A",
+                "OffensEval 2019 Task A",
+                "https://sites.google.com/site/offensevalsharedtask/offenseval2019 Sub-task A.",
+                "admin",
+                System.currentTimeMillis(), System.currentTimeMillis(), 50, true,
+                UserRoles(
+                    listOf("admin"),
+                    listOf("admin", "testuser1", "testuser2"),
+                    listOf("admin", "testuser1", "testuser2")
+                ),
+                InputMapping(
+                    DocumentText("tweet"), listOf(
+                    MetaData("id", "id")
+                )
+                ),
+                Equals("originalDocument.dataset", "offenseval2019_test_a"),
+                Sort(listOf(SortElement("originalDocument.id", Order.ASC))),
+                DocumentSelection(
+                    listOf(
+                        SubFilter("id", "ID", SelectionType.INPUT_FIELD)
+                    )
+                ),
+                AnnotationSchema(
+                    listOf(
+                        AnnotationSchemaElement(isOffensiveAnnotationDefinition.id, DocumentTarget(), null, isOffensiveModel.id)
+                    ),
+                    GeneratedAnnotationResultHandling(
+                        handlingPolicy = HandlingPolicy.Preselection(false),
+                        sortingPolicy = GeneratorSortingPolicy.ACTIVE_LEARNING_SORT,
+                        generatorTiming = GeneratorTiming.OnGenerateMissingAnnotationsRequest,
+                        updateGeneratedAnnotationDataOnNewVersion = true
+                    )
+                ), Layout(
+                mapOf(
+                    LayoutAreaType.Common to LayoutArea(
+                        LayoutAreaType.Common, listOf(
+                        Row(
+                            listOf(
+                                Column(
+                                    ColumnSizes(
+                                        12, 12, 12, 12, 12
+                                    ), listOf(
+                                    Text("Tweet-ID: "),
+                                    Bold(
+                                        TextMetaData(
+                                            "id"
+                                        )
+                                    )
+                                )
+                                )
+                            )
+                        ),
+                        Row(
+                            listOf(
+                                Column(
+                                    ColumnSizes(
+                                        12
+                                    ), listOf(DocumentTextElement("Tweet"))
+                                )
+                            )
+                        )
+                    )
+                    ),
+                    LayoutAreaType.DocumentTarget to LayoutArea(
+                        LayoutAreaType.DocumentTarget, listOf(
+                        Row(
+                            listOf(
+                                Column(
+                                    ColumnSizes(
+                                        12, 12, 12, 12, 12
+                                    ), listOf(
+                                    TagSetButtonGroup(isOffensiveAnnotationDefinition.id, buttonSize = ButtonSize.LARGE,
+                                    buttonColors = mapOf(
+                                        "OFF" to ButtonColor.RED_TONE,
+                                        "NOT" to ButtonColor.GREEN_TONE
+                                    ))
+                                )
+                                )
+                            )
+                        )
+                    )
+                    )
+                )
+            ), Policy(
+                numberOfAnnotatorsPerDocument = 2,
+                allowManualEscalationToCurator = false,
+                finalizeAnnotationPolicy = FinalizeAnnotationPolicy.MAJORITY_VOTE_PER_ANNOTATION_OR_CURATOR
+            ), Export(
+                listOf(),
+                RestConfig(
+                    ExportFormat(), RestAuthentication.None
+                ),
+                onOverwrittenFinalizedAnnotationBehavior = OnOverwrittenFinalizedAnnotationBehavior.DO_NOTHING
+            ),
+                true
+            )
+            projectDAO.save(exampleProject)
+            logger.info("Inserted $exampleProject")
+            if (documentDAO.countAll() < 20L) {
+                try {
+                    logger.info("Generate example data")
+                    val documents = jsonMapper.readTree(this::class.java.getResource("/offenseval2019_test_a.json").readText())
+                    documents as ArrayNode
+                    logger.info("Insert ${documents.size()} documents for OffensEval project")
+                    // These reviews are made up, not actual app reviews
+                    documentDAO.insertMany(documents)
+                } catch (e: Exception) {
+                    logger.error("Could not generate example data", e)
+                }
+            }
+        }
+    }
+}
+
+
+@KtorExperimentalAPI
+suspend fun resetDatabase(applicationConfig: ApplicationConfig) {
+    messageDAO.clear()
+    userDAO.clear()
+    annotationDefinitionDAO.clear()
+    annotationGeneratorDAO.clear()
+    documentDAO.clear()
+    projectDAO.clear()
+    generateExampleProject(applicationConfig, true)
+    generateOffensEvalProject(applicationConfig, true)
 }

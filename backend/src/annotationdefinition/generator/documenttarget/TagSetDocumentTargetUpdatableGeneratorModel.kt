@@ -196,29 +196,25 @@ class TagSetDocumentTargetUpdatableGeneratorModel(
                 .toMap().toTrainingData(annotationDefinition, input)
             val isMultiClass = annotationDefinition.minNumberOfTags == 0 || annotationDefinition.maxNumberOfTags == null ||
                     (annotationDefinition.maxNumberOfTags ?: 0) > 1
-            if(annotationDefinition.options.map { it.id }.all { optionID -> trainingData.filter { it.labels.contains(optionID) }.size > 2 }) {
-                val trainRequest = TrainRequest(
-                    id, trainingData, isMultiClass, testSize
+            val trainRequest = TrainRequest(
+                id, trainingData, isMultiClass, testSize
+            )
+            val trainResponse = httpClient.post<TrainResponse> {
+                url(updateUrl)
+                applyHttpAuthentication(httpAuthentication)
+                contentType(ContentType.Application.Json)
+                timeout {
+                    requestTimeoutMillis = TimeUnit.MINUTES.toMillis(30)
+                }
+                body = trainRequest
+            }
+            with(version) {
+                updateState = UpdateState.UPDATED
+                updateResponse = UpdateResponse(
+                    trainResponse.testScore,
+                    (trainResponse.testNumberOfExamples ?: 0) + trainResponse.trainNumberOfExamples,
+                    trainResponse.version
                 )
-                val trainResponse = httpClient.post<TrainResponse> {
-                    url(updateUrl)
-                    applyHttpAuthentication(httpAuthentication)
-                    contentType(ContentType.Application.Json)
-                    timeout {
-                        requestTimeoutMillis = TimeUnit.MINUTES.toMillis(30)
-                    }
-                    body = trainRequest
-                }
-                with(version) {
-                    updateState = UpdateState.UPDATED
-                    updateResponse = UpdateResponse(
-                        trainResponse.testScore,
-                        (trainResponse.testNumberOfExamples ?: 0) + trainResponse.trainNumberOfExamples,
-                        trainResponse.version
-                    )
-                }
-            } else {
-                throw IllegalStateException("Not enough training data for each annotation option yet")
             }
         }
 

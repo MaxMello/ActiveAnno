@@ -24,6 +24,7 @@ import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import org.slf4j.LoggerFactory
 import project.ProjectDAO
+import project.ProjectID
 import project.annotationschema.generator.GeneratorTiming
 import project.annotationschema.generator.generateMissingAnnotationsForAllDocumentsBulk
 import project.filter.And
@@ -31,6 +32,12 @@ import project.filter.FilterCondition
 
 
 private val logger = LoggerFactory.getLogger("GeneratorsRouting")
+
+
+data class GenerateAnnotationsResponse(
+    val projectID: ProjectID,
+    val numberUpdatedDocuments: Int
+)
 
 /**
  * Routes related to interacting with [AnnotationGenerator]s, especially the [UpdatableAnnotationGenerator]s.
@@ -44,24 +51,27 @@ fun Route.generators(applicationConfig: ApplicationConfig, projectDAO: ProjectDA
         getAuthenticatedByJwt("/generateAnnotations", listOf(applicationConfig.jwt.roleProducer)) {
             val chunkSize = call.request.queryParameters["chunkSize"]?.toInt() ?: 100
             val limit = call.request.queryParameters["limit"]?.toInt() ?: Int.MAX_VALUE
-            projectDAO.getAllActive().forEach { project ->
-                if(project.annotationSchema.generatedAnnotationResultHandling.generatorTiming.let {
+            call.respond(HttpStatusCode.OK, projectDAO.getAllActive().map { project ->
+                GenerateAnnotationsResponse(project.id,
+                    if(project.annotationSchema.generatedAnnotationResultHandling.generatorTiming.let {
                         it == GeneratorTiming.Always || it == GeneratorTiming.OnGenerateMissingAnnotationsRequest
                     }) {
-                    project.generateMissingAnnotationsForAllDocumentsBulk(chunkSize, limit)
-                }
-            }
-            call.respond(HttpStatusCode.OK)
+                        project.generateMissingAnnotationsForAllDocumentsBulk(chunkSize, limit)
+                    } else {
+                        0
+                    }
+                )
+            })
         }
 
         /*
          * Generate annotations for a specific project, will only generate missing annotations or when new versions of generators exist
          */
-        getAuthenticatedByJwt("/generateAnnotations/project/{projectID}", listOf(applicationConfig.jwt.roleProducer)) {
+        getAuthenticatedByJwt("/generateAnnotations/project/{projectID}", listOf(applicationConfig.jwt.roleProducer, applicationConfig.jwt.roleAdmin, applicationConfig.jwt.roleManager)) {
             val chunkSize = call.request.queryParameters["chunkSize"]?.toInt() ?: 100
             val limit = call.request.queryParameters["limit"]?.toInt() ?: Int.MAX_VALUE
             val projectID = call.parameters["projectID"] ?: throw IllegalArgumentException("Project ID cannot be null")
-            projectDAO.getProjectById(projectID).let { project ->
+            val noUpdated = projectDAO.getProjectById(projectID).let { project ->
                 if(project.annotationSchema.generatedAnnotationResultHandling.generatorTiming.let {
                         logger.info("GeneratorTiming of ${project.id} is $it")
                         (it == GeneratorTiming.Always || it == GeneratorTiming.OnGenerateMissingAnnotationsRequest)
@@ -69,9 +79,10 @@ fun Route.generators(applicationConfig: ApplicationConfig, projectDAO: ProjectDA
                     project.generateMissingAnnotationsForAllDocumentsBulk(chunkSize, limit)
                 } else {
                     logger.warn("Project does not support generation of annotation data via this API")
+                    0
                 }
             }
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, GenerateAnnotationsResponse(projectID, noUpdated))
         }
 
         /*
@@ -79,16 +90,16 @@ fun Route.generators(applicationConfig: ApplicationConfig, projectDAO: ProjectDA
          * similar.
          */
         getAuthenticatedByJwt("/update", listOf(applicationConfig.jwt.roleProducer)) {
-            annotationGeneratorDAO.getAll().forEach { annotationGenerator ->
+            call.respond(HttpStatusCode.OK, annotationGeneratorDAO.getAll().map { annotationGenerator ->
                 updateAnnotationGenerator(annotationGenerator, documentDAO)
-            }
-            call.respond(HttpStatusCode.OK)
+                annotationGeneratorDAO.byId(annotationGenerator.id)
+            })
         }
 
         getAuthenticatedByJwt("/update/{generatorID}", listOf(applicationConfig.jwt.roleProducer)) {
             val generatorID = call.parameters["generatorID"] ?: throw IllegalArgumentException("GeneratorID cannot be null")
             updateAnnotationGenerator(annotationGeneratorDAO.byId(generatorID), documentDAO)
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, annotationGeneratorDAO.byId(generatorID))
         }
 
         /*

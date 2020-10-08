@@ -167,6 +167,10 @@ class DocumentDAO(database: CoroutineDatabase) {
         return documentCollection.countDocuments()
     }
 
+    suspend fun clear() {
+        documentCollection.deleteMany("{}")
+    }
+
     suspend fun byId(id: String): Document {
         return documentCollection.findOneById(id) ?: throw NotFoundException("Document with id $id not found")
     }

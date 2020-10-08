@@ -130,6 +130,7 @@ fun Application.module() {
     setupApplication()
 
     generateExampleProject(applicationConfig)
+    generateOffensEvalProject(applicationConfig)
 
     // Periodically update the dynamic indexes of the mongoDB
     launch(Dispatchers.IO) {

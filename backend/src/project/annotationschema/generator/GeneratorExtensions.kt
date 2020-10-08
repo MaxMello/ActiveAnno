@@ -108,7 +108,7 @@ suspend fun DenormalizedAnnotationSchema.generateAnnotationDataBulk(documents: L
  * Given a [Project], generate missing annotations for all documents for the project and update the documents. This method does it multiple chunks,
  * given a size parameter
  */
-suspend fun Project.generateMissingAnnotationsForAllDocumentsBulk(chuckSize: Int = 100, limit: Int = Int.MAX_VALUE) {
+suspend fun Project.generateMissingAnnotationsForAllDocumentsBulk(chuckSize: Int = 100, limit: Int = Int.MAX_VALUE): Int {
     if(annotationSchema.elements.any { it.annotationGeneratorID != null }) {
         val denormalizedAnnotationSchema = annotationSchema.denormalize()
         // Only generate if we have generators which actually can generate
@@ -142,6 +142,7 @@ suspend fun Project.generateMissingAnnotationsForAllDocumentsBulk(chuckSize: Int
                     val bulkWriteResult = documentDAO.bulkReplace(updatedDocuments)
                     if(bulkWriteResult.wasAcknowledged()) {
                         logger.info("Bulk write result: $bulkWriteResult")
+                        return updatedDocuments.size
                     } else {
                         logger.error("Bulk write result was not acknowledged: $bulkWriteResult")
                     }
@@ -153,5 +154,6 @@ suspend fun Project.generateMissingAnnotationsForAllDocumentsBulk(chuckSize: Int
             logger.info("No possibility to update for project ${this.id}")
         }
     }
+    return 0
 }
 

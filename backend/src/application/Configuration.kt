@@ -43,7 +43,9 @@ class ApplicationConfig() {
         )
         ktorHttpsConfig = KtorHttpsConfig(environment.config.property("ktor.https.redirect").getString().toBoolean())
         featuresConfig = FeaturesConfig(
-            generateExampleProject = environment.config.property("features.generateExampleProject").getString().toBoolean()
+            generateExampleProject = environment.config.property("features.generateExampleProject").getString().toBoolean(),
+            examplePredictUrl = environment.config.property("features.examplePredictUrl").getString(),
+            exampleTrainUrl = environment.config.property("features.exampleTrainUrl").getString()
         )
     }
 
@@ -107,5 +109,7 @@ data class KtorHttpsConfig(
 )
 
 data class FeaturesConfig(
-    val generateExampleProject: Boolean = false
+    val generateExampleProject: Boolean = false,
+    val examplePredictUrl: String = "",
+    val exampleTrainUrl: String = ""
 )

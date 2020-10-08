@@ -2,6 +2,7 @@ package api.admin
 
 import application.ApplicationConfig
 import application.projectDAO
+import application.resetDatabase
 import common.getAuthenticatedByJwt
 import common.measureTimeMillis
 import document.DocumentDAO
@@ -48,7 +49,7 @@ fun Route.admin(applicationConfig: ApplicationConfig, documentDAO: DocumentDAO) 
         route("/database") {
             getAuthenticatedByJwt("/updateIndexes", listOf(applicationConfig.jwt.roleAdmin)) {
                 updateIndexes()
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.NoContent)
             }
             getAuthenticatedByJwt("/generateEmptyProjectAnnotationData", listOf(applicationConfig.jwt.roleAdmin)) {
                 val limit = call.request.queryParameters["limitPerProject"]?.toInt() ?: 10
@@ -58,7 +59,7 @@ fun Route.admin(applicationConfig: ApplicationConfig, documentDAO: DocumentDAO) 
                         documentDAO.save(document)
                     }
                 }
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.NoContent)
             }
             getAuthenticatedByJwt("/generateEmptyProjectAnnotationData/project/{projectID}", listOf(applicationConfig.jwt.roleAdmin)) {
                 val limit = call.request.queryParameters["limit"]?.toInt() ?: 10
@@ -76,7 +77,11 @@ fun Route.admin(applicationConfig: ApplicationConfig, documentDAO: DocumentDAO) 
                         logger.info("Generated empty ProjectAnnotationData for ${documentIDs.joinToString(",")}")
                     }
                 }
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.NoContent)
+            }
+            getAuthenticatedByJwt("/reset", listOf(applicationConfig.jwt.roleAdmin)) {
+                resetDatabase(applicationConfig)
+                call.respond(HttpStatusCode.NoContent)
             }
         }
     }

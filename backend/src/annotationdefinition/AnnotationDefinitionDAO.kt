@@ -48,4 +48,8 @@ class AnnotationDefinitionDAO(database: CoroutineDatabase) {
     suspend fun save(annotationDefinition: AnnotationDefinition): UpdateResult? {
         return collection.save(annotationDefinition)
     }
+
+    suspend fun clear() {
+        collection.deleteMany("{}")
+    }
 }

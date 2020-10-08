@@ -38,4 +38,8 @@ class AnnotationGeneratorDAO(database: CoroutineDatabase) {
     suspend fun save(annotationGenerator: AnnotationGenerator): UpdateResult? {
         return collection.save(annotationGenerator)
     }
+
+    suspend fun clear() {
+        collection.deleteMany("{}")
+    }
 }

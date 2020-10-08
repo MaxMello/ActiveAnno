@@ -59,4 +59,8 @@ class MessageDAO(database: CoroutineDatabase) {
             ).buildQuery().toString()
         )
     }
+
+    suspend fun clear() {
+        messageCollection.deleteMany("{}")
+    }
 }

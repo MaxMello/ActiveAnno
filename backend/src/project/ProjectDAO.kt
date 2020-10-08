@@ -140,4 +140,8 @@ class ProjectDAO(database: CoroutineDatabase) {
     suspend fun save(project: Project): UpdateResult? {
         return projectCollection.save(project)
     }
+
+    suspend fun clear() {
+        projectCollection.deleteMany("{}")
+    }
 }

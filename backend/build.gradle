@@ -70,6 +70,7 @@ dependencies {
     compile "io.ktor:ktor-auth:$ktor_version"
     compile "io.ktor:ktor-auth-jwt:$ktor_version"
     compile "io.ktor:ktor-jackson:$ktor_version"
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.3'
 
     // logging
     compile "ch.qos.logback:logback-classic:$logback_version"

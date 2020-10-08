@@ -7,7 +7,7 @@ enum class HandlingPolicyType(@JsonValue val value: String) {
     IGNORE("Ignore"), PRESELECTION("Preselection"), GENERATOR_AS_ANNOTATOR("GeneratorAsAnnotator");
 
     companion object {
-        @JsonCreator
+        @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
         @JvmStatic
         fun forValue(@JsonProperty("type") theValue: String?): HandlingPolicyType? {
             return values().find { it.value == theValue }
