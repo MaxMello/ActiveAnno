@@ -1,4 +1,5 @@
 import csv
+
 import requests
 
 training_file = open("olid-training-v1.0.tsv")
@@ -17,24 +18,23 @@ for index, row in enumerate(training):
             "label": row[2]
         })
 
-
 print(training_data)
 
 credentials = {
     "username": "admin",
     "password": "mysecretpassword"
 }
+
 tokens = requests.post(AS_URL + "/api/token/", json=credentials).json()
 print(str(tokens))
 
 headers = {
     "Authorization": "Bearer " + tokens["token"]
 }
-document_ids = requests.post(BACKEND_URL + "/api/v1/import/document", json=training_data, headers=headers).json()["documentIDs"]
-print(document_ids[0])
-training_data_with_ids = list(zip(document_ids, training_data))
 
-print(training_data_with_ids[0])
+document_ids = requests.post(BACKEND_URL + "/api/v1/import/document", json=training_data, headers=headers).json()["documentIDs"]
+
+training_data_with_ids = list(zip(document_ids, training_data))
 
 for pair in training_data_with_ids:
     create_annotation = requests.post(BACKEND_URL + "/api/v1/import/annotation/project/OffensEval2019_a/document/" + pair[0], json={
@@ -45,8 +45,6 @@ for pair in training_data_with_ids:
             }
         }
     }, headers=headers)
-    print(str(pair[0]) + ": " + str(create_annotation.status_code))
-
 
 # Insert test data
 
