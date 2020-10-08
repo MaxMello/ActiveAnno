@@ -51,6 +51,8 @@ services:
       CORS_HOSTS_LIST: 'localhost,localhost:3000,0.0.0.0,0.0.0.0:3000'
       LOGGING_LEVEL: DEBUG
       GENERATE_EXAMPLE_PROJECT: "true"
+      EXAMPLE_PREDICT_URL: "http://djangoauth-local:8050/ml/offenseval/predict"
+      EXAMPLE_TRAIN_URL: "http://djangoauth-local:8050/ml/offenseval/train"
   djangoauth-local:
     image: maxmello/activeannoauth:0.1
     command: bash -c "python manage.py migrate && python manage.py createsu && python manage.py runserver 0.0.0.0:8050"
