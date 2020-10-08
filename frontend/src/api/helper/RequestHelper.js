@@ -31,7 +31,11 @@ const httpError = (statusCode: number, statusText: string): HttpError => {
  */
 export const checkServerResponse = (response: Object): Object => {
     if (response && response.status >= StatusCode.OK && response.status < StatusCode.BAD_REQUEST) {
-        return response.json();
+        if(response.status === StatusCode.NO_CONTENT) {
+            return {};
+        } else {
+            return response.json();
+        }
     } else {
         throw httpError(response.status, response.statusText ? response.statusText : "Unknown status");
     }

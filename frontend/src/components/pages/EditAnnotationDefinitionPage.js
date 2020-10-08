@@ -114,7 +114,6 @@ function EditAnnotationDefinitionPage(props: EditAnnotationDefinitionPageProps) 
 
     useEffect(() => {
         if(!(props.annotationDefinition?.changed ?? true) && !props.isNewAnnotationDefinition) {
-            console.log("RELOAD");
             props.reloadAnnotationDefinition(props.annotationDefinition);
         }
     }, []);

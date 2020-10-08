@@ -11,6 +11,7 @@ import {LayoutAreaTypes} from "../../constants/LayoutAreaTypes";
 import type {ManageState, NewManageProjectInState} from "../../types/redux/ManageState";
 import type {AnalyzeProjectRequest, AnalyzeProjectResponse} from "../../types/manage/AnalyzeProjectResultsTypes";
 import {
+    generateAnnotationsForProject,
     getManageProject,
     getManageProjectList,
     postAnalyzeProjectRequest,
@@ -19,6 +20,7 @@ import {
     putManageProject
 } from "../../api/ManageRoutes";
 import {manageAnnotationDefinitionReducerActions, newAnnotationDefinition} from "./manageAnnotationDefinitions";
+import type {GenerateAnnotationsResponse} from "../../types/annotationdefinition/AnnotationGenerator";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                                    A C T I O N S
@@ -63,6 +65,12 @@ export const AnalyzeProjectResultsActionKey = {
     START_REQUEST: "ANALYZE_PROJECT_RESULTS/START_REQUEST",
     RECEIVE_RESPONSE: "ANALYZE_PROJECT_RESULTS/RECEIVE_RESPONSE",
     REQUEST_ERROR: "ANALYZE_PROJECT_RESULTS/REQUEST_ERROR",
+};
+
+export const GenerateAnnotationsActionKey = {
+    START: "GENERATE_ANNOTATIONS_FOR_PROJECT/START",
+    RECEIVED: "GENERATE_ANNOTATIONS_FOR_PROJECT/RECEIVED",
+    ERROR: "GENERATE_ANNOTATIONS_FOR_PROJECT/ERROR"
 };
 
 export const ManageProjectListActions = {
@@ -115,6 +123,12 @@ export const AnalyzeProjectResultsActions = {
         (analyzeProjectResponse: AnalyzeProjectResponse) => analyzeProjectResponse),
     error: createAction(AnalyzeProjectResultsActionKey.REQUEST_ERROR)
 }
+
+export const GenerateAnnotationsActions = {
+    start: createAction(GenerateAnnotationsActionKey.START, (project: ManageProject) => project),
+    received: createAction(GenerateAnnotationsActionKey.RECEIVED, (response: GenerateAnnotationsResponse) => response),
+    error: createAction(GenerateAnnotationsActionKey.ERROR, (project: ManageProject) => project)
+};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                                    V A L U E S
@@ -249,7 +263,9 @@ const initialState: ManageState = {
     newProject: newProject,
     annotationDefinitions: {},
     annotationDefinitionFetchStatus: null,
-    newAnnotationDefinition: newAnnotationDefinition
+    newAnnotationDefinition: newAnnotationDefinition,
+    annotationGenerators: {},
+    annotationGeneratorsFetchStatus: null
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -579,6 +595,64 @@ export const manageReducer = handleActions({
             projectAnalysisFetchStatus: FetchStatus.ERROR
         }
     },
+    [GenerateAnnotationsActionKey.START]: (state: ManageState, action: {|
+        ...Action,
+        payload: ManageProject
+            |}): Function => {
+        return {
+            ...state,
+            ...{
+                projects: {
+                    ...state.projects,
+                    [action.payload.id]: {
+                        ...state.projects[action.payload.id],
+                        ...{
+                            generateAnnotationsFetchStatus: FetchStatus.ACTIVE
+                        }
+                    }
+                }
+            }
+        };
+    },
+    [GenerateAnnotationsActionKey.RECEIVED]: (state: ManageState, action: {
+        ...Action,
+        payload: GenerateAnnotationsResponse
+    }): Function => {
+        return {
+            ...state,
+            ...{
+                projects: {
+                    ...state.projects,
+                    [action.payload.projectID]: {
+                        ...state.projects[action.payload.projectID],
+                        ...{
+                            generateAnnotationsFetchStatus: FetchStatus.SUCCESS,
+                            numberUpdatedDocuments: action.payload.numberUpdatedDocuments
+                        }
+                    }
+                }
+            }
+        };
+    },
+    [GenerateAnnotationsActionKey.ERROR]: (state: ManageState, action: {
+        ...Action,
+        payload: ManageProject
+    }): Function => {
+        return {
+            ...state,
+            ...{
+                projects: {
+                    ...state.projects,
+                    [action.payload.id]: {
+                        ...state.projects[action.payload.id],
+                        ...{
+                            generateAnnotationsFetchStatus: FetchStatus.ERROR
+                        }
+                    }
+                }
+            }
+        };
+    },
     [GlobalActionKey.LOGOUT]: (): Function => {
         return {
             ...initialState
@@ -621,3 +695,7 @@ export const uploadDocumentsForProject: Function = function*() {
         UploadDocumentsActions.received, UploadDocumentsActions.error);
 };
 
+export const onGenerateAnnotations: Function = function*() {
+    yield jwtNetworkRequestSaga(GenerateAnnotationsActionKey.START, generateAnnotationsForProject,
+        GenerateAnnotationsActions.received, GenerateAnnotationsActions.error);
+};

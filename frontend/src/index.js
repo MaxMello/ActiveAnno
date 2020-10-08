@@ -36,6 +36,7 @@ import {refreshCurationPageSaga} from "./redux/annotate/curationRefresh";
 import {
     manageReducer,
     onCreateProject,
+    onGenerateAnnotations,
     onLoadManageProject,
     onLoadManageProjectList,
     onRequestProjectResultAnalysis,
@@ -57,8 +58,10 @@ import {composeWithDevTools} from "redux-devtools-extension";
 import {
     onLoadAnnotationDefinition,
     onLoadAnnotationDefinitions,
+    onLoadAnnotationGenerators,
     onStoreAnnotationDefinition,
-    onUpdateAnnotationDefinition
+    onUpdateAnnotationDefinition,
+    onUpdateAnnotationGenerator
 } from "./redux/manage/manageAnnotationDefinitions";
 
 /************************************************************************************************
@@ -184,7 +187,7 @@ const rootSaga = function*(): Generator<AllEffect, GenericAllEffect<any>, any> {
         uploadDocumentsForProject(),
         onCreateProject(), onSaveProject(),
         onLoadAnnotationDefinitions(), onLoadAnnotationDefinition(), onUpdateAnnotationDefinition(),
-        onStoreAnnotationDefinition()
+        onStoreAnnotationDefinition(), onGenerateAnnotations(), onLoadAnnotationGenerators(), onUpdateAnnotationGenerator()
     ])
 };
 sagaMiddleware.run(rootSaga);

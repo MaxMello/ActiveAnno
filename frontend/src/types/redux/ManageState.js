@@ -8,6 +8,7 @@ import type {
 } from "../manage/ManageTypes";
 import type {AnalyzeProjectRequest, AnalyzeProjectResponse} from "../manage/AnalyzeProjectResultsTypes";
 import type {AnnotationDefinitionInStore} from "../annotationdefinition/AnnotationDefinition";
+import type {AnnotationGeneratorInStore} from "../annotationdefinition/AnnotationGenerator";
 
 export type ManageState = {|
     projects: Dictionary<ProjectID, ManageListProject | ManageProjectInState>,
@@ -19,13 +20,17 @@ export type ManageState = {|
     newProject: NewManageProjectInState,
     annotationDefinitions: Dictionary<AnnotationID, AnnotationDefinitionInStore>,
     newAnnotationDefinition: AnnotationDefinitionInStore,
-    annotationDefinitionFetchStatus: ?number
+    annotationDefinitionFetchStatus: ?number,
+    annotationGenerators: Dictionary<string, AnnotationGeneratorInStore>,
+    annotationGeneratorsFetchStatus: ?number
 |}
 
 export type ManageProjectInState = {|
     ...ManageProject,
     fetchStatus: ?number,
-    projectStoreResponse?: ProjectStoreResponseInState
+    generateAnnotationsFetchStatus?: number,
+    projectStoreResponse?: ProjectStoreResponseInState,
+    numberUpdatedDocuments?: number
 |}
 
 export type NewManageProjectInState = {|

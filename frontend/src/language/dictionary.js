@@ -35,6 +35,9 @@ const ENGLISH = {
     'annotationPanel.duration': 'duration',
     'annotationPanel.feedback': 'Feedback',
 
+    'annotationGenerator.panelTitle': 'Annotation generators',
+    'annotationGenerators.update': 'Train / update generator',
+
     'card.disabled': '(Disabled)',
     'card.documentInteractionTitle': 'Annotate document',
     'card.maxAnswers': 'Maximum number of answers',
@@ -93,6 +96,8 @@ const ENGLISH = {
     'manage.project.new': 'New project',
     'manage.projects': 'Projects',
     'manage.project.edit': 'Edit',
+    'manage.project.generateAnnotations': 'Generate annotations',
+    'manage.project.generateAnnotations.updated': 'Updated',
     'manage.project.uploadDocuments': 'Upload documents (.json)',
     'manage.project.save': 'Save',
     'manage.project.analyze': 'Analyze results',
@@ -423,6 +428,10 @@ const GERMAN = {
     'annotationPanel.creator.import': 'Importiert von',
     'annotationPanel.duration': 'Dauer',
     'annotationPanel.feedback': 'Feedback',
+
+
+    'annotationGenerator.panelTitle': 'Annotation Generatoren',
+    'annotationGenerators.update': 'Trainiere / update Generator',
 
     'card.disabled': '(Deaktiviert)',
     'card.documentInteractionTitle': 'Dokument annotieren',

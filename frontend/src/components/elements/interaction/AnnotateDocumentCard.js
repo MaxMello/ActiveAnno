@@ -254,7 +254,6 @@ class AnnotateDocumentCard extends Component<AnnotateDocumentCardProps, Annotati
                               className={this.props.classes.column}
                               key={`${key}Row${rowIndex}Column${columnIndex}`}>
                     {c.children.map((child, index) => {
-                        console.log("child", child);
                         return this.mapLayoutElementsToComponent(child, document.documentData, layoutAreaType,
                             `${key}Row${rowIndex}Column${columnIndex}Element${index}`)
                     })}

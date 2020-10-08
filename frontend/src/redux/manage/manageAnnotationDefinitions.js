@@ -2,8 +2,10 @@ import {jwtNetworkRequestSaga} from "../../api/helper/NetworkRequestSaga";
 import {
     getAnnotationDefinition,
     getAnnotationDefinitions,
+    getAnnotationGenerators,
     storeAnnotationDefinition,
-    updateAnnotationDefinition
+    updateAnnotationDefinition,
+    updateGenerator
 } from "../../api/ManageRoutes";
 import {createAction} from "redux-actions";
 import type {
@@ -15,6 +17,7 @@ import {DefaultAnnotationDefinitions} from "../../constants/AnnotationDefinition
 import type {ManageState} from "../../types/redux/ManageState";
 import FetchStatus from "../../api/helper/FetchStatus";
 import {normalize} from "../../helper/Helper";
+import type {AnnotationGenerator} from "../../types/annotationdefinition/AnnotationGenerator";
 
 /*
    LOAD ANNOTATION DEFINITIONS (LIST)
@@ -36,6 +39,53 @@ export const LoadAnnotationDefinitionsActions = {
 export const onLoadAnnotationDefinitions: Function = function* () {
     yield jwtNetworkRequestSaga(LoadAnnotationDefinitionsKey.START, getAnnotationDefinitions,
         LoadAnnotationDefinitionsActions.received, LoadAnnotationDefinitionsActions.error);
+};
+
+/*
+   Load annotation generators
+ */
+
+export const LoadAnnotationGeneratorsKey = {
+    START: "LOAD_ANNOTATION_GENERATORS/START",
+    RECEIVED: "LOAD_ANNOTATION_GENERATORS/RECEIVED",
+    ERROR: "LOAD_ANNOTATION_GENERATORS/ERROR",
+};
+
+
+export const LoadAnnotationGeneratorsActions = {
+    start: createAction(LoadAnnotationGeneratorsKey.START),
+    received: createAction(LoadAnnotationGeneratorsKey.RECEIVED,
+        (annotationGenerators: Array<AnnotationGenerator>) => annotationGenerators),
+    error: createAction(LoadAnnotationGeneratorsKey.ERROR)
+};
+
+
+export const onLoadAnnotationGenerators: Function = function* () {
+    yield jwtNetworkRequestSaga(LoadAnnotationGeneratorsKey.START, getAnnotationGenerators,
+        LoadAnnotationGeneratorsActions.received, LoadAnnotationGeneratorsActions.error);
+};
+
+/*
+   Update annotation generators
+ */
+
+export const UpdateAnnotationGeneratorKey = {
+    START: "UPDATE_ANNOTATION_GENERATOR/START",
+    RECEIVED: "UPDATE_ANNOTATION_GENERATOR/RECEIVED",
+    ERROR: "UPDATE_ANNOTATION_GENERATOR/ERROR",
+};
+
+
+export const UpdateAnnotationGeneratorActions = {
+    start: createAction(UpdateAnnotationGeneratorKey.START, (annotationGenerator: AnnotationGenerator) => annotationGenerator),
+    received: createAction(UpdateAnnotationGeneratorKey.RECEIVED, (annotationGenerator: AnnotationGenerator) => annotationGenerator),
+    error: createAction(UpdateAnnotationGeneratorKey.ERROR, (annotationGenerator: AnnotationGenerator) => annotationGenerator)
+};
+
+
+export const onUpdateAnnotationGenerator: Function = function* () {
+    yield jwtNetworkRequestSaga(UpdateAnnotationGeneratorKey.START, updateGenerator,
+        UpdateAnnotationGeneratorActions.received, UpdateAnnotationGeneratorActions.error);
 };
 
 /*
@@ -195,6 +245,87 @@ export const manageAnnotationDefinitionReducerActions = {
     },
     [LoadAnnotationDefinitionKey.ERROR]: (state: ManageState): Function => {
         return state;
+    },
+    [LoadAnnotationGeneratorsKey.START]: (state: ManageState): Function => {
+        return {
+            ...state,
+            ...{
+                annotationGeneratorsFetchStatus: FetchStatus.ACTIVE
+            }
+        };
+    },
+    [LoadAnnotationGeneratorsKey.RECEIVED]: (state: ManageState, action: {|
+        ...Action,
+        payload: Array<AnnotationGenerator>
+    |}): Function => {
+        return {
+            ...state,
+            ...{
+                annotationGenerators: {
+                    ...normalize(action.payload)
+                },
+                annotationGeneratorsFetchStatus: FetchStatus.SUCCESS
+            }
+        };
+    },
+    [LoadAnnotationGeneratorsKey.ERROR]: (state: ManageState): Function => {
+        return {
+            ...state,
+            ...{
+                annotationGeneratorsFetchStatus: FetchStatus.ERROR
+            }
+        };
+    },
+    [UpdateAnnotationGeneratorKey.START]: (state: ManageState, action: {|
+        ...Action,
+        payload: AnnotationGenerator
+    |}): Function => {
+        return {
+            ...state,
+            ...{
+                annotationGenerators: {
+                    ...state.annotationGenerators,
+                    [action.payload.id]: {
+                        ...state.annotationGenerators[action.payload.id],
+                        updateFetchStatus: FetchStatus.ACTIVE
+                    }
+                }
+            }
+        };
+    },
+    [UpdateAnnotationGeneratorKey.RECEIVED]: (state: ManageState, action: {|
+        ...Action,
+        payload: AnnotationGenerator
+    |}): Function => {
+        return {
+            ...state,
+            ...{
+                annotationGenerators: {
+                    ...state.annotationGenerators,
+                    [action.payload.id]: {
+                        ...action.payload,
+                        updateFetchStatus: FetchStatus.SUCCESS
+                    }
+                }
+            }
+        };
+    },
+    [UpdateAnnotationGeneratorKey.ERROR]: (state: ManageState, action: {|
+        ...Action,
+        payload: AnnotationGenerator
+    |}): Function => {
+        return {
+            ...state,
+            ...{
+                annotationGenerators: {
+                    ...state.annotationGenerators,
+                    [action.payload.id]: {
+                        ...state.annotationGenerators[action.payload.id],
+                        updateFetchStatus: FetchStatus.ERROR
+                    }
+                }
+            }
+        };
     },
     [UpdateAnnotationDefinitionKey.START]: (state: ManageState, action: {|
         ...Action,

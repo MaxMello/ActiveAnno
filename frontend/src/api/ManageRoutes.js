@@ -5,6 +5,7 @@ import {ACTIVE_ANNO_SERVICE_URL} from "../constants/Constants";
 import type {AnalyzeProjectRequest, AnalyzeProjectResponse} from "../types/manage/AnalyzeProjectResultsTypes";
 import type {AnnotationID, ProjectID} from "../types/Types";
 import type {AnnotationDefinition} from "../types/annotationdefinition/AnnotationDefinition";
+import type {AnnotationGenerator, GenerateAnnotationsResponse} from "../types/annotationdefinition/AnnotationGenerator";
 
 /*
  * Routes related to management activities like editing projects and annotation definitions.
@@ -21,6 +22,11 @@ const ManageRoutes = {
     UPLOAD_DOCUMENTS_FOR_PROJECT: ['/manage/project/', '/document'],
 
     ANNOTATION_DEFINITION: '/manage/annotationDefinition',
+
+    GENERATE_ANNOTATIONS: '/generators/generateAnnotations/project/',
+
+    GET_ANNOTATION_GENERATORS: '/manage/annotationGenerator',
+    UPDATE_GENERATOR: '/generators/update/',
 };
 
 export const getManageProjectList: Function = (params = null, jwt: JWT, selectedLanguage?: string):
@@ -77,3 +83,20 @@ export const storeAnnotationDefinition: Function = (annotationDefinition: Annota
                                                     jwt: JWT, selectedLanguage?: string): AnnotationDefinition =>
     post(`${ACTIVE_ANNO_SERVICE_URL}${ManageRoutes.ANNOTATION_DEFINITION}`,
         annotationDefinition, jwt, selectedLanguage);
+
+
+export const generateAnnotationsForProject: Function = (project: ManageProject, jwt: JWT, selectedLanguage?: string): GenerateAnnotationsResponse => {
+    return get(`${ACTIVE_ANNO_SERVICE_URL}${ManageRoutes.GENERATE_ANNOTATIONS}${project.id}`,
+        undefined, jwt, selectedLanguage);
+};
+
+export const getAnnotationGenerators: Function = (params = null, jwt: JWT, selectedLanguage?: string):
+    Array<AnnotationGenerator> => {
+    return get(`${ACTIVE_ANNO_SERVICE_URL}${ManageRoutes.GET_ANNOTATION_GENERATORS}`, undefined, jwt,
+        selectedLanguage);
+};
+
+export const updateGenerator: Function = (generator: AnnotationGenerator, jwt: JWT, selectedLanguage?: string): AnnotationGenerator => {
+    return get(`${ACTIVE_ANNO_SERVICE_URL}${ManageRoutes.UPDATE_GENERATOR}${generator.id}`,
+        undefined, jwt, selectedLanguage);
+};

@@ -15,7 +15,7 @@ export const networkRequest: Function = function* (action: ActionWithPayload, ap
             const jwt = yield select(getJwt);
             const selectedLanguage = yield select(getSelectedLanguage);
             const response = yield apiCall(action.payload, jwt, selectedLanguage);
-            yield put(receivedAction(response));
+            yield put(receivedAction(response, action.payload));
         };
         // Race between api call and logout action getting fired, this will stop the apiCall on logout
         yield race({
@@ -26,7 +26,7 @@ export const networkRequest: Function = function* (action: ActionWithPayload, ap
         if(e?.statusCode === 403 || e?.statusCode === 401) {
             yield put(GlobalActions.logout());
         } else {
-            yield put(errorAction());
+            yield put(errorAction(action.payload));
         }
     }
 };

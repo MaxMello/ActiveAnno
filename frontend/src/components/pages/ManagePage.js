@@ -14,7 +14,7 @@ import type {
 } from "../../types/Types";
 import type {ManageListProject, ManageProject, NewManageProject} from "../../types/manage/ManageTypes";
 import {connect} from "react-redux";
-import {ManageProjectListActions, UploadDocumentsActions} from "../../redux/manage/manage";
+import {GenerateAnnotationsActions, ManageProjectListActions, UploadDocumentsActions} from "../../redux/manage/manage";
 import Grid from "@material-ui/core/Grid";
 import type {AppState} from "../../types/redux/AppState";
 import Card from "@material-ui/core/Card";
@@ -27,7 +27,19 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import {LoadAnnotationDefinitionsActions} from "../../redux/manage/manageAnnotationDefinitions";
+import {
+    LoadAnnotationDefinitionsActions,
+    LoadAnnotationGeneratorsActions,
+    UpdateAnnotationGeneratorActions
+} from "../../redux/manage/manageAnnotationDefinitions";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import type {ManageProjectInState} from "../../types/redux/ManageState";
+import FetchStatus from "../../api/helper/FetchStatus";
+import {Check, ErrorOutline} from "@material-ui/icons";
+import type {
+    AnnotationGenerator,
+    AnnotationGeneratorInStore
+} from "../../types/annotationdefinition/AnnotationGenerator";
 
 type ContentProps = WithStylesComponentProps & WithRouterComponentProps & WithLocalizationComponentProps & {
     projects: Dictionary<ProjectID, ManageListProject | ManageProject>,
@@ -36,7 +48,11 @@ type ContentProps = WithStylesComponentProps & WithRouterComponentProps & WithLo
     newAnnotationDefinition: AnnotationDefinition,
     loadProjectList: Function,
     uploadDocumentsForProject: Function,
-    loadAnnotationDefinitions: Function
+    loadAnnotationDefinitions: Function,
+    loadAnnotationGenerators: Function,
+    updateGenerator: Function,
+    generateAnnotations: Function,
+    annotationGenerators: Dictionary<string, AnnotationGenerator>
 };
 
 const style: Function = (theme: Object): Object => ({
@@ -77,6 +93,7 @@ class ManagePage extends Component<ContentProps> {
     componentDidMount() {
         this.props.loadProjectList();
         this.props.loadAnnotationDefinitions();
+        this.props.loadAnnotationGenerators();
     }
 
     render() {
@@ -183,7 +200,7 @@ class ManagePage extends Component<ContentProps> {
                                     </Card>
                                     {
                                         (Object.values(this.props.projects): any).map(
-                                            (project: (ManageListProject | ManageProject)) => {
+                                            (project: (ManageListProject | ManageProjectInState)) => {
                                                 return <Card className={this.props.classes.projectCard}
                                                              key={`projectCard${project.id}`}
                                                              variant={"outlined"}>
@@ -242,6 +259,86 @@ class ManagePage extends Component<ContentProps> {
                                                                 {this.props.localize('manage.project.analyze')}
                                                             </Button>
                                                         </Link>
+                                                        <Button size="small" color="secondary" onClick={() => {
+                                                            this.props.generateAnnotations(project)
+                                                        }}> { project.generateAnnotationsFetchStatus === FetchStatus.ACTIVE ? <CircularProgress size={20}/> :
+                                                            (project.generateAnnotationsFetchStatus === FetchStatus.SUCCESS ? <Check/> :
+                                                                (project.generateAnnotationsFetchStatus === FetchStatus.ERROR ? <ErrorOutline/> : null))}
+                                                            {this.props.localize('manage.project.generateAnnotations')}
+                                                            {project.numberUpdatedDocuments !== undefined ? " ("
+                                                                + this.props.localize('manage.project.generateAnnotations.updated')
+                                                                + ": " + project.numberUpdatedDocuments + ")" : null}
+                                                        </Button>
+                                                    </CardActions>
+                                                </Card>
+                                            })
+                                    }
+                                </Grid>
+                            </Grid>
+                        </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                </Grid>
+                <Grid item xs={12}>
+                    <ExpansionPanel defaultExpanded={false}>
+                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+                            <Typography variant={'h4'}>
+                                {this.props.localize('annotationGenerator.panelTitle')}
+                            </Typography>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails>
+                            <Grid container spacing={4}>
+                                <Grid item xs={12}>
+                                    {
+                                        (Object.values(this.props.annotationGenerators): any).map(
+                                            (annotationGenerator: AnnotationGeneratorInStore) => {
+                                                return <Card className={this.props.classes.projectCard}
+                                                             key={`annotationGeneratorCard${annotationGenerator.id}`}
+                                                             variant={"outlined"}>
+                                                    <CardActionArea>
+                                                        <CardContent>
+                                                            <Typography gutterBottom variant="h5" component="h2">
+                                                                {annotationGenerator.name}
+                                                            </Typography>
+                                                            <Typography variant="body2" color="textSecondary"
+                                                                        component="p">
+                                                                ID: {annotationGenerator.id}
+                                                            </Typography>
+                                                            <Typography variant="body2" color="textSecondary"
+                                                                        component="p">
+                                                                {annotationGenerator.description}
+                                                            </Typography>
+                                                            <Typography variant="body2" color="textSecondary"
+                                                                        component="p">
+                                                                Annotation Definition ID: {annotationGenerator.annotationDefinitionID}
+                                                            </Typography>
+                                                            {(annotationGenerator.versions?.length ?? 0) > 0 &&
+                                                                <Grid container spacing={1} style={{marginTop: 12}}>
+                                                                    {annotationGenerator.versions.map(v => <Grid item xs={12} style={{marginLeft: 12}}>
+                                                                        <Typography variant="body2" color="textSecondary"
+                                                                                    component="p">
+                                                                            Version: {v.updateResponse?.version ?? "?"}
+                                                                        </Typography>
+                                                                        <Typography variant="body2" color="textSecondary"
+                                                                                    component="p">
+                                                                            Update State: {v.updateState}
+                                                                        </Typography>
+                                                                        <Typography variant="body2" color="textSecondary"
+                                                                                    component="p">
+                                                                            n={v.updateResponse?.numberOfExamples ?? "?"}
+                                                                        </Typography>
+                                                                    </Grid>)}
+                                                                </Grid>
+                                                            }
+                                                        </CardContent>
+                                                    </CardActionArea>
+                                                    <CardActions>
+                                                        <Button size="small" color="secondary" onClick={() => {
+                                                            this.props.updateGenerator(annotationGenerator)
+                                                        }}> { annotationGenerator.updateFetchStatus === FetchStatus.ACTIVE ? <CircularProgress size={20}/> :
+                                                            (annotationGenerator.updateFetchStatus === FetchStatus.SUCCESS ? <Check/> :
+                                                                (annotationGenerator.updateFetchStatus === FetchStatus.ERROR ? <ErrorOutline/> : null))}
+                                                            {this.props.localize('annotationGenerators.update')}
+                                                        </Button>
                                                     </CardActions>
                                                 </Card>
                                             })
@@ -252,8 +349,6 @@ class ManagePage extends Component<ContentProps> {
                     </ExpansionPanel>
                 </Grid>
             </Grid>
-
-
         </div>
     }
 }
@@ -261,7 +356,8 @@ const mapStateToProps = (state: AppState): Object => ({
     projects: state.manage.projects,
     newProject: state.manage.newProject,
     annotationDefinitions: state.manage.annotationDefinitions,
-    newAnnotationDefinition: state.manage.newAnnotationDefinition
+    newAnnotationDefinition: state.manage.newAnnotationDefinition,
+    annotationGenerators: state.manage.annotationGenerators
 });
 
 const mapDispatchToProps = (dispatch: Function) : Object => {
@@ -274,6 +370,15 @@ const mapDispatchToProps = (dispatch: Function) : Object => {
         },
         loadAnnotationDefinitions: () => {
             dispatch(LoadAnnotationDefinitionsActions.start());
+        },
+        loadAnnotationGenerators: () => {
+            dispatch(LoadAnnotationGeneratorsActions.start());
+        },
+        updateGenerator: (annotationGenerator: AnnotationGenerator) => {
+            dispatch(UpdateAnnotationGeneratorActions.start(annotationGenerator));
+        },
+        generateAnnotations: (project: ManageProject) => {
+            dispatch(GenerateAnnotationsActions.start(project));
         }
     });
 };
