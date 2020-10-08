@@ -83,12 +83,12 @@ AUTH_USER_MODEL = 'djangoauth.User'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-sqliteDir = os.getenv("DATA_PATH", BASE_DIR)
+dataDir = os.getenv("DATA_PATH", BASE_DIR)
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(sqliteDir) + '/db.sqlite3',
+        'NAME': str(dataDir) + '/db.sqlite3',
     }
 }
 
