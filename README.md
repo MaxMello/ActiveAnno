@@ -2,6 +2,7 @@
 ActiveAnno is a web-based, responsive, highly configurable open source document annotation tool.
 
 <!-- TOC -->
+- [Demo](#demo)
 - [Quick start](#quick-start)
 - [Use cases](#use-cases)
 - [API](#api)
@@ -16,6 +17,12 @@ ActiveAnno is a web-based, responsive, highly configurable open source document 
 - [License](#license)
 
 <!-- /TOC -->
+## Demo
+### Live Demo
+The current running demo can be found here: http://ltdemos.informatik.uni-hamburg.de/activeanno. Please use the login credentials username "testuser", password "testuser". Since the location of where the demo is running might change in the future, it will always be referenced here in the Github Readme.
+### Demo Video
+https://youtu.be/ryCi4XeReDg
+
 ## Quick start
 Use `docker-compose` to start the application with frontend, backend and the database. Run the following command from the top
 level directory of the project:
